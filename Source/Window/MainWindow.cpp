@@ -19,5 +19,4 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 {
     const QSize& newSize = event->size();
     Log::Debug("Window resize: {}, {}", newSize.width(), newSize.height());
-
 }
