@@ -1,11 +1,15 @@
 #include <QApplication>
-#include <QPushButton>
+#include <QScreen>
+
+#include <Window/MainWindow.hpp>
 
 int main(int argc, char* argv[])
 {
-    QApplication a(argc, argv);
-    QPushButton button("Hello world!", nullptr);
-    button.resize(200, 100);
-    button.show();
-    return QApplication::exec();
+    QApplication app(argc, argv);
+
+    MainWindow window(1280, 720, "Photoshop");
+    window.move(window.screen()->availableGeometry().topLeft() + QPoint(100, 100));
+    window.show();
+
+    return app.exec();
 }

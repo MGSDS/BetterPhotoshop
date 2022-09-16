@@ -1,3 +1,5 @@
-target_sources(cg22_project_13 PRIVATE 
+target_sources(Photoshop PUBLIC 
     main.cpp
 )
+
+add_subdirectory(Window)
