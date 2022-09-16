@@ -1,5 +1,11 @@
 # gc22-project-13
 
+## How to checkout
+
+Because the project contains submodules, you should 
+clone it with ```--recursive``` flag, like so:
+```git clone --recursive git@github.com:IS-CG/cg22-project-13.git```.
+
 ## How to configure and compile
 
 Firstly, make sure that Qt6 binaries are installed somewhere in the system. 
