@@ -1,8 +1,8 @@
 #include "MainWindow.hpp"
 
-#include <QtWidgets>
+#include <Core/Log.hpp>
 
-#include <iostream> 
+#include <QtWidgets>
 
 MainWindow::MainWindow(int width, int height, const char* title)
 {
@@ -18,5 +18,5 @@ MainWindow::~MainWindow()
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
     const QSize& newSize = event->size();
-    std::cout << "Window resize: " << newSize.width() << ", " << newSize.height() << '\n';
+    Log::Debug("Window resize: {}, {}", newSize.width(), newSize.height());
 }
