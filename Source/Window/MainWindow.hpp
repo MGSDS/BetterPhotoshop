@@ -1,6 +1,10 @@
 #pragma once
 
+#include <Window/ImageView.hpp>
+
 #include <QMainWindow>
+
+#include <memory>
 
 class MainWindow : public QMainWindow
 {
@@ -8,8 +12,18 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(int width, int height, const char* title);
-    ~MainWindow() override;
+    ~MainWindow() override = default;
 
 private:
+    void InitMenuBar();
+    void InitImageView();
+
+private slots:
     void resizeEvent(QResizeEvent *event) override;
+    void OnFileNewAction();
+    void OnFileOpenAction();
+    void OnFileSaveAction();
+
+private:
+    std::unique_ptr<ImageView> m_ImageView;
 };
