@@ -1,10 +1,10 @@
 #pragma once
 
+#include <Window/ImageView.hpp>
+
 #include <QMainWindow>
-#include <QPushButton>
-#include <QImage>
-#include <QLabel>
-#include <QGraphicsScene>
+
+#include <memory>
 
 class MainWindow : public QMainWindow
 {
@@ -25,5 +25,5 @@ private slots:
     void OnFileSaveAction();
 
 private:
-    QGraphicsScene* m_GraphicsScene;
+    std::unique_ptr<ImageView> m_ImageView;
 };

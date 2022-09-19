@@ -38,32 +38,8 @@ void MainWindow::InitMenuBar()
 
 void MainWindow::InitImageView()
 {
-    m_GraphicsScene = new QGraphicsScene(this);
-
-    int size = 16;
-
-    std::vector<uint8_t> data(size * size * 4, 255);
-    data[0] = 0;
-    data[1] = 0;
-    data[2] = 0;
-
-    data[data.size() - 2] = 0;
-    data[data.size() - 3] = 0;
-    data[data.size() - 4] = 0;
-
-    auto* hugeRect = m_GraphicsScene->addRect(-100000, -100000, 200000, 200000);
-
-    auto* image = new QImage(&data[0], size, size, QImage::Format_ARGB32);
-    auto pixmap = QPixmap::fromImage(*image);
-    auto* pixmapItem = m_GraphicsScene->addPixmap(pixmap);
-
-    QGraphicsView* view = new QGraphicsView(m_GraphicsScene, this);
-    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->fitInView(pixmapItem, Qt::AspectRatioMode::KeepAspectRatioByExpanding);
-    view->scale(1, -1);
-
-    setCentralWidget(view);
+    m_ImageView = std::make_unique<ImageView>(this);
+    setCentralWidget(m_ImageView->GetViewWidget());
 }
 
 void MainWindow::OnFileNewAction()
