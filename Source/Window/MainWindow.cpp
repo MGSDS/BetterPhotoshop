@@ -4,6 +4,7 @@
 
 #include <QtWidgets>
 #include <QPixmap>
+#include <QFileDialog>
 
 #include <string>
 
@@ -72,12 +73,22 @@ void MainWindow::OnFileNewAction()
 
 void MainWindow::OnFileOpenAction()
 {
-    Log::Debug("File->Open");
+    auto filename = QFileDialog::getOpenFileName(this, "Open image");
+    if (filename.isEmpty()) {
+        return;
+    }
+
+    Log::Debug("File: {}", filename.toStdString().c_str());
 }
 
 void MainWindow::OnFileSaveAction()
 {
-    Log::Debug("File->Save");
+    auto filename = QFileDialog::getSaveFileName(this, "Save image");
+    if (filename.isEmpty()) {
+        return;
+    }
+
+    Log::Debug("File: {}", filename.toStdString().c_str());
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
