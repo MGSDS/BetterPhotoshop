@@ -39,7 +39,7 @@ void MainWindow::InitMenuBar()
 void MainWindow::InitImageView()
 {
     m_ImageView = std::make_unique<ImageView>(this);
-    setCentralWidget(m_ImageView->GetViewWidget());
+    setCentralWidget(m_ImageView.get());
 }
 
 void MainWindow::OnFileNewAction()
