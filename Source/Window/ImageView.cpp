@@ -7,6 +7,8 @@
 #include <QtWidgets>
 
 static Qt::MouseButton MOVE_BUTTON = Qt::MouseButton::LeftButton;
+static QRect PAN_RECTANGLE = QRect(-100000, -100000, 200000, 200000);
+static qreal SCALE_STEP = 0.05;
 
 ImageView::ImageView(QWidget* parent, QObject* sceneParent)
     : QGraphicsView(parent)
@@ -14,8 +16,7 @@ ImageView::ImageView(QWidget* parent, QObject* sceneParent)
 {
     setScene(m_Scene);
 
-    QRect hugeRect(-100000, -100000, 200000, 200000);
-    m_Scene->addRect(hugeRect);
+    m_Scene->addRect(PAN_RECTANGLE);
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -97,9 +98,9 @@ void ImageView::wheelEvent(QWheelEvent *event)
     int angle = event->angleDelta().y();
     qreal factor;
     if (angle > 0) {
-        factor = 1.05;
+        factor = 1.0 + SCALE_STEP;
     } else {
-        factor = 0.95;
+        factor = 1.0 - SCALE_STEP;
     }
     scale(factor, factor);
 
