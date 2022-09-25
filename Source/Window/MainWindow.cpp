@@ -1,5 +1,4 @@
 #include "MainWindow.hpp"
-#include "Core/Image/Image.hpp"
 #include "Core/Image/PpmImage.hpp"
 
 #include <Core/Log.hpp>

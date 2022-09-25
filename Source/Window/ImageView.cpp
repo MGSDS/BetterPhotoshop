@@ -1,6 +1,5 @@
 #include "ImageView.hpp"
 
-#include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
 
 #include <QGraphicsView>
