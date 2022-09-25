@@ -91,3 +91,9 @@ Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels)
 uint8_t* Image::ToDataARGB32() {
     return reinterpret_cast<uint8_t*>(&m_pixels[0]);
 }
+
+Image::Image(size_t width, size_t height)
+: m_Width(width), m_Height(height), m_Size(width * height)
+{
+    m_pixels = std::vector<Pixel>(m_Size);
+}

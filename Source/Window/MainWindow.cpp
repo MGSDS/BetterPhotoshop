@@ -40,7 +40,7 @@ void MainWindow::InitMenuBar()
 void MainWindow::InitImageView()
 {
     m_ImageView = std::make_unique<ImageView>(this);
-    m_Image = createEmptyImage(256, 256);
+    m_Image = std::make_shared<PpmImage>(256, 256);
     m_ImageView->SetImage(m_Image);
     setCentralWidget(m_ImageView.get());
 }
@@ -50,7 +50,7 @@ void MainWindow::OnFileNewAction()
     //TODO: Dialog
     size_t height = 256;
     size_t width = 256;
-    m_Image = createEmptyImage(width, height);
+    m_Image = std::make_shared<PpmImage>(width, height);
     m_ImageView->SetImage(m_Image);
 
     Log::Debug("File->New");
@@ -63,8 +63,8 @@ void MainWindow::OnFileOpenAction()
         return;
     }
 
-    auto img = Image::FromFile(filename.toStdString());
-    m_ImageView->SetImage(img);
+    m_Image = Image::FromFile(filename.toStdString());
+    m_ImageView->SetImage(m_Image);
 
     Log::Debug("File: {}", filename.toStdString().c_str());
 }
@@ -86,9 +86,4 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 {
     const QSize& newSize = event->size();
     Log::Debug("Window resize: {}, {}", newSize.width(), newSize.height());
-}
-
-std::shared_ptr<Image> MainWindow::createEmptyImage(size_t width, size_t height) {
-    std::vector<Pixel> pixels = std::vector<Pixel>(width*height);
-    return std::make_shared<PpmImage>(width, height, pixels);
 }

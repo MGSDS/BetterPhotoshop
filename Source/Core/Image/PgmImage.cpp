@@ -16,3 +16,6 @@ PgmImage::PgmImage(size_t width, size_t height, std::vector<Pixel>& pixels) : Im
 std::string PgmImage::GetExtension() const {
     return ".pgm";
 }
+
+PgmImage::PgmImage(size_t width, size_t height) : Image(width, height) {
+}

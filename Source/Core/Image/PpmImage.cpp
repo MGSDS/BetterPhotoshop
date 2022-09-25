@@ -17,3 +17,6 @@ PpmImage::PpmImage(size_t width, size_t height, std::vector<Pixel>& pixels) : Im
 std::string PpmImage::GetExtension() const {
     return ".ppm";
 }
+
+PpmImage::PpmImage(size_t width, size_t height) : Image(width, height) {
+}
