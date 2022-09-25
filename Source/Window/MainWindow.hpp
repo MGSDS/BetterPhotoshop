@@ -25,5 +25,7 @@ private slots:
     void OnFileSaveAction();
 
 private:
+    static std::shared_ptr<Image> createEmptyImage(size_t width, size_t height);
     std::unique_ptr<ImageView> m_ImageView;
+    std::shared_ptr<Image> m_Image;
 };

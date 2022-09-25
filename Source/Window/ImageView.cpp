@@ -21,14 +21,6 @@ ImageView::ImageView(QWidget* parent, QObject* sceneParent)
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    // Temp image, won't be created here
-    {
-        auto img = Image::FromFile("path/to/image/image.ppm");
-//        auto img = Image::FromFile("path/to/file/image.ppm");
-        setImage(img);
-        img->WriteToFile("qwe.ppm");
-    }
 }
 
 void ImageView::mouseMoveEvent(QMouseEvent *event)
@@ -97,7 +89,7 @@ void ImageView::wheelEvent(QWheelEvent *event)
     setTransformationAnchor(anchor);
 }
 
-void ImageView::setImage(const std::shared_ptr<Image>& img) {
+void ImageView::SetImage(const std::shared_ptr<Image>& img) {
     auto* image = new QImage(img->ToDataARGB32(), img->GetWidth(), img->GetHeight(), QImage::Format_ARGB32);
     auto pixmap = QPixmap::fromImage(*image);
     QGraphicsItem* pixmapItem = m_Scene->addPixmap(pixmap);

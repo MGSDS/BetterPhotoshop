@@ -12,3 +12,7 @@ void PgmImage::WriteToFile(const std::string& fileName) const
 }
 
 PgmImage::PgmImage(size_t width, size_t height, std::vector<Pixel>& pixels) : Image(width, height, pixels) {}
+
+std::string PgmImage::GetExtension() const {
+    return ".pgm";
+}

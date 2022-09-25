@@ -26,6 +26,7 @@ public:
     const Pixel& PixelAt(size_t row, size_t col) const;
     Pixel& PixelAt(size_t index);
     const Pixel& PixelAt(size_t index) const;
+    virtual std::string GetExtension() const = 0;
 
 protected:
     Image(size_t, size_t, const std::vector<Pixel>& pixels);

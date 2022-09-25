@@ -13,3 +13,7 @@ void PpmImage::WriteToFile(const std::string& fileName) const
 }
 
 PpmImage::PpmImage(size_t width, size_t height, std::vector<Pixel>& pixels) : Image(width, height, pixels) {}
+
+std::string PpmImage::GetExtension() const {
+    return ".ppm";
+}
