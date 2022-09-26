@@ -95,5 +95,12 @@ uint8_t* Image::ToDataARGB32() {
 Image::Image(size_t width, size_t height)
 : m_Width(width), m_Height(height), m_Size(width * height)
 {
-    m_pixels = std::vector<Pixel>(m_Size);
+    m_pixels = std::vector<Pixel>(
+            m_Size,
+            Pixel {
+                .blue = 255U,
+                .green = 255U,
+                .red = 255U,
+                .alpha = 255U,
+            });
 }
