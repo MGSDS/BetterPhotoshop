@@ -40,5 +40,5 @@ private:
     size_t m_Width = 0;
     size_t m_Height = 0;
     size_t m_Size = 0;
-    std::vector<Pixel> m_pixels;
+    std::vector<Pixel> m_Pixels;
 };
