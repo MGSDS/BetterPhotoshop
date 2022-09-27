@@ -33,9 +33,18 @@ void MainWindow::InitMenuBar()
     openAction->setShortcut(QKeySequence::Open);
     connect(openAction, &QAction::triggered, this, &MainWindow::OnFileOpenAction);
 
-    auto* saveAction = fileMenu->addAction("Save");
-    saveAction->setShortcut(QKeySequence::Save);
-    connect(saveAction, &QAction::triggered, this, &MainWindow::OnFileSaveAction);
+    auto* saveAsMenu = fileMenu->addMenu("Save As");
+    {
+        auto* pgmAction = saveAsMenu->addAction("PGM Image");
+        connect(pgmAction, &QAction::triggered, this, [this]() {
+            SaveImageToFile(ImageFormat::Pgm, ".pgm");
+        });
+
+        auto* ppmAction = saveAsMenu->addAction("PPM Image");
+        connect(ppmAction, &QAction::triggered, this, [this]() {
+            SaveImageToFile(ImageFormat::Ppm, ".ppm");
+        });
+    }
 }
 
 void MainWindow::InitImageView()
@@ -64,24 +73,25 @@ void MainWindow::OnFileOpenAction()
         return;
     }
 
+    Log::Debug("Trying to read image from file: {}", filename.toStdString().c_str());
     m_Image = Image::FromFile(filename.toStdString());
     m_ImageView->SetImage(m_Image);
 
-    Log::Debug("File: {}", filename.toStdString().c_str());
 }
 
-void MainWindow::OnFileSaveAction()
+void MainWindow::SaveImageToFile(ImageFormat format, const char* extension)
 {
-
-    auto filename = QFileDialog::getSaveFileName(this, "Image", QString());
+    auto filename = QFileDialog::getSaveFileName(this, "Image", QString(), "Image (*" + QString(extension) + ")");
     if (filename.isEmpty()) {
         return;
     }
 
-    // TODO: decide ImageFormat before choosing file
-    m_Image->WriteToFile(filename.toStdString(), ImageFormat::Pgm);
+    if (!filename.endsWith(extension)) {
+        filename += extension;
+    }
 
-    Log::Debug("File: {}", filename.toStdString().c_str());
+    Log::Debug("Trying to write image to file: {}", filename.toStdString().c_str());
+    m_Image->WriteToFile(filename.toStdString(), format);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
