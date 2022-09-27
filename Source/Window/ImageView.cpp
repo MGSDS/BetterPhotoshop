@@ -1,6 +1,5 @@
 #include "ImageView.hpp"
 
-#include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
 
 #include <QGraphicsView>
@@ -15,25 +14,12 @@ ImageView::ImageView(QWidget* parent, QObject* sceneParent)
     : QGraphicsView(parent)
     , m_Scene(new QGraphicsScene(sceneParent))
 {
-    setScene(m_Scene);
+    setScene(m_Scene.get());
 
     m_Scene->addRect(PAN_RECTANGLE);
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    // Temp image, won't be created here
-    {
-        auto img = Image::FromFile("path/to/image/image.ppm");
-//        auto img = Image::FromFile("path/to/file/image.ppm");
-
-        auto* image = new QImage(img->ToDataARGB32(), img->GetWidth(), img->GetHeight(), QImage::Format_ARGB32);
-        auto pixmap = QPixmap::fromImage(*image);
-        QGraphicsItem* pixmapItem = m_Scene->addPixmap(pixmap);
-
-        fitInView(pixmapItem, Qt::AspectRatioMode::KeepAspectRatio);
-        img->WriteToFile("qwe.ppm");
-    }
 }
 
 void ImageView::mouseMoveEvent(QMouseEvent *event)
@@ -100,4 +86,12 @@ void ImageView::wheelEvent(QWheelEvent *event)
     scale(factor, factor);
 
     setTransformationAnchor(anchor);
+}
+
+void ImageView::SetImage(const std::shared_ptr<Image>& img) {
+    auto* image = new QImage(img->ToDataARGB32(), img->GetWidth(), img->GetHeight(), QImage::Format_ARGB32);
+    QPixmap pixmap = QPixmap::fromImage(*image);
+    m_Scene->removeItem(m_Image.get());
+    m_Image = std::unique_ptr<QGraphicsItem>{m_Scene->addPixmap(pixmap)};
+    fitInView(m_Image.get(), Qt::AspectRatioMode::KeepAspectRatio);
 }
