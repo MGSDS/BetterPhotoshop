@@ -1,7 +1,9 @@
 #include "Image.hpp"
+
 #include "Core/Log.hpp"
-#include "Core/Image/Reader/FormatReaderResolver.hpp"
 #include "Core/Utils/Utils.hpp"
+#include <Core/Image/Reader/ImageReader.hpp>
+
 #include <fstream>
 #include <exception>
 
@@ -73,12 +75,16 @@ std::shared_ptr<Image> Image::FromFile(const std::string& fileName)
         throw std::runtime_error("File not found.");
     }
 
-    std::vector<uint8_t> data = Utils::ReadAllBytes(in);
-    in.close();
+    auto extension = Utils::GetFileExtension(fileName);
+    auto reader = ImageReader::GetReader(extension);
+    if (!reader) {
+        Log::Error("Unknown image extension: {}", extension);
+        throw std::runtime_error("Unable to open image with such extension");
+    }
 
+    std::vector<uint8_t> data = Utils::ReadAllBytes(in);
     Log::Info("{}: {} bytes read.", fileName, data.size());
 
-    auto reader = FormatReaderResolver::GetReader(data);
     return reader->ReadImage(data);
 }
 
