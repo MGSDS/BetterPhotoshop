@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QGraphicsItem>
 #include "Core/Image/Image.hpp"
 
 class ImageView : public QGraphicsView
@@ -19,8 +20,8 @@ private:
     void wheelEvent(QWheelEvent *event) override;
 
 private:
-    QGraphicsScene* m_Scene = nullptr;
+    std::unique_ptr<QGraphicsScene> m_Scene = nullptr;
     bool m_IsMoveButtonPressed = false;
     int m_PrevPanX = 0, m_PrevPanY = 0;
-    QGraphicsItem* m_Image = nullptr;
+    std::unique_ptr<QGraphicsItem> m_Image = nullptr;
 };
