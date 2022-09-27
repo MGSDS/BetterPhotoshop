@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Core/Image/ImageFormat.hpp>
+
 #include <cstdint>
 #include <vector>
 #include <memory>
@@ -15,9 +17,10 @@ class Image
 {
 public:
     Image(size_t width, size_t height);
+    Image(size_t width, size_t height, const std::vector<Pixel>& pixels);
 
     static std::shared_ptr<Image> FromFile(const std::string& fileName);
-    virtual void WriteToFile(const std::string&) const = 0;
+    void WriteToFile(const std::string& fileName, ImageFormat format) const;
 
     uint8_t* ToDataARGB32();
     size_t GetWidth() const;
@@ -27,13 +30,6 @@ public:
     const Pixel& PixelAt(size_t row, size_t col) const;
     Pixel& PixelAt(size_t index);
     const Pixel& PixelAt(size_t index) const;
-
-    //FIXME: remove, this should be in writer
-    virtual std::string GetExtension() const = 0;
-
-protected:
-    Image(size_t, size_t, const std::vector<Pixel>& pixels);
-    virtual ~Image() = default;
 
 private:
     Image() = default;

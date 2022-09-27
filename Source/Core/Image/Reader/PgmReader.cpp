@@ -1,7 +1,6 @@
 #include "PgmReader.hpp"
 #include "Core/Utils/Utils.hpp"
 #include "Core/Log.hpp"
-#include "Core/Image/PgmImage.hpp"
 
 #include <memory>
 
@@ -119,5 +118,5 @@ std::shared_ptr<Image> PgmReader::ReadImage(const std::vector<uint8_t>& data)
     }
 
     Log::Info("Successfully read PGM image.");
-    return std::make_shared<PgmImage>(header.width, header.height, pixels);
+    return std::make_shared<Image>(header.width, header.height, pixels);
 }

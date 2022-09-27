@@ -1,6 +1,5 @@
 #include "PpmReader.hpp"
 #include "Core/Utils/Utils.hpp"
-#include "Core/Image/PpmImage.hpp"
 #include "Core/Log.hpp"
 
 #include <string>
@@ -149,5 +148,5 @@ std::shared_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
     }
 
     Log::Info("Successfully read PPM image.");
-    return std::make_shared<PpmImage>(header.width, header.height, pixels);
+    return std::make_shared<Image>(header.width, header.height, pixels);
 }
