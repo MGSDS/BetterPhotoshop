@@ -14,7 +14,7 @@ struct Pixel {
 class Image
 {
 public:
-    Image(size_t, size_t);
+    Image(size_t width, size_t height);
 
     static std::shared_ptr<Image> FromFile(const std::string& fileName);
     virtual void WriteToFile(const std::string&) const = 0;
