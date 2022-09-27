@@ -58,7 +58,7 @@ void MainWindow::OnFileNewAction()
 
 void MainWindow::OnFileOpenAction()
 {
-    auto filename = QFileDialog::getOpenFileName(this, "Open image", QString(), tr("Image (*.ppm *.pgm)"));
+    auto filename = QFileDialog::getOpenFileName(this, "Open image", QString(), "Image (*.ppm *.pgm)");
     if (filename.isEmpty()) {
         return;
     }
@@ -72,7 +72,7 @@ void MainWindow::OnFileOpenAction()
 void MainWindow::OnFileSaveAction()
 {
 
-    auto filename = QFileDialog::getSaveFileName(this, tr("Image"), QString(), tr(("Image (" + m_Image->GetExtension() + ")").c_str()));
+    auto filename = QFileDialog::getSaveFileName(this, "Image", QString(), ("Image (" + m_Image->GetExtension() + ")").c_str());
     if (filename.isEmpty()) {
         return;
     }

@@ -22,4 +22,5 @@ private:
     QGraphicsScene* m_Scene = nullptr;
     bool m_IsMoveButtonPressed = false;
     int m_PrevPanX = 0, m_PrevPanY = 0;
+    QGraphicsItem* m_Image = nullptr;
 };

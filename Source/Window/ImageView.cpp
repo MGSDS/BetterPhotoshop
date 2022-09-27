@@ -90,11 +90,11 @@ void ImageView::wheelEvent(QWheelEvent *event)
 
 void ImageView::SetImage(const std::shared_ptr<Image>& img) {
     auto* image = new QImage(img->ToDataARGB32(), img->GetWidth(), img->GetHeight(), QImage::Format_ARGB32);
-    auto pixmap = QPixmap::fromImage(*image);
-    QGraphicsItem* old_pixmap = m_Scene->items().at(0);
-    m_Scene->removeItem(old_pixmap);
-    delete old_pixmap;
-    QGraphicsItem* pixmapItem = m_Scene->addPixmap(pixmap);
+    QPixmap pixmap = QPixmap::fromImage(*image);
+    m_Scene->removeItem(m_Image);
 
-    fitInView(pixmapItem, Qt::AspectRatioMode::KeepAspectRatio);
+    delete m_Image;
+    m_Image = m_Scene->addPixmap(pixmap);
+
+    fitInView(m_Image, Qt::AspectRatioMode::KeepAspectRatio);
 }
