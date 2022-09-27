@@ -74,9 +74,13 @@ void MainWindow::OnFileOpenAction()
     }
 
     Log::Debug("Trying to read image from file: {}", filename.toStdString().c_str());
-    m_Image = Image::FromFile(filename.toStdString());
-    m_ImageView->SetImage(m_Image);
 
+    try {
+        m_Image = Image::FromFile(filename.toStdString());
+        m_ImageView->SetImage(m_Image);
+    } catch (const std::exception& exception) {
+        Log::Error("An error occured while reading image from file: {}", exception.what());
+    }
 }
 
 void MainWindow::SaveImageToFile(ImageFormat format, const char* extension)
@@ -91,7 +95,12 @@ void MainWindow::SaveImageToFile(ImageFormat format, const char* extension)
     }
 
     Log::Debug("Trying to write image to file: {}", filename.toStdString().c_str());
-    m_Image->WriteToFile(filename.toStdString(), format);
+
+    try {
+        m_Image->WriteToFile(filename.toStdString(), format);
+    } catch (const std::exception& exception) {
+        Log::Error("An error occured while saving image to file: {}", exception.what());
+    }
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
