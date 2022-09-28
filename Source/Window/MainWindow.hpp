@@ -17,12 +17,12 @@ public:
 private:
     void InitMenuBar();
     void InitImageView();
+    void SaveImageToFile(ImageFormat format, const char* extension);
 
 private slots:
     void resizeEvent(QResizeEvent *event) override;
     void OnFileNewAction();
     void OnFileOpenAction();
-    void OnFileSaveAction();
 
 private:
     std::unique_ptr<ImageView> m_ImageView;

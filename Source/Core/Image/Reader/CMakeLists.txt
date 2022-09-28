@@ -1,5 +1,5 @@
 target_sources(Photoshop PUBLIC
-    FormatReaderResolver.cpp
+    ImageReader.cpp
     PgmReader.cpp
     PpmReader.cpp
 )
