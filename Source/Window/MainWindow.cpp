@@ -7,8 +7,13 @@
 #include <QtWidgets>
 #include <QPixmap>
 #include <QFileDialog>
+#include <QDialog>
 
 #include <string>
+
+QSize NEW_IMAGE_MIN_SIZE = { 1, 1 };
+QSize NEW_IMAGE_MAX_SIZE = { 32768, 32768 };
+QSize NEW_IMAGE_DEFAULT_SIZE = { 1280, 720 };
 
 MainWindow::MainWindow(int width, int height, const char* title)
 {
@@ -50,20 +55,63 @@ void MainWindow::InitMenuBar()
 void MainWindow::InitImageView()
 {
     m_ImageView = std::make_unique<ImageView>(this);
-    m_Image = std::make_shared<Image>(256, 256);
+    m_Image = std::make_shared<Image>(NEW_IMAGE_DEFAULT_SIZE.width(), NEW_IMAGE_DEFAULT_SIZE.height());
     m_ImageView->SetImage(m_Image);
     setCentralWidget(m_ImageView.get());
 }
 
 void MainWindow::OnFileNewAction()
 {
-    //TODO: Dialog
-    size_t height = 256;
-    size_t width = 256;
+    QDialog dialog(this);
+    dialog.setWindowTitle("New Image");
+    dialog.setFixedSize(200, 150);
+
+    auto labelWidth = new QLabel();
+    labelWidth->setText("Width");
+    labelWidth->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    auto spinBoxWidth = new QSpinBox();
+    spinBoxWidth->setMinimum(NEW_IMAGE_MIN_SIZE.width());
+    spinBoxWidth->setMaximum(NEW_IMAGE_MAX_SIZE.width());
+    spinBoxWidth->setValue(NEW_IMAGE_DEFAULT_SIZE.width());
+
+    auto widthLayout = new QHBoxLayout();
+    widthLayout->addWidget(labelWidth);
+    widthLayout->addWidget(spinBoxWidth);
+
+    auto labelHeight = new QLabel();
+    labelHeight->setText("Height");
+    labelHeight->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    auto spinBoxHeight = new QSpinBox();
+    spinBoxHeight->setMinimum(NEW_IMAGE_MIN_SIZE.height());
+    spinBoxHeight->setMaximum(NEW_IMAGE_MAX_SIZE.height());
+    spinBoxHeight->setValue(NEW_IMAGE_DEFAULT_SIZE.height());
+
+    auto heightLayout = new QHBoxLayout();
+    heightLayout->addWidget(labelHeight);
+    heightLayout->addWidget(spinBoxHeight);
+
+    auto okButton = new QPushButton();
+    okButton->setText("Ok");
+    okButton->setDefault(true);
+    connect(okButton, &QPushButton::pressed, &dialog, &QDialog::accept);
+
+    auto dialogLayout = new QVBoxLayout();
+    dialogLayout->addLayout(widthLayout);
+    dialogLayout->addLayout(heightLayout);
+    dialogLayout->addWidget(okButton);
+
+    dialog.setLayout(dialogLayout);
+
+    if (!dialog.exec()) {
+        return;
+    }
+
+    int width = spinBoxWidth->value();
+    int height = spinBoxHeight->value();
+    Log::Debug("New image width: {}, height: {}", width, height);
+
     m_Image = std::make_shared<Image>(width, height);
     m_ImageView->SetImage(m_Image);
-
-    Log::Debug("File->New");
 }
 
 void MainWindow::OnFileOpenAction()
