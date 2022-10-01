@@ -6,12 +6,23 @@
 
 #include <memory>
 
+struct WindowSettings
+{
+    WindowSettings& SetWidth(int width) { Width = width; return *this; }
+    WindowSettings& SetHeight(int height) { Height = height; return *this; }
+    WindowSettings& SetTitle(const char* title) { Title = title; return *this; }
+
+    int Width;
+    int Height;
+    const char* Title;
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(int width, int height, const char* title);
+    MainWindow(const WindowSettings& settings);
     ~MainWindow() override = default;
 
 private:

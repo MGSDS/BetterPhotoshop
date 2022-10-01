@@ -2,17 +2,17 @@
 #include <QScreen>
 
 #include <Core/Log.hpp>
-#include <Window/MainWindow.hpp>
+#include <Window/Application.hpp>
 
 int main(int argc, char* argv[])
 {
     Log::Init();
 
-    QApplication app(argc, argv);
+    auto windowSettings = WindowSettings()
+        .SetWidth(1280)
+        .SetHeight(720)
+        .SetTitle("Photoshop");
 
-    MainWindow window(1280, 720, "Photoshop");
-    window.move(window.screen()->availableGeometry().topLeft() + QPoint(100, 100));
-    window.show();
-
-    return app.exec();
+    Application app(argc, argv, windowSettings);
+    return app.Exec();
 }

@@ -15,10 +15,10 @@ QSize NEW_IMAGE_MIN_SIZE = { 1, 1 };
 QSize NEW_IMAGE_MAX_SIZE = { 32768, 32768 };
 QSize NEW_IMAGE_DEFAULT_SIZE = { 1280, 720 };
 
-MainWindow::MainWindow(int width, int height, const char* title)
+MainWindow::MainWindow(const WindowSettings& settings)
 {
-    resize(width, height);
-    setWindowTitle(title);
+    resize(settings.Width, settings.Height);
+    setWindowTitle(settings.Title);
 
     InitMenuBar();
     InitImageView();
@@ -116,7 +116,14 @@ void MainWindow::OnFileNewAction()
 
 void MainWindow::OnFileOpenAction()
 {
-    auto filename = QFileDialog::getOpenFileName(this, "Open image", QString());
+    QFileDialog dialog(this);
+    dialog.setViewMode(QFileDialog::List);
+    if (!dialog.exec()) {
+        return;
+    }
+
+    auto filename = dialog.selectedFiles()[0];
+
     if (filename.isEmpty()) {
         return;
     }

@@ -17,6 +17,7 @@ find_package(Qt6 REQUIRED COMPONENTS
 )
 
 add_executable(Photoshop)
+add_subdirectory(Resources)
 add_subdirectory(Source)
 
 add_subdirectory(Deps/spdlog)
