@@ -26,11 +26,11 @@ size_t Image::GetPixelsCount() const
 Pixel& Image::PixelAt(size_t row, size_t col)
 {
     if (row >= m_Height) {
-        Log::Error("Given 'row' value {} is out of range [0, {}).", row, m_Height);
+        Log::Error("Getting pixel at position {row={}, col={}}: given 'row' value {} is out of range [0, {}).", row, col, row, m_Height);
         throw std::out_of_range("Given 'row' value is out of range.");
     }
     if (col >= m_Width) {
-        Log::Error("Given 'col' value ({}) is out of range [0, {})", row, m_Width);
+        Log::Error("Getting pixel at position {row={}, col={}}: given 'col' value ({}) is out of range [0, {})", row, col, row, m_Width);
         throw std::out_of_range("Given 'col' value is out of range.");
     }
     return m_Pixels[m_Width * row + col];
@@ -39,11 +39,11 @@ Pixel& Image::PixelAt(size_t row, size_t col)
 const Pixel& Image::PixelAt(size_t row, size_t col) const
 {
     if (row >= m_Height) {
-        Log::Error("Given 'row' value {} is out of range [0, {}).", row, m_Height);
+        Log::Error("Getting pixel at position {row={}, col={}}: given 'row' value {} is out of range [0, {}).", row, col, row, m_Height);
         throw std::out_of_range("Given 'row' value is out of range.");
     }
     if (col >= m_Width) {
-        Log::Error("Given 'col' value ({}) is out of range [0, {})", row, m_Width);
+        Log::Error("Getting pixel at position {row={}, col={}}: given 'col' value ({}) is out of range [0, {})", row, col, row, m_Width);
         throw std::out_of_range("Given 'col' value is out of range.");
     }
     return m_Pixels[m_Width * row + col];
@@ -52,7 +52,7 @@ const Pixel& Image::PixelAt(size_t row, size_t col) const
 Pixel& Image::PixelAt(size_t index)
 {
     if (index >= m_Width * m_Height) {
-        Log::Error("Given 'index' value ({}) is out of range [0, {})", index, m_Size);
+        Log::Error("Getting pixel at index={}: given 'index' value ({}) is out of range [0, {})", index, index, m_Size);
         throw std::out_of_range("Given 'index' value is out of range.");
     }
     return m_Pixels[index];
@@ -61,7 +61,7 @@ Pixel& Image::PixelAt(size_t index)
 const Pixel& Image::PixelAt(size_t index) const
 {
     if (index >= m_Width * m_Height) {
-        Log::Error("Given 'index' value ({}) is out of range [0, {})", index, m_Size);
+        Log::Error("Getting pixel at index={}: given 'index' value ({}) is out of range [0, {})", index, index, m_Size);
         throw std::out_of_range("Given 'index' value is out of range.");
     }
     return m_Pixels[index];
@@ -72,19 +72,18 @@ std::shared_ptr<Image> Image::FromFile(const std::string& fileName)
     std::ifstream in(fileName, std::ios::binary | std::ios::ate);
 
     if (!in.good()) {
-        Log::Error("File {} does not exists.", fileName);
+        Log::Error("Reading image data from file: file {} does not exist.", fileName);
         throw std::runtime_error("File not found.");
     }
 
-    auto extension = Utils::GetFileExtension(fileName);
-    auto reader = ImageReader::GetReader(extension);
-    if (!reader) {
-        Log::Error("Unknown image extension: {}", extension);
-        throw std::runtime_error("Unable to open image with such extension");
-    }
-
     std::vector<uint8_t> data = Utils::ReadAllBytes(in);
-    Log::Info("{}: {} bytes read.", fileName, data.size());
+    Log::Info("Reading image data from file: {} bytes read from file {}.", data.size(), fileName);
+
+    auto reader = ImageReader::GetReader(data);
+    if (!reader) {
+        Log::Error("Reading image data from file: data prefix does not correspond to any handled format.");
+        throw std::runtime_error("Unable to determine image format.");
+    }
 
     return reader->ReadImage(data);
 }

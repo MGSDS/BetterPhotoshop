@@ -12,7 +12,7 @@ void PpmReader::ThrowInvalidHeaderError(size_t pos)
 
 void PpmReader::ThrowInvalidPpmFormatDataError()
 {
-    throw std::runtime_error("Invalid PGM format data.");
+    throw std::runtime_error("Invalid PPM format data.");
 }
 
 PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
@@ -30,7 +30,7 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
         char curr = (char) data[pos];
         if (readingMagic && curr == '\n') {
             if (pos != 2 || data[0] != 'P' || data[1] != '6') {
-                Log::Error("Invalid PPM header at pos {}: header data must start with 'P6' followed by '\\n'.", pos);
+                Log::Error("Reading PPM image: invalid PPM header at pos {}. Header data must start with 'P6' followed by '\\n'.", pos);
                 ThrowInvalidHeaderError(pos);
             }
             readingMagic = false;
@@ -42,7 +42,7 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
                 readingWidth = false;
                 readingHeight = true;
             } else {
-                Log::Error("Invalid PPM header at pos {}: reading width, expected: '0'-'9' or ' ', actual: {}", pos, curr);
+                Log::Error("Reading PPM image: invalid PPM header at pos {}. While reading width, expected: '0'-'9' or ' ', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
         } else if (readingHeight) {
@@ -52,7 +52,7 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
                 readingHeight = false;
                 readingMaxRedValue = true;
             } else {
-                Log::Error("Invalid PPM header at pos {}: reading height, expected: '0'-'9' or ' ', actual: {}", pos, curr);
+                Log::Error("Reading PPM image: invalid PPM header at pos {}. While reading height, expected: '0'-'9' or ' ', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
         } else if (readingMaxRedValue) {
@@ -70,7 +70,7 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
                 readingMaxBlueValue = false;
                 break;
             } else {
-                Log::Error("Invalid PPM header at pos {}: reading max red value, expected: '0'-'9' or ' ' or '\\n', actual: {}", pos, curr);
+                Log::Error("Reading PPM image: invalid PPM header at pos {}. While reading max red value, expected: '0'-'9' or ' ' or '\\n', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
         } else if (readingMaxGreenValue) {
@@ -80,7 +80,7 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
                 readingMaxGreenValue = false;
                 readingMaxBlueValue = true;
             } else {
-                Log::Error("Invalid PPM header at pos {}: reading max green value, expected: '0'-'9' or ' ', actual: {}", pos, curr);
+                Log::Error("Reading PPM image: invalid PPM header at pos {}. While reading max green value, expected: '0'-'9' or ' ', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
         } else if (readingMaxBlueValue) {
@@ -90,7 +90,7 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
                 readingMaxBlueValue = false;
                 break;
             } else {
-                Log::Error("Invalid PPM header at pos {}: reading max blue value, expected: '0'-'9' or ' ', actual: {}", pos, curr);
+                Log::Error("reading PPM image: invalid PPM header at pos {}. While reading max blue value, expected: '0'-'9' or ' ', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
         }
@@ -117,7 +117,7 @@ std::shared_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
 {
     PpmHeader header = PpmReader::ReadHeader(data);
     Log::Info(
-            "Read PPM header: width = {}, height = {}, maxRedValue = {}, maxGreenValue = {}, maxBlueValue = {}, dataOffset = {}",
+            "Reading PPM image: read PPM header. Width = {}, height = {}, maxRedValue = {}, maxGreenValue = {}, maxBlueValue = {}, dataOffset = {}",
             header.width,header.height, header.maxRedValue, header.maxGreenValue, header.maxBlueValue, header.dataOffset
     );
 
@@ -125,14 +125,9 @@ std::shared_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
 
     if (data.size() - header.dataOffset - 1 != expectedSize) {
         Log::Error(
-                "Invalid PPM format data: expected size: {}, actual size: {}.",
+                "Reading PPM image: invalid PPM format data. Expected size: {}, actual size: {}.",
                 expectedSize, data.size() - header.dataOffset
         );
-        ThrowInvalidPpmFormatDataError();
-    }
-
-    if (expectedSize % 3 != 0) {
-        Log::Error("Invalid PPM format data: size of actual data is not multiple of 3.", expectedSize);
         ThrowInvalidPpmFormatDataError();
     }
 
@@ -147,6 +142,6 @@ std::shared_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
         pixels.push_back(pixel);
     }
 
-    Log::Info("Successfully read PPM image.");
+    Log::Info("Reading PPM image: image successfully read.");
     return std::make_shared<Image>(header.width, header.height, pixels);
 }

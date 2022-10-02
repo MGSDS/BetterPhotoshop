@@ -33,7 +33,7 @@ PgmHeader PgmReader::ReadHeader(const std::vector<uint8_t>& data)
         char curr = (char) data[pos];
         if (readingMagic && curr == '\n') {
             if (pos != 2 || data[0] != 'P' || data[1] != '5') {
-                Log::Error("Invalid PGM header at pos {}: header data must start with 'P6' followed by '\\n'.", pos);
+                Log::Error("Read PGM image: invalid PGM header at pos {}. Header data must start with 'P6' followed by '\\n'.", pos);
                 ThrowInvalidHeaderError(pos);
             }
             readingMagic = false;
@@ -45,7 +45,7 @@ PgmHeader PgmReader::ReadHeader(const std::vector<uint8_t>& data)
                 readingWidth = false;
                 readingHeight = true;
             } else {
-                Log::Error("Invalid PPM header at pos {}: reading width, expected: '0'-'9' or ' ', actual: {}", pos, curr);
+                Log::Error("Reading PGM image: invalid PGM header at pos {}. While reading width, expected: '0'-'9' or ' ', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
         } else if (readingHeight) {
@@ -55,7 +55,7 @@ PgmHeader PgmReader::ReadHeader(const std::vector<uint8_t>& data)
                 readingHeight = false;
                 readingMaxValue = true;
             } else {
-                Log::Error("Invalid PPM header at pos {}: reading height, expected: '0'-'9' or '\\n', actual: {}", pos, curr);
+                Log::Error("Reading PGM image: invalid PGM header at pos {}. While reading height, expected: '0'-'9' or '\\n', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
         } else if (readingMaxValue) {
@@ -65,7 +65,7 @@ PgmHeader PgmReader::ReadHeader(const std::vector<uint8_t>& data)
                 readingMaxValue = false;
                 break;
             } else {
-                Log::Error("Invalid PPM header at pos {}: reading max grey value, expected: '0'-'9' or '\\n', actual: {}", pos, curr);
+                Log::Error("Reading PGM image: invalid PGM header at pos {}. While reading max grey value, expected: '0'-'9' or '\\n', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
         }
@@ -73,7 +73,7 @@ PgmHeader PgmReader::ReadHeader(const std::vector<uint8_t>& data)
     }
 
     if (readingMagic || readingWidth || readingHeight || readingMaxValue) {
-        Log::Error("Invalid PPM header at pos {}. End of header not reached.", pos);
+        Log::Error("Reading PGM image: Invalid PGM header at pos {}. End of header not reached.", pos);
         ThrowInvalidHeaderError(pos);
     }
 
@@ -86,12 +86,12 @@ std::shared_ptr<Image> PgmReader::ReadImage(const std::vector<uint8_t>& data)
 {
     PgmHeader header = ReadHeader(data);
     Log::Info(
-            "Read PGM header: width = {}, height = {}, maxGreyValue = {}, dataOffset = {}.",
+            "Reading PGM image: read PGM header. Width = {}, height = {}, maxGreyValue = {}, dataOffset = {}.",
             header.width,header.height, header.maxGreyValue, header.dataOffset
     );
     if (data.size() - header.dataOffset - 1 != header.height * header.width) {
         Log::Error(
-                "Invalid PGM format data: expected size: {}, actual size: {}.",
+                "Reading PGM image: invalid PGM format data. Expected size: {}, actual size: {}.",
                 header.height * header.width, data.size() - header.dataOffset - 1
         );
         ThrowInvalidPgmFormatDataError();
@@ -101,7 +101,7 @@ std::shared_ptr<Image> PgmReader::ReadImage(const std::vector<uint8_t>& data)
     for (size_t i = header.dataOffset + 1; i < data.size(); i++) {
         if (data[i] > header.maxGreyValue) {
             Log::Error(
-                    "Invalid PGM format data: byte value {} is more than header max grey value {}.",
+                    "Reading PGM image: invalid PGM format data. Byte value {} is more than header max grey value {}.",
                     (int) data[i],
                     header.maxGreyValue
             );
@@ -117,6 +117,6 @@ std::shared_ptr<Image> PgmReader::ReadImage(const std::vector<uint8_t>& data)
         pixels.push_back(pixel);
     }
 
-    Log::Info("Successfully read PGM image.");
+    Log::Info("Reading PGM image: image successfully read.");
     return std::make_shared<Image>(header.width, header.height, pixels);
 }

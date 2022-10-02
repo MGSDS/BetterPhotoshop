@@ -1,6 +1,7 @@
 #include "Utils.hpp"
 
 #include <cctype>
+#include <cstring>
 #include <filesystem>
 
 bool Utils::IsDigit(char c)
@@ -48,3 +49,7 @@ std::string Utils::GetFileExtension(const std::string& path)
     return p.extension().string();
 }
 
+bool Utils::DataStartsWith(const std::vector<uint8_t>& data, const std::vector<uint8_t>& prefix)
+{
+    return data.size() >= prefix.size() && memcmp(&data[0], &prefix[0], prefix.size()) == 0;
+}

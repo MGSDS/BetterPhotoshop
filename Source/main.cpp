@@ -6,6 +6,8 @@
 
 int main(int argc, char* argv[])
 {
+    static_assert(sizeof(float) * 8 == 32, "Required size of float is 32 bits");
+
     Log::Init();
 
     auto windowSettings = WindowSettings()
