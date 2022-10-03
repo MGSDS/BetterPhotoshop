@@ -8,6 +8,19 @@
 #include <fstream>
 #include <exception>
 
+Pixel::Pixel(float red, float green, float blue, float alpha)
+    : red(red)
+    , green(green)
+    , blue(blue)
+    , alpha(alpha)
+{
+}
+
+Pixel Pixel::White()
+{
+    return Pixel(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
 size_t Image::GetWidth() const
 {
     return m_Width;
@@ -95,7 +108,7 @@ void Image::WriteToFile(const std::string& fileName, ImageFormat format) const
     writer->Write(*this, ofs);
 }
 
-uint8_t* Image::ToDataARGB32() {
+uint8_t* Image::ToDataRGBA32FPx4() {
     return reinterpret_cast<uint8_t*>(&m_Pixels[0]);
 }
 
@@ -104,14 +117,7 @@ Image::Image(size_t width, size_t height)
     , m_Height(height)
     , m_Size(width * height)
 {
-    m_Pixels = std::vector<Pixel>(
-            m_Size,
-            Pixel {
-                .blue = 255U,
-                .green = 255U,
-                .red = 255U,
-                .alpha = 255U,
-            });
+    m_Pixels = std::vector<Pixel>(m_Size, Pixel::White());
 }
 
 Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels)

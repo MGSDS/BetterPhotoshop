@@ -107,14 +107,8 @@ std::shared_ptr<Image> PgmReader::ReadImage(const std::vector<uint8_t>& data)
             );
             ThrowInvalidPgmFormatDataError();
         }
-        uint8_t greyByte = Utils::ScaleByte((uint8_t) data[i], header.maxGreyValue);
-        Pixel pixel {
-            .blue = greyByte,
-            .green = greyByte,
-            .red = greyByte,
-            .alpha = 255u
-        };
-        pixels.push_back(pixel);
+        float greyValue = Utils::NormByte(data[i], header.maxGreyValue);
+        pixels.emplace_back(greyValue, greyValue, greyValue, 1.0f);
     }
 
     Log::Info("Reading PGM image: image successfully read.");

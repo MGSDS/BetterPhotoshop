@@ -7,10 +7,13 @@
 #include <memory>
 
 struct Pixel {
-    uint8_t blue;
-    uint8_t green;
-    uint8_t red;
-    uint8_t alpha;
+    float red;
+    float green;
+    float blue;
+    float alpha;
+
+    Pixel(float red, float green, float blue, float alpha);
+    static Pixel White();
 };
 
 class Image
@@ -22,7 +25,7 @@ public:
     static std::shared_ptr<Image> FromFile(const std::string& fileName);
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
 
-    uint8_t* ToDataARGB32();
+    uint8_t* ToDataRGBA32FPx4();
     size_t GetWidth() const;
     size_t GetHeight() const;
     size_t GetPixelsCount() const;

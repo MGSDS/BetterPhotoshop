@@ -9,9 +9,9 @@ bool Utils::IsDigit(char c)
     return '0' <= c && c <= '9';
 }
 
-uint8_t Utils::ScaleByte(uint8_t value, uint8_t maxValue) 
+float Utils::NormByte(uint8_t value, uint8_t maxValue)
 {
-    return (uint8_t)(((uint32_t) value) * maxValue / 255u);
+    return  1.0f * value / maxValue;
 }
 
 std::vector<uint8_t> Utils::ReadAllBytes(std::ifstream& ifs) 

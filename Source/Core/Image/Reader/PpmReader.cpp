@@ -133,13 +133,10 @@ std::shared_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
 
     std::vector<Pixel> pixels;
     for (size_t i = header.dataOffset + 1; i < data.size() - 2; i += 3) {
-        Pixel pixel {
-            .blue = Utils::ScaleByte((uint8_t) data[i + 2], header.maxBlueValue),
-            .green = Utils::ScaleByte((uint8_t) data[i + 1], header.maxGreenValue),
-            .red = Utils::ScaleByte((uint8_t) data[i], header.maxRedValue),
-            .alpha = 255u
-        };
-        pixels.push_back(pixel);
+        float red   = Utils::NormByte(data[i], header.maxRedValue);
+        float green = Utils::NormByte(data[i + 1], header.maxGreenValue);
+        float blue  = Utils::NormByte(data[i + 2], header.maxBlueValue);
+        pixels.emplace_back(red, green, blue, 1.0f);
     }
 
     Log::Info("Reading PPM image: image successfully read.");

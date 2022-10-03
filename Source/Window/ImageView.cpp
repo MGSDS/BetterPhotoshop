@@ -89,7 +89,7 @@ void ImageView::wheelEvent(QWheelEvent *event)
 }
 
 void ImageView::SetImage(const std::shared_ptr<Image>& img) {
-    auto* image = new QImage(img->ToDataARGB32(), img->GetWidth(), img->GetHeight(), QImage::Format_ARGB32);
+    auto* image = new QImage(img->ToDataRGBA32FPx4(), img->GetWidth(), img->GetHeight(), QImage::Format_RGBA32FPx4);
     QPixmap pixmap = QPixmap::fromImage(*image);
     m_Scene->removeItem(m_Image.get());
     m_Image = std::unique_ptr<QGraphicsItem>{m_Scene->addPixmap(pixmap)};
