@@ -1,7 +1,9 @@
 #include "Utils.hpp"
 
+#include <algorithm>
 #include <cctype>
 #include <cstring>
+#include <cmath>
 #include <filesystem>
 
 bool Utils::IsDigit(char c)
@@ -12,6 +14,11 @@ bool Utils::IsDigit(char c)
 float Utils::NormByte(uint8_t value, uint8_t maxValue)
 {
     return  1.0f * value / maxValue;
+}
+
+uint8_t Utils::ByteFromNorm(float norm)
+{
+    return static_cast<uint8_t>(round(255 * std::clamp(norm, 0.0f, 1.0f)));
 }
 
 std::vector<uint8_t> Utils::ReadAllBytes(std::ifstream& ifs) 

@@ -1,4 +1,5 @@
 #include "PgmWriter.hpp"
+#include "Core/Utils/Utils.hpp"
 
 #include <string>
 
@@ -16,7 +17,7 @@ void PgmWriter::Write(const Image& image, std::ostream& os) const
     for (size_t i = 0; i < image.GetPixelsCount(); i++)
     {
         auto& pixel = image.PixelAt(i);
-        os.put(pixel.red);
+        os.put(Utils::ByteFromNorm(pixel.red));
     }
     os.flush();
 }
