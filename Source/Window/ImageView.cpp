@@ -5,6 +5,7 @@
 #include <QGraphicsView>
 #include <QPixmap>
 #include <QtWidgets>
+#include <QImage>
 
 static Qt::MouseButton MOVE_BUTTON = Qt::MouseButton::LeftButton;
 static QRect PAN_RECTANGLE = QRect(-100000, -100000, 200000, 200000);
@@ -89,7 +90,7 @@ void ImageView::wheelEvent(QWheelEvent *event)
 }
 
 void ImageView::SetImage(const std::shared_ptr<Image>& img) {
-    auto* image = new QImage(img->ToDataRGBA32FPx4(), img->GetWidth(), img->GetHeight(), QImage::Format_RGBA32FPx4);
+    auto image = std::make_unique<QImage>(img->ToDataRGBA32FPx4(), img->GetWidth(), img->GetHeight(), QImage::Format_RGBA32FPx4);
     QPixmap pixmap = QPixmap::fromImage(*image);
     m_Scene->removeItem(m_Image.get());
     m_Image = std::unique_ptr<QGraphicsItem>{m_Scene->addPixmap(pixmap)};

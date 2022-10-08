@@ -7,7 +7,7 @@
 
 const char* THEME_STYLESHEET_RESOURCE_PATH = ":dark/stylesheet.qss";
 
-Application::Application(int argc, char** argv, const WindowSettings& windowSettings)
+Application::Application(int& argc, char** argv, const WindowSettings& windowSettings)
     : m_Application(std::make_unique<QApplication>(argc, argv))
     , m_MainWindow(std::make_unique<MainWindow>(windowSettings))
 {

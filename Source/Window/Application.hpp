@@ -8,7 +8,7 @@
 class Application
 {
 public:
-    Application(int argc, char** argv, const WindowSettings& windowSettings);
+    Application(int& argc, char** argv, const WindowSettings& windowSettings);
     
     int Exec();
 
