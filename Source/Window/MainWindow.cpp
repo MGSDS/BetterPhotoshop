@@ -17,7 +17,12 @@ QSize NEW_IMAGE_DEFAULT_SIZE = { 1280, 720 };
 
 MainWindow::MainWindow(const WindowSettings& settings)
 {
-    resize(settings.Width, settings.Height);
+    if (settings.IsMaximized) {
+        setWindowState(Qt::WindowMaximized);
+    } else {
+        resize(settings.Width, settings.Height);
+    }
+
     setWindowTitle(settings.Title);
 
     InitMenuBar();
@@ -38,14 +43,15 @@ void MainWindow::InitMenuBar()
     openAction->setShortcut(QKeySequence::Open);
     connect(openAction, &QAction::triggered, this, &MainWindow::OnFileOpenAction);
 
-    auto* saveAsMenu = fileMenu->addMenu("Save As");
+    m_SaveAsMenu = fileMenu->addMenu("Save As");
+    m_SaveAsMenu->setEnabled(false);
     {
-        auto* pgmAction = saveAsMenu->addAction("PGM Image");
+        auto* pgmAction = m_SaveAsMenu->addAction("PGM Image");
         connect(pgmAction, &QAction::triggered, this, [this]() {
             SaveImageToFile(ImageFormat::Pgm, ".pgm");
         });
 
-        auto* ppmAction = saveAsMenu->addAction("PPM Image");
+        auto* ppmAction = m_SaveAsMenu->addAction("PPM Image");
         connect(ppmAction, &QAction::triggered, this, [this]() {
             SaveImageToFile(ImageFormat::Ppm, ".ppm");
         });
@@ -55,8 +61,6 @@ void MainWindow::InitMenuBar()
 void MainWindow::InitImageView()
 {
     m_ImageView = std::make_unique<ImageView>(this);
-    m_Image = std::make_shared<Image>(NEW_IMAGE_DEFAULT_SIZE.width(), NEW_IMAGE_DEFAULT_SIZE.height());
-    m_ImageView->SetImage(m_Image);
     setCentralWidget(m_ImageView.get());
 }
 
@@ -110,8 +114,7 @@ void MainWindow::OnFileNewAction()
     int height = spinBoxHeight->value();
     Log::Debug("New image width: {}, height: {}", width, height);
 
-    m_Image = std::make_shared<Image>(width, height);
-    m_ImageView->SetImage(m_Image);
+    SetImage(std::make_unique<Image>(width, height));
 }
 
 void MainWindow::OnFileOpenAction()
@@ -131,8 +134,7 @@ void MainWindow::OnFileOpenAction()
     Log::Debug("Trying to read image from file: {}", filename.toStdString().c_str());
 
     try {
-        m_Image = Image::FromFile(filename.toStdString());
-        m_ImageView->SetImage(m_Image);
+        SetImage(Image::FromFile(filename.toStdString()));
     } catch (const std::exception& exception) {
         Log::Error("An error occured while reading image from file: {}", exception.what());
     }
@@ -156,6 +158,13 @@ void MainWindow::SaveImageToFile(ImageFormat format, const char* extension)
     } catch (const std::exception& exception) {
         Log::Error("An error occured while saving image to file: {}", exception.what());
     }
+}
+
+void MainWindow::SetImage(std::unique_ptr<Image>&& image)
+{
+    m_Image = std::move(image);
+    m_ImageView->SetImage(m_Image.get());
+    m_SaveAsMenu->setEnabled(m_Image != nullptr);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)

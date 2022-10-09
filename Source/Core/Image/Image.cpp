@@ -80,7 +80,7 @@ const Pixel& Image::PixelAt(size_t index) const
     return m_Pixels[index];
 }
 
-std::shared_ptr<Image> Image::FromFile(const std::string& fileName)
+std::unique_ptr<Image> Image::FromFile(const std::string& fileName)
 {
     std::ifstream in(fileName, std::ios::binary | std::ios::ate);
 
@@ -110,6 +110,10 @@ void Image::WriteToFile(const std::string& fileName, ImageFormat format) const
 
 uint8_t* Image::ToDataRGBA32FPx4() {
     return reinterpret_cast<uint8_t*>(&m_Pixels[0]);
+}
+
+const uint8_t* Image::ToDataRGBA32FPx4() const {
+    return reinterpret_cast<const uint8_t*>(&m_Pixels[0]);
 }
 
 Image::Image(size_t width, size_t height)

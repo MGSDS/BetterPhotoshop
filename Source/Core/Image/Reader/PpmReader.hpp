@@ -17,7 +17,7 @@ struct PpmHeader
 class PpmReader : public ImageReader
 {
 public:
-    std::shared_ptr<Image> ReadImage(const std::vector<uint8_t>& data) override;
+    std::unique_ptr<Image> ReadImage(const std::vector<uint8_t>& data) override;
 
     ~PpmReader() override = default;
 

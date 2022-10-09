@@ -11,9 +11,7 @@ Application::Application(int& argc, char** argv, const WindowSettings& windowSet
     : m_Application(std::make_unique<QApplication>(argc, argv))
     , m_MainWindow(std::make_unique<MainWindow>(windowSettings))
 {
-    m_MainWindow->move(m_MainWindow->screen()->availableGeometry().topLeft() + QPoint(100, 100));
     m_MainWindow->show();
-
     InitWidgetTheme();
 }
 

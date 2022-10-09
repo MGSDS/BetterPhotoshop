@@ -10,6 +10,8 @@
 static Qt::MouseButton MOVE_BUTTON = Qt::MouseButton::LeftButton;
 static QRect PAN_RECTANGLE = QRect(-100000, -100000, 200000, 200000);
 static qreal SCALE_STEP = 0.05;
+static qreal MIN_ZOOM = 0.1;
+static qreal MAX_ZOOM = 50.0;
 
 ImageView::ImageView(QWidget* parent, QObject* sceneParent)
     : QGraphicsView(parent)
@@ -75,7 +77,6 @@ void ImageView::wheelEvent(QWheelEvent *event)
     event->accept();
 
     auto anchor = transformationAnchor();
-    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
     int angle = event->angleDelta().y();
     qreal factor;
@@ -84,15 +85,43 @@ void ImageView::wheelEvent(QWheelEvent *event)
     } else {
         factor = 1.0 - SCALE_STEP;
     }
-    scale(factor, factor);
 
+    if (m_CurrentZoom * factor < MIN_ZOOM || m_CurrentZoom * factor > MAX_ZOOM) {
+        return;
+    }
+
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    m_CurrentZoom *= factor;
+    scale(factor, factor);
     setTransformationAnchor(anchor);
 }
 
-void ImageView::SetImage(const std::shared_ptr<Image>& img) {
+void ImageView::SetImage(const Image* img) {
+    if (m_Image) {
+        m_Scene->removeItem(m_Image.get());
+    }
+
+    if (!img) {
+        m_Image = nullptr;
+        return;
+    }
+
     auto image = std::make_unique<QImage>(img->ToDataRGBA32FPx4(), img->GetWidth(), img->GetHeight(), QImage::Format_RGBA32FPx4);
     QPixmap pixmap = QPixmap::fromImage(*image);
-    m_Scene->removeItem(m_Image.get());
     m_Image = std::unique_ptr<QGraphicsItem>{m_Scene->addPixmap(pixmap)};
-    fitInView(m_Image.get(), Qt::AspectRatioMode::KeepAspectRatio);
+
+    CenterOnCurrentImage();
+}
+
+void ImageView::CenterOnCurrentImage()
+{
+    resetTransform();
+    m_CurrentZoom = 1.0;
+
+    centerOn(m_Image.get());
+
+    // Fix weird scaling snap bug
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    scale(1.0, 1.0);
+    setTransformationAnchor(QGraphicsView::AnchorViewCenter);
 }

@@ -15,5 +15,5 @@ public:
 
     static std::unique_ptr<ImageReader> GetReader(const std::vector<uint8_t>& data);
     
-    virtual std::shared_ptr<Image> ReadImage(const std::vector<uint8_t>& data) = 0;
+    virtual std::unique_ptr<Image> ReadImage(const std::vector<uint8_t>& data) = 0;
 };

@@ -11,7 +11,7 @@ class ImageView : public QGraphicsView
 public:
     ImageView(QWidget* parent = nullptr, QObject* sceneParent = nullptr);
     ~ImageView() = default;
-    void SetImage(const std::shared_ptr<Image>& image);
+    void SetImage(const Image* image);
 
 private:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -19,9 +19,12 @@ private:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
 
+    void CenterOnCurrentImage();
+
 private:
     std::unique_ptr<QGraphicsScene> m_Scene = nullptr;
+    std::unique_ptr<QGraphicsItem> m_Image = nullptr;
     bool m_IsMoveButtonPressed = false;
     int m_PrevPanX = 0, m_PrevPanY = 0;
-    std::unique_ptr<QGraphicsItem> m_Image = nullptr;
+    qreal m_CurrentZoom = 1.0;
 };

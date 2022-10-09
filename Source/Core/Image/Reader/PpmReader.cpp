@@ -113,7 +113,7 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
     return header;
 }
 
-std::shared_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
+std::unique_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
 {
     PpmHeader header = PpmReader::ReadHeader(data);
     Log::Info(
@@ -140,5 +140,5 @@ std::shared_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
     }
 
     Log::Info("Reading PPM image: image successfully read.");
-    return std::make_shared<Image>(header.width, header.height, pixels);
+    return std::make_unique<Image>(header.width, header.height, pixels);
 }
