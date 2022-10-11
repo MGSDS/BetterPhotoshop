@@ -8,7 +8,7 @@ struct PgmHeader
     size_t dataOffset = 0; // size in bytes
     size_t width = 0;
     size_t height = 0;
-    uint8_t maxGreyValue = 0;
+    uint8_t maxChannelValue = 0;
 };
 
 class PgmReader : public ImageReader

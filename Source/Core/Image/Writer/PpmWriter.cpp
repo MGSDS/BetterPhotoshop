@@ -15,9 +15,9 @@ void PpmWriter::Write(const Image& image, std::ostream& os) const
     for (size_t i = 0; i < image.GetPixelsCount(); i++)
     {
         auto& pixel = image.PixelAt(i);
-        os.put(Utils::ByteFromNorm(pixel.red))
-          .put(Utils::ByteFromNorm(pixel.green))
-          .put(Utils::ByteFromNorm(pixel.blue));
+        for (size_t j = 0; j < 3; j++) {
+            os.put(Utils::ByteFromNorm(pixel.channels[j]));
+        }
     }
     os.flush();
 }

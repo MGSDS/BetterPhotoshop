@@ -1,6 +1,7 @@
 #include "ImageView.hpp"
 
 #include <Core/Log.hpp>
+#include "Core/Image/ColorModel/ColorModelConverter.hpp"
 
 #include <QGraphicsView>
 #include <QPixmap>

@@ -60,12 +60,12 @@ PgmHeader PgmReader::ReadHeader(const std::vector<uint8_t>& data)
             }
         } else if (readingMaxValue) {
             if (IsDigitChar(curr)) {
-                header.maxGreyValue = header.maxGreyValue * 10 + (curr - '0');
+                header.maxChannelValue = header.maxChannelValue * 10 + (curr - '0');
             } else if (curr == '\n') {
                 readingMaxValue = false;
                 break;
             } else {
-                Log::Error("Reading PGM image: invalid PGM header at pos {}. While reading max grey value, expected: '0'-'9' or '\\n', actual: {}", pos, curr);
+                Log::Error("Reading PGM image: invalid PGM header at pos {}. While reading max value, expected: '0'-'9' or '\\n', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
         }
@@ -87,7 +87,7 @@ std::unique_ptr<Image> PgmReader::ReadImage(const std::vector<uint8_t>& data)
     PgmHeader header = ReadHeader(data);
     Log::Info(
             "Reading PGM image: read PGM header. Width = {}, height = {}, maxGreyValue = {}, dataOffset = {}.",
-            header.width,header.height, header.maxGreyValue, header.dataOffset
+            header.width,header.height, header.maxChannelValue, header.dataOffset
     );
     if (data.size() - header.dataOffset - 1 != header.height * header.width) {
         Log::Error(
@@ -99,16 +99,16 @@ std::unique_ptr<Image> PgmReader::ReadImage(const std::vector<uint8_t>& data)
 
     std::vector<Pixel> pixels;
     for (size_t i = header.dataOffset + 1; i < data.size(); i++) {
-        if (data[i] > header.maxGreyValue) {
+        if (data[i] > header.maxChannelValue) {
             Log::Error(
                     "Reading PGM image: invalid PGM format data. Byte value {} is more than header max grey value {}.",
                     (int) data[i],
-                    header.maxGreyValue
+                    header.maxChannelValue
             );
             ThrowInvalidPgmFormatDataError();
         }
-        float greyValue = Utils::NormByte(data[i], header.maxGreyValue);
-        pixels.emplace_back(greyValue, greyValue, greyValue, 1.0f);
+        float channelValue = Utils::NormByte(data[i], header.maxChannelValue);
+        pixels.emplace_back(channelValue, channelValue, channelValue, 1.0f);
     }
 
     Log::Info("Reading PGM image: image successfully read.");

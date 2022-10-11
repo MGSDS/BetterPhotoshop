@@ -7,13 +7,10 @@
 #include <memory>
 
 struct Pixel {
-    float red;
-    float green;
-    float blue;
-    float alpha;
+    float channels[4];
 
-    Pixel(float red, float green, float blue, float alpha);
-    static Pixel White();
+    Pixel(float ch0, float ch1, float ch2, float ch3);
+    static Pixel WhiteRgb();
 };
 
 class Image
@@ -21,6 +18,7 @@ class Image
 public:
     Image(size_t width, size_t height);
     Image(size_t width, size_t height, const std::vector<Pixel>& pixels);
+    Image(const Image& other) = default;
 
     static std::unique_ptr<Image> FromFile(const std::string& fileName);
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
@@ -37,7 +35,6 @@ public:
 
 private:
     Image() = default;
-    Image(const Image&) = delete;
 
     size_t m_Width = 0;
     size_t m_Height = 0;

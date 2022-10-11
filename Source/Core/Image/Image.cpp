@@ -8,15 +8,15 @@
 #include <fstream>
 #include <exception>
 
-Pixel::Pixel(float red, float green, float blue, float alpha)
-    : red(red)
-    , green(green)
-    , blue(blue)
-    , alpha(alpha)
+Pixel::Pixel(float ch0, float ch1, float ch2, float ch3)
 {
+    channels[0] = ch0;
+    channels[1] = ch1;
+    channels[2] = ch2;
+    channels[3] = ch3;
 }
 
-Pixel Pixel::White()
+Pixel Pixel::WhiteRgb()
 {
     return Pixel(1.0f, 1.0f, 1.0f, 1.0f);
 }
@@ -121,7 +121,7 @@ Image::Image(size_t width, size_t height)
     , m_Height(height)
     , m_Size(width * height)
 {
-    m_Pixels = std::vector<Pixel>(m_Size, Pixel::White());
+    m_Pixels = std::vector<Pixel>(m_Size, Pixel::WhiteRgb());
 }
 
 Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels)

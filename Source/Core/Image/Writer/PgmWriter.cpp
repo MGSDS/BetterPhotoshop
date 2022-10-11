@@ -17,7 +17,14 @@ void PgmWriter::Write(const Image& image, std::ostream& os) const
     for (size_t i = 0; i < image.GetPixelsCount(); i++)
     {
         auto& pixel = image.PixelAt(i);
-        os.put(Utils::ByteFromNorm(pixel.red));
+
+        float meanChannelValue = (
+            pixel.channels[0] + 
+            pixel.channels[1] +
+            pixel.channels[2]
+        ) / 3.0f;
+        
+        os.put(Utils::ByteFromNorm(meanChannelValue));
     }
     os.flush();
 }

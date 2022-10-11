@@ -21,9 +21,9 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
     bool readingMagic = true;
     bool readingWidth = false;
     bool readingHeight = false;
-    bool readingMaxRedValue = false;
-    bool readingMaxGreenValue = false;
-    bool readingMaxBlueValue = false;
+    bool readingMaxCh0Value = false;
+    bool readingMaxCh1Value = false;
+    bool readingMaxCh2Value = false;
 
     size_t pos = 0;
     while (pos < data.size()) {
@@ -50,47 +50,47 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
                 header.height = header.height * 10 + (curr - '0');
             } else if (curr == '\n') {
                 readingHeight = false;
-                readingMaxRedValue = true;
+                readingMaxCh0Value = true;
             } else {
                 Log::Error("Reading PPM image: invalid PPM header at pos {}. While reading height, expected: '0'-'9' or ' ', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
-        } else if (readingMaxRedValue) {
+        } else if (readingMaxCh0Value) {
             if (Utils::IsDigit(curr)) {
-                header.maxRedValue = header.maxRedValue * 10 + (curr - '0');
+                header.maxCh0Value = header.maxCh0Value * 10 + (curr - '0');
             } else if (curr == ' ') {
-                readingMaxRedValue = false;
-                readingMaxGreenValue = true;
+                readingMaxCh0Value = false;
+                readingMaxCh1Value = true;
             } else if (curr == '\n') {
-                // apply max red value for each color
-                header.maxGreenValue = header.maxRedValue;
-                header.maxBlueValue = header.maxRedValue;
-                readingMaxRedValue = false;
-                readingMaxGreenValue = false;
-                readingMaxBlueValue = false;
+                // apply max ch0 value for each color
+                header.maxCh1Value = header.maxCh0Value;
+                header.maxCh2Value = header.maxCh0Value;
+                readingMaxCh0Value = false;
+                readingMaxCh1Value = false;
+                readingMaxCh2Value = false;
                 break;
             } else {
-                Log::Error("Reading PPM image: invalid PPM header at pos {}. While reading max red value, expected: '0'-'9' or ' ' or '\\n', actual: {}", pos, curr);
+                Log::Error("Reading PPM image: invalid PPM header at pos {}. While reading max ch0 value, expected: '0'-'9' or ' ' or '\\n', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
-        } else if (readingMaxGreenValue) {
+        } else if (readingMaxCh1Value) {
             if (Utils::IsDigit(curr)) {
-                header.maxGreenValue = header.maxGreenValue * 10 + (curr - '0');
+                header.maxCh1Value = header.maxCh1Value * 10 + (curr - '0');
             } else if (curr == ' ') {
-                readingMaxGreenValue = false;
-                readingMaxBlueValue = true;
+                readingMaxCh1Value = false;
+                readingMaxCh2Value = true;
             } else {
-                Log::Error("Reading PPM image: invalid PPM header at pos {}. While reading max green value, expected: '0'-'9' or ' ', actual: {}", pos, curr);
+                Log::Error("Reading PPM image: invalid PPM header at pos {}. While reading max ch1 value, expected: '0'-'9' or ' ', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
-        } else if (readingMaxBlueValue) {
+        } else if (readingMaxCh2Value) {
             if (Utils::IsDigit(curr)) {
-                header.maxBlueValue = header.maxBlueValue * 10 + (curr - '0');
+                header.maxCh2Value = header.maxCh2Value * 10 + (curr - '0');
             } else if (curr == '\n') {
-                readingMaxBlueValue = false;
+                readingMaxCh2Value = false;
                 break;
             } else {
-                Log::Error("reading PPM image: invalid PPM header at pos {}. While reading max blue value, expected: '0'-'9' or ' ', actual: {}", pos, curr);
+                Log::Error("reading PPM image: invalid PPM header at pos {}. While reading max ch2 value, expected: '0'-'9' or ' ', actual: {}", pos, curr);
                 ThrowInvalidHeaderError(pos);
             }
         }
@@ -101,9 +101,9 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
         readingMagic ||
         readingWidth ||
         readingHeight ||
-        readingMaxRedValue ||
-        readingMaxGreenValue ||
-        readingMaxBlueValue
+        readingMaxCh0Value ||
+        readingMaxCh1Value ||
+        readingMaxCh2Value
     ) {
         Log::Error("Invalid PPM header at pos {}. End of header not reached.", pos);
         ThrowInvalidHeaderError(pos);
@@ -117,8 +117,8 @@ std::unique_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
 {
     PpmHeader header = PpmReader::ReadHeader(data);
     Log::Info(
-            "Reading PPM image: read PPM header. Width = {}, height = {}, maxRedValue = {}, maxGreenValue = {}, maxBlueValue = {}, dataOffset = {}",
-            header.width,header.height, header.maxRedValue, header.maxGreenValue, header.maxBlueValue, header.dataOffset
+            "Reading PPM image: read PPM header. Width = {}, height = {}, maxCh0Value = {}, maxCh1Value = {}, maxCh2Value = {}, dataOffset = {}",
+            header.width,header.height, header.maxCh0Value, header.maxCh1Value, header.maxCh2Value, header.dataOffset
     );
 
     size_t expectedSize = header.height * header.width * 3;
@@ -133,10 +133,10 @@ std::unique_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
 
     std::vector<Pixel> pixels;
     for (size_t i = header.dataOffset + 1; i < data.size() - 2; i += 3) {
-        float red   = Utils::NormByte(data[i], header.maxRedValue);
-        float green = Utils::NormByte(data[i + 1], header.maxGreenValue);
-        float blue  = Utils::NormByte(data[i + 2], header.maxBlueValue);
-        pixels.emplace_back(red, green, blue, 1.0f);
+        float ch0 = Utils::NormByte(data[i], header.maxCh0Value);
+        float ch1 = Utils::NormByte(data[i + 1], header.maxCh1Value);
+        float ch2 = Utils::NormByte(data[i + 2], header.maxCh2Value);
+        pixels.emplace_back(ch0, ch1, ch2, 1.0f);
     }
 
     Log::Info("Reading PPM image: image successfully read.");

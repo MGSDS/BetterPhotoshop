@@ -8,9 +8,9 @@ struct PpmHeader
 {
     size_t width = 0;
     size_t height = 0;
-    uint8_t maxRedValue = 0;
-    uint8_t maxGreenValue = 0;
-    uint8_t maxBlueValue = 0;
+    uint8_t maxCh0Value = 0;
+    uint8_t maxCh1Value = 0;
+    uint8_t maxCh2Value = 0;
     size_t dataOffset = 0;
 };
 
