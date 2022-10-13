@@ -14,19 +14,22 @@
 QSize NEW_IMAGE_MIN_SIZE = { 1, 1 };
 QSize NEW_IMAGE_MAX_SIZE = { 32768, 32768 };
 QSize NEW_IMAGE_DEFAULT_SIZE = { 1280, 720 };
+std::string NEW_IMAGE_DEFAULT_NAME = "Untitled";
 
 MainWindow::MainWindow(const WindowSettings& settings)
 {
+    resize(settings.Width, settings.Height);
+
     if (settings.IsMaximized) {
         setWindowState(Qt::WindowMaximized);
-    } else {
-        resize(settings.Width, settings.Height);
     }
 
-    setWindowTitle(settings.Title);
+    m_BaseTitle = settings.Title;
+    setWindowTitle(m_BaseTitle.c_str());
 
     InitMenuBar();
     InitImageView();
+    InitImageFileFilters(); 
 }
 
 void MainWindow::InitMenuBar()
@@ -43,25 +46,36 @@ void MainWindow::InitMenuBar()
     openAction->setShortcut(QKeySequence::Open);
     connect(openAction, &QAction::triggered, this, &MainWindow::OnFileOpenAction);
 
-    m_SaveAsMenu = fileMenu->addMenu("Save As");
-    m_SaveAsMenu->setEnabled(false);
-    {
-        auto* pgmAction = m_SaveAsMenu->addAction("PGM Image");
-        connect(pgmAction, &QAction::triggered, this, [this]() {
-            SaveImageToFile(ImageFormat::Pgm, ".pgm");
-        });
-
-        auto* ppmAction = m_SaveAsMenu->addAction("PPM Image");
-        connect(ppmAction, &QAction::triggered, this, [this]() {
-            SaveImageToFile(ImageFormat::Ppm, ".ppm");
-        });
-    }
+    m_SaveAction = fileMenu->addAction("Save");
+    m_SaveAction->setShortcut(QKeySequence::Save);
+    m_SaveAction->setEnabled(false);
+    connect(m_SaveAction, &QAction::triggered, this, &MainWindow::OnFileSaveAction);
+    
+    m_SaveAsAction = fileMenu->addAction("Save As");
+    m_SaveAsAction->setShortcut(QKeySequence::SaveAs);
+    m_SaveAsAction->setEnabled(false);
+    connect(m_SaveAsAction, &QAction::triggered, this, &MainWindow::OnFileSaveAsAction);
 }
 
 void MainWindow::InitImageView()
 {
-    m_ImageView = std::make_unique<ImageView>(this);
+    m_ImageView = std::make_unique<ImageViewWithInfo>(this);
     setCentralWidget(m_ImageView.get());
+}
+
+void MainWindow::InitImageFileFilters()
+{
+    m_ImageFileFilters.clear();
+    bool isFirstValue = true;
+
+    for (const auto& [filter, _] : FILTER_TO_IMAGE_FORMAT_INFO_MAPPING) {
+        if (!isFirstValue) {
+            m_ImageFileFilters += ";;";
+        }
+        isFirstValue = false;
+
+        m_ImageFileFilters += filter.c_str();
+    }
 }
 
 void MainWindow::OnFileNewAction()
@@ -115,6 +129,7 @@ void MainWindow::OnFileNewAction()
     Log::Debug("New image width: {}, height: {}", width, height);
 
     SetImage(std::make_unique<Image>(width, height));
+    SetImagePath(std::string());
 }
 
 void MainWindow::OnFileOpenAction()
@@ -137,35 +152,89 @@ void MainWindow::OnFileOpenAction()
         SetImage(Image::FromFile(filename.toStdString()));
     } catch (const std::exception& exception) {
         Log::Error("An error occured while reading image from file: {}", exception.what());
+        return;
+    }
+
+    SetImagePath(filename.toStdString());
+}
+
+void MainWindow::OnFileSaveAction()
+{
+    if (!m_Image) {
+        Log::Warn("OnFileSaveAction: no image to save");
+        return;
+    }
+
+    if (m_ImagePath.empty()) {
+        OnFileSaveAsAction();
+    } else {
+        TrySaveCurrentImage(m_ImagePath, m_LastSelectedSaveFormat);
     }
 }
 
-void MainWindow::SaveImageToFile(ImageFormat format, const char* extension)
+void MainWindow::OnFileSaveAsAction()
 {
-    auto filename = QFileDialog::getSaveFileName(this, "Image", QString(), "Image (*" + QString(extension) + ")");
+    if (!m_Image) {
+        Log::Warn("OnFileSaveAsAction: no image to save");
+        return;
+    }
+
+    QString selectedFilter;
+    auto filename = QFileDialog::getSaveFileName(this, "Save As", QString(), m_ImageFileFilters, &selectedFilter);
     if (filename.isEmpty()) {
         return;
     }
 
-    if (!filename.endsWith(extension)) {
-        filename += extension;
+    auto formatInfo = FILTER_TO_IMAGE_FORMAT_INFO_MAPPING.find(selectedFilter.toStdString());
+    if (formatInfo == FILTER_TO_IMAGE_FORMAT_INFO_MAPPING.end()) {
+        Log::Error("OnFileSaveAsAction: can't map filter to image format info");
+        return;
     }
 
-    Log::Debug("Trying to write image to file: {}", filename.toStdString().c_str());
+    const char* selectedFileExtension = formatInfo->second.FileExtension.c_str();
+    ImageFormat selectedImageFormat = formatInfo->second.Format;
 
-    try {
-        m_Image->WriteToFile(filename.toStdString(), format);
-    } catch (const std::exception& exception) {
-        Log::Error("An error occured while saving image to file: {}", exception.what());
+    if (!filename.endsWith(selectedFileExtension)) {
+        filename.append(selectedFileExtension);
     }
+
+    TrySaveCurrentImage(filename.toStdString(), selectedImageFormat);
+    SetImagePath(filename.toStdString());
+    m_LastSelectedSaveFormat = selectedImageFormat;
 }
 
 void MainWindow::SetImage(std::unique_ptr<Image>&& image)
 {
     m_Image = std::move(image);
     m_ImageView->SetImage(m_Image.get());
-    m_SaveAsMenu->setEnabled(m_Image != nullptr);
+
+    bool enableSaveActions = (m_Image != nullptr);
+    m_SaveAction->setEnabled(enableSaveActions);
+    m_SaveAsAction->setEnabled(enableSaveActions);
 }
+
+bool MainWindow::TrySaveCurrentImage(const std::string& filename, ImageFormat format)
+{
+    Log::Debug("TrySaveCurrentImage: writing image to file: {}", filename);
+
+    try {
+        m_Image->WriteToFile(filename, format);
+        Log::Debug("TrySaveCurrentImage: image is successfully saved");
+        return true;
+    } catch (const std::exception& exception) {
+        Log::Error("TrySaveCurrentImage: an error occured while saving image to file: {}", exception.what());
+        return false;
+    }
+}
+
+void MainWindow::SetImagePath(const std::string& newPath)
+{
+    m_ImagePath = newPath;
+
+    auto imageName = m_ImagePath.empty() ? NEW_IMAGE_DEFAULT_NAME : m_ImagePath;
+    setWindowTitle((m_BaseTitle + " - " + imageName).c_str());
+}
+
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {

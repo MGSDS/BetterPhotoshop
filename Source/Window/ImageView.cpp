@@ -14,9 +14,9 @@ static qreal SCALE_STEP = 0.05;
 static qreal MIN_ZOOM = 0.1;
 static qreal MAX_ZOOM = 50.0;
 
-ImageView::ImageView(QWidget* parent, QObject* sceneParent)
+ImageView::ImageView(QWidget* parent)
     : QGraphicsView(parent)
-    , m_Scene(new QGraphicsScene(sceneParent))
+    , m_Scene(std::make_unique<QGraphicsScene>(this))
 {
     setScene(m_Scene.get());
 
@@ -28,6 +28,9 @@ ImageView::ImageView(QWidget* parent, QObject* sceneParent)
 
 void ImageView::mouseMoveEvent(QMouseEvent *event)
 {
+    const auto newPos = mapToScene(event->pos());
+    emit cursorPosChanged(newPos);
+
     if (!m_IsMoveButtonPressed) {
         QGraphicsView::mouseMoveEvent(event);
         return;
@@ -46,11 +49,11 @@ void ImageView::mouseMoveEvent(QMouseEvent *event)
 
 void ImageView::mousePressEvent(QMouseEvent *event)
 {
+    event->accept();
+
     if (event->button() != MOVE_BUTTON) {
-        QGraphicsView::mousePressEvent(event);
         return;
     }
-    event->accept();
 
     m_IsMoveButtonPressed = true;
     m_PrevPanX = event->position().x();
@@ -60,11 +63,11 @@ void ImageView::mousePressEvent(QMouseEvent *event)
 
 void ImageView::mouseReleaseEvent(QMouseEvent *event)
 {
+    event->accept();
+
     if (event->button() != MOVE_BUTTON) {
-        QGraphicsView::mouseReleaseEvent(event);
         return;
     }
-    event->accept();
 
     m_IsMoveButtonPressed = false;
 }
@@ -72,7 +75,7 @@ void ImageView::mouseReleaseEvent(QMouseEvent *event)
 void ImageView::wheelEvent(QWheelEvent *event)
 {
     if (!(event->modifiers() & Qt::ControlModifier)) {
-        event->ignore();
+        QGraphicsView::wheelEvent(event);
         return;
     }
     event->accept();
@@ -87,14 +90,15 @@ void ImageView::wheelEvent(QWheelEvent *event)
         factor = 1.0 - SCALE_STEP;
     }
 
-    if (m_CurrentZoom * factor < MIN_ZOOM || m_CurrentZoom * factor > MAX_ZOOM) {
-        return;
-    }
+    qreal clampedZoom = std::clamp(m_CurrentZoom * factor, MIN_ZOOM, MAX_ZOOM);
+    factor = clampedZoom / m_CurrentZoom;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     m_CurrentZoom *= factor;
     scale(factor, factor);
     setTransformationAnchor(anchor);
+
+    emit zoomChanged(m_CurrentZoom);
 }
 
 void ImageView::SetImage(const Image* img) {
@@ -104,14 +108,24 @@ void ImageView::SetImage(const Image* img) {
 
     if (!img) {
         m_Image = nullptr;
+        emit imageDisappeared();
         return;
     }
+
+    bool imageHasAppeared = !m_Image;
 
     auto image = std::make_unique<QImage>(img->ToDataRGBA32FPx4(), img->GetWidth(), img->GetHeight(), QImage::Format_RGBA32FPx4);
     QPixmap pixmap = QPixmap::fromImage(*image);
     m_Image = std::unique_ptr<QGraphicsItem>{m_Scene->addPixmap(pixmap)};
+    emit imageSizeChanged(QSize(img->GetWidth(), img->GetHeight()));
 
     CenterOnCurrentImage();
+
+    if (imageHasAppeared) {
+        emit imageAppeared();
+        emit zoomChanged(1.0);
+        emit cursorPosChanged(mapToScene(cursor().pos()));
+    }
 }
 
 void ImageView::CenterOnCurrentImage()

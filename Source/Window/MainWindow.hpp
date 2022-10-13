@@ -1,9 +1,10 @@
 #pragma once
 
-#include <Window/ImageView.hpp>
+#include <Window/ImageViewWithInfo.hpp>
 
 #include <QMainWindow>
-#include <QMenu>
+#include <QAction>
+#include <QString>
 
 #include <memory>
 
@@ -31,17 +32,28 @@ public:
 private:
     void InitMenuBar();
     void InitImageView();
-    void SaveImageToFile(ImageFormat format, const char* extension);
+    void InitImageFileFilters(); 
+
     void SetImage(std::unique_ptr<Image>&& image);
+    bool TrySaveCurrentImage(const std::string& filename, ImageFormat format);
+    void SetImagePath(const std::string& newPath);
 
 private slots:
     void resizeEvent(QResizeEvent *event) override;
     void OnFileNewAction();
     void OnFileOpenAction();
+    void OnFileSaveAction();
+    void OnFileSaveAsAction();
 
 private:
-    std::unique_ptr<ImageView> m_ImageView;
-    std::unique_ptr<Image> m_Image;
+    std::unique_ptr<ImageViewWithInfo> m_ImageView = nullptr;
+    std::unique_ptr<Image> m_Image = nullptr;
 
-    QMenu* m_SaveAsMenu;
+    QAction* m_SaveAction = nullptr;
+    QAction* m_SaveAsAction = nullptr;
+
+    std::string m_BaseTitle = "";
+    std::string m_ImagePath = "";
+    ImageFormat m_LastSelectedSaveFormat = ImageFormat::Pgm;
+    QString m_ImageFileFilters = "";
 };

@@ -8,18 +8,28 @@
 
 class ImageView : public QGraphicsView
 {
+    Q_OBJECT
+
 public:
-    ImageView(QWidget* parent = nullptr, QObject* sceneParent = nullptr);
+    ImageView(QWidget* parent = nullptr);
     ~ImageView() = default;
     void SetImage(const Image* image);
 
 private:
+    void CenterOnCurrentImage();
+
+private slots:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
 
-    void CenterOnCurrentImage();
+signals:
+    void imageAppeared();
+    void imageDisappeared();
+    void imageSizeChanged(const QSize& newSize);
+    void cursorPosChanged(const QPointF& newPos);
+    void zoomChanged(float newZoom);
 
 private:
     std::unique_ptr<QGraphicsScene> m_Scene = nullptr;
