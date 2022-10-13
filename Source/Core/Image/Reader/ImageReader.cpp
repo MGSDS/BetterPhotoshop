@@ -28,7 +28,21 @@ std::unique_ptr<ImageReader> ImageReader::GetReader(const std::string& fileExten
         return nullptr;
     }
 
-    switch(format->second) {
+    return GetReader(format->second);
+}
+
+std::unique_ptr<ImageReader> ImageReader::GetReader(const std::vector<uint8_t>& data) 
+{
+    if (auto imageFormat = GetImageFormat(data)) {
+        return GetReader(*imageFormat);
+    }
+
+    return nullptr;
+}
+
+std::unique_ptr<ImageReader> ImageReader::GetReader(ImageFormat format)
+{
+    switch(format) {
         case ImageFormat::Pgm:  return std::make_unique<PgmReader>();
         case ImageFormat::Ppm:  return std::make_unique<PpmReader>();
         default: break;
@@ -37,13 +51,14 @@ std::unique_ptr<ImageReader> ImageReader::GetReader(const std::string& fileExten
     return nullptr;
 }
 
-std::unique_ptr<ImageReader> ImageReader::GetReader(const std::vector<uint8_t>& data) 
+std::optional<ImageFormat> ImageReader::GetImageFormat(const std::vector<uint8_t>& data)
 {
     if (Utils::DataStartsWith(data, IMAGE_FORMAT_TO_FILE_PREFIX[ImageFormat::Pgm])) {
-        return std::make_unique<PgmReader>();
+        return ImageFormat::Pgm;
     }
     if (Utils::DataStartsWith(data, IMAGE_FORMAT_TO_FILE_PREFIX[ImageFormat::Ppm])) {
-        return std::make_unique<PpmReader>();
+        return ImageFormat::Ppm;
     }
-    return nullptr;
+
+    return {};
 }

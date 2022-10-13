@@ -148,14 +148,17 @@ void MainWindow::OnFileOpenAction()
 
     Log::Debug("Trying to read image from file: {}", filename.toStdString().c_str());
 
+    LoadedImageData imageData;
     try {
-        SetImage(Image::FromFile(filename.toStdString()));
+        imageData = Image::FromFile(filename.toStdString());
+        SetImage(std::move(imageData.LoadedImage));
     } catch (const std::exception& exception) {
         Log::Error("An error occured while reading image from file: {}", exception.what());
         return;
     }
 
     SetImagePath(filename.toStdString());
+    m_LastSelectedSaveFormat = imageData.Format;
 }
 
 void MainWindow::OnFileSaveAction()

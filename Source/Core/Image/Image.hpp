@@ -13,6 +13,14 @@ struct Pixel {
     static Pixel WhiteRgb();
 };
 
+class Image;
+
+struct LoadedImageData
+{
+    std::unique_ptr<Image> LoadedImage;
+    ImageFormat Format;
+};
+
 class Image
 {
 public:
@@ -20,7 +28,7 @@ public:
     Image(size_t width, size_t height, const std::vector<Pixel>& pixels);
     Image(const Image& other) = default;
 
-    static std::unique_ptr<Image> FromFile(const std::string& fileName);
+    static LoadedImageData FromFile(const std::string& fileName);
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
 
     uint8_t* ToDataRGBA32FPx4();

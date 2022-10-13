@@ -80,7 +80,7 @@ const Pixel& Image::PixelAt(size_t index) const
     return m_Pixels[index];
 }
 
-std::unique_ptr<Image> Image::FromFile(const std::string& fileName)
+LoadedImageData Image::FromFile(const std::string& fileName)
 {
     std::ifstream in(fileName, std::ios::binary | std::ios::ate);
 
@@ -92,13 +92,19 @@ std::unique_ptr<Image> Image::FromFile(const std::string& fileName)
     std::vector<uint8_t> data = Utils::ReadAllBytes(in);
     Log::Info("Reading image data from file: {} bytes read from file {}.", data.size(), fileName);
 
-    auto reader = ImageReader::GetReader(data);
+    auto imageFormat = ImageReader::GetImageFormat(data);
+    if (!imageFormat) {
+        Log::Error("Reading image data from file: data prefix does not correspond to any handled format.");
+        throw std::runtime_error("Unable to determine image format.");
+    }
+
+    auto reader = ImageReader::GetReader(*imageFormat);
     if (!reader) {
         Log::Error("Reading image data from file: data prefix does not correspond to any handled format.");
         throw std::runtime_error("Unable to determine image format.");
     }
 
-    return reader->ReadImage(data);
+    return { reader->ReadImage(data), *imageFormat };
 }
 
 void Image::WriteToFile(const std::string& fileName, ImageFormat format) const
