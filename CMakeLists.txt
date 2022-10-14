@@ -32,9 +32,14 @@ add_subdirectory(Source)
 add_subdirectory(Deps/spdlog)
 target_compile_definitions(Photoshop PUBLIC SPDLOG_COMPILED_LIB)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(Photoshop PRIVATE -fsanitize=address -fno-omit-frame-pointer)
-    target_link_options(Photoshop PRIVATE -fsanitize=address -fno-omit-frame-pointer)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT MINGW)
+    if(NOT MINGW)
+        target_compile_options(Photoshop PRIVATE -fsanitize=address -fno-omit-frame-pointer)
+        target_link_options(Photoshop PRIVATE -fsanitize=address -fno-omit-frame-pointer)
+    else()
+        target_compile_options(Photoshop PRIVATE -fno-omit-frame-pointer)
+        target_link_options(Photoshop PRIVATE -fno-omit-frame-pointer)
+    endif()
 endif()
 
 target_link_libraries(Photoshop PUBLIC
