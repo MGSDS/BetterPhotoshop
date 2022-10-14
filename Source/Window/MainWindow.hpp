@@ -2,18 +2,37 @@
 
 #include <Window/ImageViewWithInfo.hpp>
 
-#include <QMainWindow>
 #include <QAction>
+#include <QMainWindow>
 #include <QString>
 
 #include <memory>
 
 struct WindowSettings
 {
-    WindowSettings& SetWidth(int width) { Width = width; return *this; }
-    WindowSettings& SetHeight(int height) { Height = height; return *this; }
-    WindowSettings& SetIsMaximized(bool isMaximized) { IsMaximized = isMaximized; return *this; }
-    WindowSettings& SetTitle(const char* title) { Title = title; return *this; }
+    WindowSettings& SetWidth(int width)
+    {
+        Width = width;
+        return *this;
+    }
+
+    WindowSettings& SetHeight(int height)
+    {
+        Height = height;
+        return *this;
+    }
+
+    WindowSettings& SetIsMaximized(bool isMaximized)
+    {
+        IsMaximized = isMaximized;
+        return *this;
+    }
+
+    WindowSettings& SetTitle(const char* title)
+    {
+        Title = title;
+        return *this;
+    }
 
     int Width = 1280;
     int Height = 720;
@@ -32,14 +51,14 @@ public:
 private:
     void InitMenuBar();
     void InitImageView();
-    void InitImageFileFilters(); 
+    void InitImageFileFilters();
 
     void SetImage(std::unique_ptr<Image>&& image);
     bool TrySaveCurrentImage(const std::string& filename, ImageFormat format);
     void SetImagePath(const std::string& newPath);
 
 private slots:
-    void resizeEvent(QResizeEvent *event) override;
+    void resizeEvent(QResizeEvent* event) override;
     void OnFileNewAction();
     void OnFileOpenAction();
     void OnFileSaveAction();

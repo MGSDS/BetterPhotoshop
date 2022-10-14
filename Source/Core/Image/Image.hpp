@@ -3,10 +3,11 @@
 #include <Core/Image/ImageFormat.hpp>
 
 #include <cstdint>
-#include <vector>
 #include <memory>
+#include <vector>
 
-struct Pixel {
+struct Pixel
+{
     float channels[4];
 
     Pixel(float ch0, float ch1, float ch2, float ch3);

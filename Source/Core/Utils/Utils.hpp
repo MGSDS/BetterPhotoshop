@@ -1,12 +1,12 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
 #include <fstream>
 #include <string>
+#include <vector>
 
-
-class Utils {
+class Utils
+{
 public:
     static bool IsDigit(char c);
     static float NormByte(uint8_t value, uint8_t maxValue);

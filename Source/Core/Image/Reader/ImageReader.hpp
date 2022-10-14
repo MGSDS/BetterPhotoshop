@@ -4,8 +4,8 @@
 #include <Core/Image/ImageFormat.hpp>
 
 #include <memory>
-#include <vector>
 #include <optional>
+#include <vector>
 
 class ImageReader
 {
@@ -19,6 +19,6 @@ public:
     static std::unique_ptr<ImageReader> GetReader(ImageFormat format);
 
     static std::optional<ImageFormat> GetImageFormat(const std::vector<uint8_t>& data);
-    
+
     virtual std::unique_ptr<Image> ReadImage(const std::vector<uint8_t>& data) = 0;
 };

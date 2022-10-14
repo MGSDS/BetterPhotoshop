@@ -9,10 +9,10 @@ int main(int argc, char* argv[])
     Log::Init();
 
     auto windowSettings = WindowSettings()
-        .SetWidth(1280)
-        .SetHeight(720)
-        .SetIsMaximized(true)
-        .SetTitle("Photoshop");
+                              .SetWidth(1280)
+                              .SetHeight(720)
+                              .SetIsMaximized(true)
+                              .SetTitle("Photoshop");
 
     Application app(argc, argv, windowSettings);
     return app.Exec();

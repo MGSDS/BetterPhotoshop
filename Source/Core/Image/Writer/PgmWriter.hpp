@@ -2,7 +2,6 @@
 
 #include "ImageWriter.hpp"
 
-
 class PgmWriter : public ImageWriter
 {
 public:

@@ -24,7 +24,7 @@ ImageViewWithInfo::ImageViewWithInfo(QWidget* parent, QObject* sceneParent)
     m_SizeLabel->setMinimumWidth(80);
     m_CoordsLabel->setMinimumWidth(80);
     m_ZoomLabel->setMinimumWidth(50);
-    
+
     std::vector<QLabel*> labels = { m_SizeLabel, m_CoordsLabel, m_ZoomLabel };
     for (auto* label : labels) {
         label->setAlignment(Qt::AlignCenter);
@@ -61,7 +61,6 @@ void ImageViewWithInfo::SetImage(const Image* image)
 
 void ImageViewWithInfo::OnImageAppeared()
 {
-
 }
 
 void ImageViewWithInfo::OnImageDisappeared()
@@ -86,7 +85,6 @@ void ImageViewWithInfo::OnCursorPosChanged(const QPointF& newPos)
     ss << static_cast<int>(newPos.x()) << ", " << static_cast<int>(newPos.y());
     m_CoordsLabel->setText(ss.str().c_str());
 }
-
 
 void ImageViewWithInfo::OnZoomChanged(float newZoom)
 {

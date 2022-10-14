@@ -2,8 +2,8 @@
 
 #include <Core/Log.hpp>
 
-#include <QScreen>
 #include <QFile>
+#include <QScreen>
 
 const char* THEME_STYLESHEET_RESOURCE_PATH = ":dark/stylesheet.qss";
 
@@ -18,7 +18,7 @@ Application::Application(int& argc, char** argv, const WindowSettings& windowSet
 void Application::InitWidgetTheme()
 {
     QFile stylesheetFile(THEME_STYLESHEET_RESOURCE_PATH);
-    
+
     if (!stylesheetFile.open(QFile::ReadOnly)) {
         Log::Error("Can't open resource file: {}", THEME_STYLESHEET_RESOURCE_PATH);
         return;

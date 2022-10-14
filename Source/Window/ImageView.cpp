@@ -1,12 +1,12 @@
 #include "ImageView.hpp"
 
-#include <Core/Log.hpp>
 #include "Core/Image/ColorModel/ColorModelConverter.hpp"
+#include <Core/Log.hpp>
 
 #include <QGraphicsView>
+#include <QImage>
 #include <QPixmap>
 #include <QtWidgets>
-#include <QImage>
 
 static Qt::MouseButton MOVE_BUTTON = Qt::MouseButton::LeftButton;
 static QRect PAN_RECTANGLE = QRect(-100000, -100000, 200000, 200000);
@@ -26,7 +26,7 @@ ImageView::ImageView(QWidget* parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-void ImageView::mouseMoveEvent(QMouseEvent *event)
+void ImageView::mouseMoveEvent(QMouseEvent* event)
 {
     const auto newPos = mapToScene(event->pos());
     emit cursorPosChanged(newPos);
@@ -36,7 +36,7 @@ void ImageView::mouseMoveEvent(QMouseEvent *event)
         return;
     }
     event->accept();
-    
+
     int deltaX = m_PrevPanX - event->position().x();
     int deltaY = m_PrevPanY - event->position().y();
     m_PrevPanX = event->position().x();
@@ -44,10 +44,9 @@ void ImageView::mouseMoveEvent(QMouseEvent *event)
 
     horizontalScrollBar()->setValue(horizontalScrollBar()->value() + deltaX);
     verticalScrollBar()->setValue(verticalScrollBar()->value() + deltaY);
-
 }
 
-void ImageView::mousePressEvent(QMouseEvent *event)
+void ImageView::mousePressEvent(QMouseEvent* event)
 {
     event->accept();
 
@@ -58,10 +57,9 @@ void ImageView::mousePressEvent(QMouseEvent *event)
     m_IsMoveButtonPressed = true;
     m_PrevPanX = event->position().x();
     m_PrevPanY = event->position().y();
-
 }
 
-void ImageView::mouseReleaseEvent(QMouseEvent *event)
+void ImageView::mouseReleaseEvent(QMouseEvent* event)
 {
     event->accept();
 
@@ -72,7 +70,7 @@ void ImageView::mouseReleaseEvent(QMouseEvent *event)
     m_IsMoveButtonPressed = false;
 }
 
-void ImageView::wheelEvent(QWheelEvent *event)
+void ImageView::wheelEvent(QWheelEvent* event)
 {
     if (!(event->modifiers() & Qt::ControlModifier)) {
         QGraphicsView::wheelEvent(event);
@@ -101,7 +99,8 @@ void ImageView::wheelEvent(QWheelEvent *event)
     emit zoomChanged(m_CurrentZoom);
 }
 
-void ImageView::SetImage(const Image* img) {
+void ImageView::SetImage(const Image* img)
+{
     if (m_Image) {
         m_Scene->removeItem(m_Image.get());
     }
@@ -116,7 +115,7 @@ void ImageView::SetImage(const Image* img) {
 
     auto image = std::make_unique<QImage>(img->ToDataRGBA32FPx4(), img->GetWidth(), img->GetHeight(), QImage::Format_RGBA32FPx4);
     QPixmap pixmap = QPixmap::fromImage(*image);
-    m_Image = std::unique_ptr<QGraphicsItem>{m_Scene->addPixmap(pixmap)};
+    m_Image = std::unique_ptr<QGraphicsItem>{ m_Scene->addPixmap(pixmap) };
     emit imageSizeChanged(QSize(img->GetWidth(), img->GetHeight()));
 
     CenterOnCurrentImage();

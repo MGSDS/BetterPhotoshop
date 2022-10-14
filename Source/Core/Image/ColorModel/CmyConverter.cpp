@@ -9,7 +9,6 @@ void CmyConverter::ConvertPixelToRGB(Pixel& pixel)
     }
 }
 
-
 void CmyConverter::ConvertPixelFromRGB(Pixel& pixel)
 {
     ConvertPixelToRGB(pixel); // symmetric

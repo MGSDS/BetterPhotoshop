@@ -3,8 +3,8 @@
 #include <Core/Image/Image.hpp>
 #include <Core/Image/ImageFormat.hpp>
 
-#include <ostream>
 #include <memory>
+#include <ostream>
 
 class ImageWriter
 {

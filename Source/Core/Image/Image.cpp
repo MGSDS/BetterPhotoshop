@@ -5,8 +5,8 @@
 #include <Core/Image/Reader/ImageReader.hpp>
 #include <Core/Image/Writer/ImageWriter.hpp>
 
-#include <fstream>
 #include <exception>
+#include <fstream>
 
 Pixel::Pixel(float ch0, float ch1, float ch2, float ch3)
 {
@@ -114,11 +114,13 @@ void Image::WriteToFile(const std::string& fileName, ImageFormat format) const
     writer->Write(*this, ofs);
 }
 
-uint8_t* Image::ToDataRGBA32FPx4() {
+uint8_t* Image::ToDataRGBA32FPx4()
+{
     return reinterpret_cast<uint8_t*>(&m_Pixels[0]);
 }
 
-const uint8_t* Image::ToDataRGBA32FPx4() const {
+const uint8_t* Image::ToDataRGBA32FPx4() const
+{
     return reinterpret_cast<const uint8_t*>(&m_Pixels[0]);
 }
 

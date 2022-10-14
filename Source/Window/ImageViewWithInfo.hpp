@@ -2,9 +2,9 @@
 
 #include <Window/ImageView.hpp>
 
-#include <QWidget>
 #include <QLabel>
 #include <QLayout>
+#include <QWidget>
 
 class ImageViewWithInfo : public QWidget
 {

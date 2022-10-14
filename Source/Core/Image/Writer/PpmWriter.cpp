@@ -1,7 +1,6 @@
 #include "PpmWriter.hpp"
 #include "Core/Utils/Utils.hpp"
 
-
 void PpmWriter::WriteHeader(const Image& image, std::ostream& os)
 {
     os << "P6\n";
@@ -12,8 +11,7 @@ void PpmWriter::WriteHeader(const Image& image, std::ostream& os)
 void PpmWriter::Write(const Image& image, std::ostream& os) const
 {
     WriteHeader(image, os);
-    for (size_t i = 0; i < image.GetPixelsCount(); i++)
-    {
+    for (size_t i = 0; i < image.GetPixelsCount(); i++) {
         auto& pixel = image.PixelAt(i);
         for (size_t j = 0; j < 3; j++) {
             os.put(Utils::ByteFromNorm(pixel.channels[j]));

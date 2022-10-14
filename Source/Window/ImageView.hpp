@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QWidget>
+#include "Core/Image/Image.hpp"
+#include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QGraphicsItem>
-#include "Core/Image/Image.hpp"
+#include <QWidget>
 
 class ImageView : public QGraphicsView
 {
@@ -19,10 +19,10 @@ private:
     void CenterOnCurrentImage();
 
 private slots:
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
-    void wheelEvent(QWheelEvent *event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 signals:
     void imageAppeared();

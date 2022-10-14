@@ -4,10 +4,10 @@
 
 #include <Core/Log.hpp>
 
-#include <QtWidgets>
-#include <QPixmap>
-#include <QFileDialog>
 #include <QDialog>
+#include <QFileDialog>
+#include <QPixmap>
+#include <QtWidgets>
 
 #include <string>
 
@@ -29,7 +29,7 @@ MainWindow::MainWindow(const WindowSettings& settings)
 
     InitMenuBar();
     InitImageView();
-    InitImageFileFilters(); 
+    InitImageFileFilters();
 }
 
 void MainWindow::InitMenuBar()
@@ -37,7 +37,7 @@ void MainWindow::InitMenuBar()
     auto* menu = menuBar();
 
     auto* fileMenu = menu->addMenu("File");
-    
+
     auto* newAction = fileMenu->addAction("New");
     newAction->setShortcut(QKeySequence::New);
     connect(newAction, &QAction::triggered, this, &MainWindow::OnFileNewAction);
@@ -50,7 +50,7 @@ void MainWindow::InitMenuBar()
     m_SaveAction->setShortcut(QKeySequence::Save);
     m_SaveAction->setEnabled(false);
     connect(m_SaveAction, &QAction::triggered, this, &MainWindow::OnFileSaveAction);
-    
+
     m_SaveAsAction = fileMenu->addAction("Save As");
     m_SaveAsAction->setShortcut(QKeySequence::SaveAs);
     m_SaveAsAction->setEnabled(false);
@@ -237,7 +237,6 @@ void MainWindow::SetImagePath(const std::string& newPath)
     auto imageName = m_ImagePath.empty() ? NEW_IMAGE_DEFAULT_NAME : m_ImagePath;
     setWindowTitle((m_BaseTitle + " - " + imageName).c_str());
 }
-
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {

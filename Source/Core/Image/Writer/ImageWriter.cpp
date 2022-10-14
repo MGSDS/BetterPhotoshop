@@ -6,8 +6,8 @@
 std::unique_ptr<ImageWriter> ImageWriter::GetWriter(ImageFormat format)
 {
     switch (format) {
-        case ImageFormat::Pgm:  return std::make_unique<PgmWriter>();
-        case ImageFormat::Ppm:  return std::make_unique<PpmWriter>();
+        case ImageFormat::Pgm: return std::make_unique<PgmWriter>();
+        case ImageFormat::Ppm: return std::make_unique<PpmWriter>();
         default: break;
     }
 

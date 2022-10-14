@@ -1,10 +1,10 @@
 #include "ImageReader.hpp"
 
-#include <Core/Log.hpp>
-#include <Core/Utils/Utils.hpp>
+#include <Core/Image/ImageFormat.hpp>
 #include <Core/Image/Reader/PgmReader.hpp>
 #include <Core/Image/Reader/PpmReader.hpp>
-#include <Core/Image/ImageFormat.hpp>
+#include <Core/Log.hpp>
+#include <Core/Utils/Utils.hpp>
 
 #include <unordered_map>
 #include <vector>
@@ -22,7 +22,7 @@ static std::unordered_map<ImageFormat, std::vector<uint8_t>> IMAGE_FORMAT_TO_FIL
 std::unique_ptr<ImageReader> ImageReader::GetReader(const std::string& fileExtension)
 {
     std::string extension = Utils::ToLower(fileExtension);
- 
+
     auto format = EXTENSION_TO_IMAGE_FORMAT.find(extension);
     if (format == EXTENSION_TO_IMAGE_FORMAT.end()) {
         return nullptr;
@@ -31,7 +31,7 @@ std::unique_ptr<ImageReader> ImageReader::GetReader(const std::string& fileExten
     return GetReader(format->second);
 }
 
-std::unique_ptr<ImageReader> ImageReader::GetReader(const std::vector<uint8_t>& data) 
+std::unique_ptr<ImageReader> ImageReader::GetReader(const std::vector<uint8_t>& data)
 {
     if (auto imageFormat = GetImageFormat(data)) {
         return GetReader(*imageFormat);
@@ -42,9 +42,9 @@ std::unique_ptr<ImageReader> ImageReader::GetReader(const std::vector<uint8_t>& 
 
 std::unique_ptr<ImageReader> ImageReader::GetReader(ImageFormat format)
 {
-    switch(format) {
-        case ImageFormat::Pgm:  return std::make_unique<PgmReader>();
-        case ImageFormat::Ppm:  return std::make_unique<PpmReader>();
+    switch (format) {
+        case ImageFormat::Pgm: return std::make_unique<PgmReader>();
+        case ImageFormat::Ppm: return std::make_unique<PpmReader>();
         default: break;
     }
 

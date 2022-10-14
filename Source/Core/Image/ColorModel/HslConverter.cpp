@@ -1,8 +1,8 @@
 #include "HslConverter.hpp"
 
 #include <algorithm>
-#include <memory>
 #include <cmath>
+#include <memory>
 
 const float NORM_SIXTY = (60.0f / 360.0f);
 
@@ -49,15 +49,14 @@ void HslConverter::ConvertPixelToRGB(Pixel& pixel)
     }
 }
 
-
 void HslConverter::ConvertPixelFromRGB(Pixel& pixel)
 {
     float R = pixel.channels[0];
     float G = pixel.channels[1];
     float B = pixel.channels[2];
 
-    float minX = std::min({R, G, B});
-    float maxX = std::max({R, G, B});
+    float minX = std::min({ R, G, B });
+    float maxX = std::max({ R, G, B });
 
     float V = maxX;
     float C = maxX - minX;

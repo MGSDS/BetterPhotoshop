@@ -1,6 +1,6 @@
 #include "PgmReader.hpp"
-#include "Core/Utils/Utils.hpp"
 #include "Core/Log.hpp"
+#include "Core/Utils/Utils.hpp"
 
 #include <memory>
 
@@ -30,7 +30,7 @@ PgmHeader PgmReader::ReadHeader(const std::vector<uint8_t>& data)
 
     size_t pos = 0;
     while (pos < data.size()) {
-        char curr = (char) data[pos];
+        char curr = (char)data[pos];
         if (readingMagic && curr == '\n') {
             if (pos != 2 || data[0] != 'P' || data[1] != '5') {
                 Log::Error("Read PGM image: invalid PGM header at pos {}. Header data must start with 'P6' followed by '\\n'.", pos);
@@ -86,14 +86,12 @@ std::unique_ptr<Image> PgmReader::ReadImage(const std::vector<uint8_t>& data)
 {
     PgmHeader header = ReadHeader(data);
     Log::Info(
-            "Reading PGM image: read PGM header. Width = {}, height = {}, maxGreyValue = {}, dataOffset = {}.",
-            header.width,header.height, header.maxChannelValue, header.dataOffset
-    );
+        "Reading PGM image: read PGM header. Width = {}, height = {}, maxGreyValue = {}, dataOffset = {}.",
+        header.width, header.height, header.maxChannelValue, header.dataOffset);
     if (data.size() - header.dataOffset - 1 != header.height * header.width) {
         Log::Error(
-                "Reading PGM image: invalid PGM format data. Expected size: {}, actual size: {}.",
-                header.height * header.width, data.size() - header.dataOffset - 1
-        );
+            "Reading PGM image: invalid PGM format data. Expected size: {}, actual size: {}.",
+            header.height * header.width, data.size() - header.dataOffset - 1);
         ThrowInvalidPgmFormatDataError();
     }
 
@@ -101,10 +99,9 @@ std::unique_ptr<Image> PgmReader::ReadImage(const std::vector<uint8_t>& data)
     for (size_t i = header.dataOffset + 1; i < data.size(); i++) {
         if (data[i] > header.maxChannelValue) {
             Log::Error(
-                    "Reading PGM image: invalid PGM format data. Byte value {} is more than header max grey value {}.",
-                    (int) data[i],
-                    header.maxChannelValue
-            );
+                "Reading PGM image: invalid PGM format data. Byte value {} is more than header max grey value {}.",
+                (int)data[i],
+                header.maxChannelValue);
             ThrowInvalidPgmFormatDataError();
         }
         float channelValue = Utils::NormByte(data[i], header.maxChannelValue);

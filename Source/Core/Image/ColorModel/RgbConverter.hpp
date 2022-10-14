@@ -7,7 +7,7 @@ class RgbConverter : public ColorModelConverter
 public:
     std::unique_ptr<Image> ToRGB(const Image& origin) override;
     std::unique_ptr<Image> FromRGB(const Image& origin) override;
-    
+
     ~RgbConverter() override = default;
 
 protected:

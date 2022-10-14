@@ -1,6 +1,6 @@
 #include "PpmReader.hpp"
-#include "Core/Utils/Utils.hpp"
 #include "Core/Log.hpp"
+#include "Core/Utils/Utils.hpp"
 
 #include <string>
 
@@ -27,7 +27,7 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
 
     size_t pos = 0;
     while (pos < data.size()) {
-        char curr = (char) data[pos];
+        char curr = (char)data[pos];
         if (readingMagic && curr == '\n') {
             if (pos != 2 || data[0] != 'P' || data[1] != '6') {
                 Log::Error("Reading PPM image: invalid PPM header at pos {}. Header data must start with 'P6' followed by '\\n'.", pos);
@@ -103,8 +103,7 @@ PpmHeader PpmReader::ReadHeader(const std::vector<uint8_t>& data)
         readingHeight ||
         readingMaxCh0Value ||
         readingMaxCh1Value ||
-        readingMaxCh2Value
-    ) {
+        readingMaxCh2Value) {
         Log::Error("Invalid PPM header at pos {}. End of header not reached.", pos);
         ThrowInvalidHeaderError(pos);
     }
@@ -117,17 +116,15 @@ std::unique_ptr<Image> PpmReader::ReadImage(const std::vector<uint8_t>& data)
 {
     PpmHeader header = PpmReader::ReadHeader(data);
     Log::Info(
-            "Reading PPM image: read PPM header. Width = {}, height = {}, maxCh0Value = {}, maxCh1Value = {}, maxCh2Value = {}, dataOffset = {}",
-            header.width,header.height, header.maxCh0Value, header.maxCh1Value, header.maxCh2Value, header.dataOffset
-    );
+        "Reading PPM image: read PPM header. Width = {}, height = {}, maxCh0Value = {}, maxCh1Value = {}, maxCh2Value = {}, dataOffset = {}",
+        header.width, header.height, header.maxCh0Value, header.maxCh1Value, header.maxCh2Value, header.dataOffset);
 
     size_t expectedSize = header.height * header.width * 3;
 
     if (data.size() - header.dataOffset - 1 != expectedSize) {
         Log::Error(
-                "Reading PPM image: invalid PPM format data. Expected size: {}, actual size: {}.",
-                expectedSize, data.size() - header.dataOffset
-        );
+            "Reading PPM image: invalid PPM format data. Expected size: {}, actual size: {}.",
+            expectedSize, data.size() - header.dataOffset);
         ThrowInvalidPpmFormatDataError();
     }
 

@@ -2,7 +2,6 @@
 
 #include "Core/Image/Writer/ImageWriter.hpp"
 
-
 class PpmWriter : public ImageWriter
 {
 public:

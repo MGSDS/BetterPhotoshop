@@ -1,7 +1,7 @@
 #include "ColorModelConverter.hpp"
 
-#include "RgbConverter.hpp"
 #include "CmyConverter.hpp"
+#include "RgbConverter.hpp"
 
 #include <memory>
 #include <stdexcept>
