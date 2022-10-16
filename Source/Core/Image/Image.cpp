@@ -109,7 +109,7 @@ LoadedImageData Image::FromFile(const std::string& fileName)
 
 void Image::WriteToFile(const std::string& fileName, ImageFormat format) const
 {
-    std::ofstream ofs(fileName, std::ofstream::out);
+    std::ofstream ofs(fileName, std::ios::binary);
     auto writer = ImageWriter::GetWriter(format);
     writer->Write(*this, ofs);
 }
