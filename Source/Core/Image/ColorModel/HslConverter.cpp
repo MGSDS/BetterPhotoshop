@@ -11,10 +11,10 @@ void HslConverter::ConvertPixelToRGB(Pixel& pixel)
     float H = pixel.channels[0];
     float S = pixel.channels[1];
     float L = pixel.channels[2];
-    float C = (1.0f - abs(2 * L - 1.0f)) * S; // chroma
+    float C = (1.0f - std::abs(2.0f * L - 1.0f)) * S; // chroma
 
     float H1 = H / NORM_SIXTY;
-    float X = C * (1.0f - abs(static_cast<float>(fmod(H1, 2.0)) - 1.0f)); // intermediate
+    float X = C * (1.0f - std::abs(std::fmod(H1, 2.0f) - 1.0f)); // intermediate
 
     if (0.0f <= H1 && H1 < 1.0f) {
         pixel.channels[0] = C;
@@ -71,13 +71,12 @@ void HslConverter::ConvertPixelFromRGB(Pixel& pixel)
     } else if (V == G) {
         H *= (2.0f + (B - R) / C);
     } else if (V == B) {
-        H *= (4.0 + (R - G) / C);
+        H *= (4.0f + (R - G) / C);
     }
 
-    float S = 0.0f;
-    if (0.0f < L && L < 1.0f) {
-        S = (V - L) / std::min(L, 1 - L);
-    }
+    float S = 1;
+    if (L != 1.0f)
+        S = C / (1 - std::abs(1.0f - 2.0f * L));
 
     pixel.channels[0] = H;
     pixel.channels[1] = S;
