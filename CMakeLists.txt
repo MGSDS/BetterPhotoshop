@@ -25,7 +25,7 @@ find_package(Qt6 REQUIRED COMPONENTS
     Widgets
 )
 
-add_executable(Photoshop)
+add_executable(Photoshop Source/Core/Image/ColorModel/HsvConverter.cpp Source/Core/Image/ColorModel/HsvConverter.hpp)
 add_subdirectory(Resources)
 add_subdirectory(Source)
 
