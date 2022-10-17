@@ -15,7 +15,8 @@ void HsvConverter::ConvertPixelFromRGB(Pixel &pixel) {
 
     float H = 0.0f;
 
-    if (max == R  && G >= B)
+    if (delta == 0) { }
+    else if(max == R  && G >= B)
         H = NORM_SIXTY * (G - B) / delta;
     else if (max == R  && G < B)
         H = NORM_SIXTY * (G - B) / delta + 1;
@@ -88,8 +89,8 @@ void HsvConverter::ConvertPixelToRGB(Pixel &pixel) {
             break;
     }
 
-    pixel.channels[0] = R * .01f;
-    pixel.channels[1] = S * .01f;
-    pixel.channels[2] = V * .01f;
+    pixel.channels[0] = R;
+    pixel.channels[1] = G;
+    pixel.channels[2] = B;
 
 }
