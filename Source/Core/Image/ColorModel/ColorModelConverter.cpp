@@ -1,6 +1,7 @@
 #include "ColorModelConverter.hpp"
 
 #include "CmyConverter.hpp"
+#include "HslConverter.hpp"
 #include "RgbConverter.hpp"
 
 #include <memory>
@@ -11,6 +12,7 @@ std::unique_ptr<ColorModelConverter> ColorModelConverter::GetConverter(ColorMode
     switch (colorModel) {
         case ColorModel::RGB: return std::make_unique<RgbConverter>();
         case ColorModel::CMY: return std::make_unique<CmyConverter>();
+        case ColorModel::HSL: return std::make_unique<HslConverter>();
         default: throw std::runtime_error("Unhandled color model");
     }
 }

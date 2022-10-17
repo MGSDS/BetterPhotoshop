@@ -1,8 +1,10 @@
 #pragma once
 
+#include <Core/Image/ColorModel/ColorModelConverter.hpp>
 #include <Window/ImageViewWithInfo.hpp>
 
 #include <QAction>
+#include <QDialog>
 #include <QMainWindow>
 #include <QString>
 
@@ -54,15 +56,19 @@ private:
     void InitImageFileFilters();
 
     void SetImage(std::unique_ptr<Image>&& image);
-    bool TrySaveCurrentImage(const std::string& filename, ImageFormat format);
+    bool TrySaveImage(const Image& image, const std::string& filename, ImageFormat format);
+    bool TrySaveRgbImage(const Image& image, const std::string& filename, ImageFormat format);
     void SetImagePath(const std::string& newPath);
 
+    std::unique_ptr<Image> ConvertImageToNewModel(const Image& image, ColorModel currentModel, ColorModel newModel);
+
 private slots:
-    void resizeEvent(QResizeEvent* event) override;
     void OnFileNewAction();
     void OnFileOpenAction();
     void OnFileSaveAction();
     void OnFileSaveAsAction();
+
+    void OnImageColorModelActionSelected(ColorModel selectedColorModel);
 
 private:
     std::unique_ptr<ImageViewWithInfo> m_ImageView = nullptr;
@@ -75,4 +81,7 @@ private:
     std::string m_ImagePath = "";
     ImageFormat m_LastSelectedSaveFormat = ImageFormat::Pgm;
     QString m_ImageFileFilters = "";
+
+    ColorModel m_SelectedColorModel;
+    QAction* m_DefaultColorModelAction = nullptr;
 };

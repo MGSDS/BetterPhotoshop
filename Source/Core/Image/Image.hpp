@@ -34,9 +34,11 @@ public:
 
     uint8_t* ToDataRGBA32FPx4();
     const uint8_t* ToDataRGBA32FPx4() const;
+
     size_t GetWidth() const;
     size_t GetHeight() const;
     size_t GetPixelsCount() const;
+
     Pixel& PixelAt(size_t row, size_t col);
     const Pixel& PixelAt(size_t row, size_t col) const;
     Pixel& PixelAt(size_t index);

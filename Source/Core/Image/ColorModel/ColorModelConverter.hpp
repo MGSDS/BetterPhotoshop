@@ -2,11 +2,20 @@
 
 #include "Core/Image/Image.hpp"
 
+#include <memory>
+#include <unordered_map>
+
 enum ColorModel
 {
     RGB = 0,
     CMY,
     HSL
+};
+
+static const std::unordered_map<std::string, ColorModel> STRING_TO_ENUM_COLOR_MODEL_MAPPING = {
+    { "RGB", ColorModel::RGB },
+    { "CMY", ColorModel::CMY },
+    { "HSL", ColorModel::HSL },
 };
 
 class ColorModelConverter
