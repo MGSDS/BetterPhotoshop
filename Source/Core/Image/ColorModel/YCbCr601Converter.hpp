@@ -1,13 +1,8 @@
 #pragma once
 
-#include "ColorModelConverter.hpp"
+#include "YCbCrConverter.hpp"
 
-class YCbCr601Converter : public ColorModelConverter {
+class YCbCr601Converter : public YCbCrConverter{
 public:
-    ~YCbCr601Converter() override = default;
-
-protected:
-    void ConvertPixelToRGB(Pixel& pixel) override;
-    void ConvertPixelFromRGB(Pixel& pixel) override;
+    YCbCr601Converter();
 };
-
