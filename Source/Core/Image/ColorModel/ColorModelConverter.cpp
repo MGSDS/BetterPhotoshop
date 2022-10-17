@@ -5,6 +5,7 @@
 #include "RgbConverter.hpp"
 #include "HsvConverter.hpp"
 #include "YCbCr601Converter.hpp"
+#include "YCoCgConverter.hpp"
 
 #include <memory>
 #include <stdexcept>
@@ -17,6 +18,7 @@ std::unique_ptr<ColorModelConverter> ColorModelConverter::GetConverter(ColorMode
         case ColorModel::HSL: return std::make_unique<HslConverter>();
         case ColorModel::HSV: return std::make_unique<HsvConverter>();
         case ColorModel::YCbCr601: return std::make_unique<YCbCr601Converter>();
+        case ColorModel::YCoCg: return std::make_unique<YCoCgConverter>();
         default: throw std::runtime_error("Unhandled color model");
     }
 }

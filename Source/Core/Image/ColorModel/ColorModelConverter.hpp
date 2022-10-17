@@ -12,6 +12,7 @@ enum ColorModel
     HSL,
     HSV,
     YCbCr601,
+    YCoCg,
 };
 
 static const std::unordered_map<std::string, ColorModel> STRING_TO_ENUM_COLOR_MODEL_MAPPING = {
@@ -20,6 +21,7 @@ static const std::unordered_map<std::string, ColorModel> STRING_TO_ENUM_COLOR_MO
     { "HSL", ColorModel::HSL },
     { "HSV", ColorModel::HSV },
     { "YCbCr.601", ColorModel::YCbCr601 },
+    { "YCoCg", ColorModel::YCoCg },
 };
 
 class ColorModelConverter
