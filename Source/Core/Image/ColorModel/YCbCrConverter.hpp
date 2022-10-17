@@ -2,7 +2,8 @@
 
 #include "ColorModelConverter.hpp"
 
-class YCbCrConverter : public ColorModelConverter {
+class YCbCrConverter : public ColorModelConverter
+{
 public:
     YCbCrConverter(float Kb, float Kr);
     ~YCbCrConverter() override = default;
@@ -13,4 +14,3 @@ protected:
     float Kb;
     float Kr;
 };
-

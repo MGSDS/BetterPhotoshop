@@ -2,7 +2,8 @@
 
 #include "ColorModelConverter.hpp"
 
-class HsvConverter : public ColorModelConverter {
+class HsvConverter : public ColorModelConverter
+{
 public:
     ~HsvConverter() override = default;
 

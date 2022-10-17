@@ -2,11 +2,11 @@
 
 #include "CmyConverter.hpp"
 #include "HslConverter.hpp"
-#include "RgbConverter.hpp"
 #include "HsvConverter.hpp"
-#include "YCoCgConverter.hpp"
+#include "RgbConverter.hpp"
 #include "YCbCr601Converter.hpp"
 #include "YCbCr709Converter.hpp"
+#include "YCoCgConverter.hpp"
 
 #include <memory>
 #include <stdexcept>

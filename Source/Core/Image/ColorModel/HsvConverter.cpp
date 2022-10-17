@@ -4,7 +4,8 @@
 
 const float NORM_SIXTY = (60.0f / 360.0f);
 
-void HsvConverter::ConvertPixelFromRGB(Pixel &pixel) {
+void HsvConverter::ConvertPixelFromRGB(Pixel& pixel)
+{
     float R = pixel.channels[0];
     float G = pixel.channels[1];
     float B = pixel.channels[2];
@@ -15,15 +16,15 @@ void HsvConverter::ConvertPixelFromRGB(Pixel &pixel) {
 
     float H = 0.0f;
 
-    if (delta == 0) { }
-    else if(max == R  && G >= B)
+    if (delta == 0) {
+    } else if (max == R && G >= B)
         H = NORM_SIXTY * (G - B) / delta;
-    else if (max == R  && G < B)
+    else if (max == R && G < B)
         H = NORM_SIXTY * (G - B) / delta + 1;
     else if (max == G)
-        H = NORM_SIXTY * (B - R) / delta + 1.0f/3.0f;
+        H = NORM_SIXTY * (B - R) / delta + 1.0f / 3.0f;
     else if (max == B)
-        H = NORM_SIXTY * (R - G) / delta + 2.0f/3.0f;
+        H = NORM_SIXTY * (R - G) / delta + 2.0f / 3.0f;
 
     float S = 0.0f;
 
@@ -37,7 +38,8 @@ void HsvConverter::ConvertPixelFromRGB(Pixel &pixel) {
     pixel.channels[2] = V;
 }
 
-void HsvConverter::ConvertPixelToRGB(Pixel &pixel) {
+void HsvConverter::ConvertPixelToRGB(Pixel& pixel)
+{
     float H = pixel.channels[0];
     float S = pixel.channels[1];
     float V = pixel.channels[2];
@@ -54,7 +56,6 @@ void HsvConverter::ConvertPixelToRGB(Pixel &pixel) {
     float R = 0;
     float G = 0;
     float B = 0;
-
 
     switch (Hi) {
         case 0:
@@ -92,5 +93,4 @@ void HsvConverter::ConvertPixelToRGB(Pixel &pixel) {
     pixel.channels[0] = R;
     pixel.channels[1] = G;
     pixel.channels[2] = B;
-
 }

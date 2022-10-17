@@ -1,13 +1,14 @@
 #include "YCoCgConverter.hpp"
 
-void YCoCgConverter::ConvertPixelFromRGB(Pixel &pixel) {
+void YCoCgConverter::ConvertPixelFromRGB(Pixel& pixel)
+{
     float R = pixel.channels[0];
     float G = pixel.channels[1];
     float B = pixel.channels[2];
 
-    float Y = 0.25f * R + 0.5f * G + 0.25f * B;     // [0, 1]
-    float Co = 0.5f * R - 0.5f * B;                 // [-0.5, 0.5]
-    float Cg = - 0.25f * R + 0.5f * G - 0.25f * B;  // [-0.5, 0.5]
+    float Y = 0.25f * R + 0.5f * G + 0.25f * B;   // [0, 1]
+    float Co = 0.5f * R - 0.5f * B;               // [-0.5, 0.5]
+    float Cg = -0.25f * R + 0.5f * G - 0.25f * B; // [-0.5, 0.5]
 
     float normCo = Co + 0.5f; // [0, 1]
     float normCg = Cg + 0.5f; // [0, 1]
@@ -15,10 +16,10 @@ void YCoCgConverter::ConvertPixelFromRGB(Pixel &pixel) {
     pixel.channels[0] = Y;
     pixel.channels[1] = normCo;
     pixel.channels[2] = normCg;
-
 }
 
-void YCoCgConverter::ConvertPixelToRGB(Pixel &pixel) {
+void YCoCgConverter::ConvertPixelToRGB(Pixel& pixel)
+{
     float Y = pixel.channels[0];
     float normCo = pixel.channels[1];
     float normCg = pixel.channels[2];

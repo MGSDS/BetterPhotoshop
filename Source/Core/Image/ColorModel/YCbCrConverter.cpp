@@ -1,6 +1,7 @@
 #include "YCbCrConverter.hpp"
 
-void YCbCrConverter::ConvertPixelToRGB(Pixel &pixel) {
+void YCbCrConverter::ConvertPixelToRGB(Pixel& pixel)
+{
     float Y = pixel.channels[0] * 255.0f;
     float Cb = pixel.channels[1] * 255.0f;
     float Cr = pixel.channels[2] * 255.0f;
@@ -16,10 +17,10 @@ void YCbCrConverter::ConvertPixelToRGB(Pixel &pixel) {
     pixel.channels[0] = R;
     pixel.channels[1] = G;
     pixel.channels[2] = B;
-
 }
 
-void YCbCrConverter::ConvertPixelFromRGB(Pixel &pixel) {
+void YCbCrConverter::ConvertPixelFromRGB(Pixel& pixel)
+{
     float R = pixel.channels[0];
     float G = pixel.channels[1];
     float B = pixel.channels[2];
@@ -37,6 +38,7 @@ void YCbCrConverter::ConvertPixelFromRGB(Pixel &pixel) {
     pixel.channels[2] = Cr / 255.0f;
 }
 
-YCbCrConverter::YCbCrConverter(float Kb, float Kr) : Kb(Kb), Kr(Kr) {
-
+YCbCrConverter::YCbCrConverter(float Kb, float Kr)
+    : Kb(Kb), Kr(Kr)
+{
 }
