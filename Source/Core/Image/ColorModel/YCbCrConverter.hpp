@@ -11,6 +11,8 @@ public:
 protected:
     void ConvertPixelToRGB(Pixel& pixel) override;
     void ConvertPixelFromRGB(Pixel& pixel) override;
-    float Kb;
-    float Kr;
+
+private:
+    float m_Kb;
+    float m_Kr;
 };

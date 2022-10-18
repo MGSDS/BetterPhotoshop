@@ -10,9 +10,9 @@ void YCbCrConverter::ConvertPixelToRGB(Pixel& pixel)
     float Pb = (Cb - 128.0f) / 224.0f;
     float Pr = (Cr - 128.0f) / 224.0f;
 
-    float R = 2.0f * Pr * (1 - Kr) + Y;
-    float B = 2.0f * Pb * (1 - Kb) + Y;
-    float G = (Y - Kr * R - Kb * B) / (1 - Kr - Kb);
+    float R = 2.0f * Pr * (1 - m_Kr) + Y;
+    float B = 2.0f * Pb * (1 - m_Kb) + Y;
+    float G = (Y - m_Kr * R - m_Kb * B) / (1 - m_Kr - m_Kb);
 
     pixel.channels[0] = R;
     pixel.channels[1] = G;
@@ -25,9 +25,9 @@ void YCbCrConverter::ConvertPixelFromRGB(Pixel& pixel)
     float G = pixel.channels[1];
     float B = pixel.channels[2];
 
-    float Y = Kr * R + (1 - Kr - Kb) * G + Kb * B;
-    float Pb = 0.5f * (B - Y) / (1 - Kb);
-    float Pr = 0.5f * (R - Y) / (1 - Kr);
+    float Y = m_Kr * R + (1 - m_Kr - m_Kb) * G + m_Kb * B;
+    float Pb = 0.5f * (B - Y) / (1 - m_Kb);
+    float Pr = 0.5f * (R - Y) / (1 - m_Kr);
 
     Y = 16.0f + 219.0f * Y;
     float Cb = 128.0f + 224.0f * Pb;
@@ -39,6 +39,6 @@ void YCbCrConverter::ConvertPixelFromRGB(Pixel& pixel)
 }
 
 YCbCrConverter::YCbCrConverter(float Kb, float Kr)
-    : Kb(Kb), Kr(Kr)
+    : m_Kb(Kb), m_Kr(Kr)
 {
 }
