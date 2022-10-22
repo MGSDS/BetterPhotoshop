@@ -28,6 +28,10 @@ ImageView::ImageView(QWidget* parent)
 
 void ImageView::mouseMoveEvent(QMouseEvent* event)
 {
+    if (!m_Image) {
+        return;
+    }
+
     const auto newPos = mapToScene(event->pos());
     emit cursorPosChanged(newPos);
 
@@ -48,6 +52,10 @@ void ImageView::mouseMoveEvent(QMouseEvent* event)
 
 void ImageView::mousePressEvent(QMouseEvent* event)
 {
+    if (!m_Image) {
+        return;
+    }
+
     event->accept();
 
     if (event->button() != MOVE_BUTTON) {
@@ -61,6 +69,10 @@ void ImageView::mousePressEvent(QMouseEvent* event)
 
 void ImageView::mouseReleaseEvent(QMouseEvent* event)
 {
+    if (!m_Image) {
+        return;
+    }
+
     event->accept();
 
     if (event->button() != MOVE_BUTTON) {
@@ -72,6 +84,10 @@ void ImageView::mouseReleaseEvent(QMouseEvent* event)
 
 void ImageView::wheelEvent(QWheelEvent* event)
 {
+    if (!m_Image) {
+        return;
+    }
+
     if (!(event->modifiers() & Qt::ControlModifier)) {
         QGraphicsView::wheelEvent(event);
         return;
@@ -107,7 +123,6 @@ void ImageView::SetImage(const Image* img)
 
     if (!img) {
         m_Image = nullptr;
-        emit imageDisappeared();
         return;
     }
 
@@ -121,7 +136,6 @@ void ImageView::SetImage(const Image* img)
     CenterOnCurrentImage();
 
     if (imageHasAppeared) {
-        emit imageAppeared();
         emit zoomChanged(1.0);
         emit cursorPosChanged(mapToScene(cursor().pos()));
     }

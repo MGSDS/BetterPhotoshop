@@ -25,8 +25,6 @@ private slots:
     void wheelEvent(QWheelEvent* event) override;
 
 signals:
-    void imageAppeared();
-    void imageDisappeared();
     void imageSizeChanged(const QSize& newSize);
     void cursorPosChanged(const QPointF& newPos);
     void zoomChanged(float newZoom);

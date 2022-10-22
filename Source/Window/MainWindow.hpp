@@ -51,6 +51,7 @@ public:
     ~MainWindow() override = default;
 
 private:
+    void InitWindow(const WindowSettings& settings);
     void InitMenuBar();
     void InitImageView();
     void InitImageFileFilters();
@@ -59,6 +60,8 @@ private:
     bool TrySaveImage(const Image& image, const std::string& filename, ImageFormat format);
     bool TrySaveRgbImage(const Image& image, const std::string& filename, ImageFormat format);
     void SetImagePath(const std::string& newPath);
+
+    void UpdateColorModelText(ColorModel colorModel);
 
     std::unique_ptr<Image> ConvertImageToNewModel(const Image& image, ColorModel currentModel, ColorModel newModel);
 

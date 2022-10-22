@@ -18,21 +18,31 @@ ImageViewWithInfo::ImageViewWithInfo(QWidget* parent, QObject* sceneParent)
     , m_SizeLabel(new QLabel(this))
     , m_CoordsLabel(new QLabel(this))
     , m_ZoomLabel(new QLabel(this))
+    , m_ColorModelLabel(new QLabel(this))
 {
     m_LabelsLayout = new QHBoxLayout();
 
     m_SizeLabel->setMinimumWidth(80);
     m_CoordsLabel->setMinimumWidth(80);
     m_ZoomLabel->setMinimumWidth(50);
+    m_ColorModelLabel->setMinimumWidth(80);
 
-    std::vector<QLabel*> labels = { m_SizeLabel, m_CoordsLabel, m_ZoomLabel };
-    for (auto* label : labels) {
+    std::vector<QLabel*> leftLabels = { m_SizeLabel, m_CoordsLabel, m_ZoomLabel };
+    for (auto* label : leftLabels) {
         label->setAlignment(Qt::AlignCenter);
         m_LabelsLayout->addWidget(CreateLineSeparator(this));
         m_LabelsLayout->addWidget(label);
     }
+
     m_LabelsLayout->addWidget(CreateLineSeparator(this));
     m_LabelsLayout->addStretch();
+
+    std::vector<QLabel*> rightLabels = { m_ColorModelLabel };
+    for (auto* label : rightLabels) {
+        label->setAlignment(Qt::AlignCenter);
+        m_LabelsLayout->addWidget(CreateLineSeparator(this));
+        m_LabelsLayout->addWidget(label);
+    }
 
     m_MainLayout = new QVBoxLayout();
     m_MainLayout->addWidget(m_ImageView);
@@ -40,36 +50,23 @@ ImageViewWithInfo::ImageViewWithInfo(QWidget* parent, QObject* sceneParent)
 
     setLayout(m_MainLayout);
 
-    connect(m_ImageView, &ImageView::imageAppeared, this, &ImageViewWithInfo::OnImageAppeared);
-    connect(m_ImageView, &ImageView::imageDisappeared, this, &ImageViewWithInfo::OnImageDisappeared);
     connect(m_ImageView, &ImageView::imageSizeChanged, this, &ImageViewWithInfo::OnImageSizeChanged);
     connect(m_ImageView, &ImageView::cursorPosChanged, this, &ImageViewWithInfo::OnCursorPosChanged);
     connect(m_ImageView, &ImageView::zoomChanged, this, &ImageViewWithInfo::OnZoomChanged);
 }
 
-ImageViewWithInfo::~ImageViewWithInfo()
-{
-    if (!m_LabelsLayout->parent()) {
-        delete m_LabelsLayout;
-    }
-}
-
 void ImageViewWithInfo::SetImage(const Image* image)
 {
     m_ImageView->SetImage(image);
+
+    if (!image) {
+        ClearImageInfo();
+    }
 }
 
-void ImageViewWithInfo::OnImageAppeared()
+void ImageViewWithInfo::SetColorModelText(const QString& text)
 {
-}
-
-void ImageViewWithInfo::OnImageDisappeared()
-{
-    QString emptyString;
-
-    m_SizeLabel->setText(emptyString);
-    m_CoordsLabel->setText(emptyString);
-    m_ZoomLabel->setText(emptyString);
+    m_ColorModelLabel->setText(text);
 }
 
 void ImageViewWithInfo::OnImageSizeChanged(const QSize& newSize)
@@ -91,4 +88,12 @@ void ImageViewWithInfo::OnZoomChanged(float newZoom)
     std::stringstream ss;
     ss << static_cast<int>(100 * newZoom) << "%";
     m_ZoomLabel->setText(ss.str().c_str());
+}
+
+void ImageViewWithInfo::ClearImageInfo()
+{
+    std::vector<QLabel*> labels = { m_SizeLabel, m_CoordsLabel, m_ZoomLabel };
+    for (auto* label : labels) {
+        label->clear();
+    }
 }
