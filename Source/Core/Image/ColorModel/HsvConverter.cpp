@@ -12,28 +12,26 @@ void HsvConverter::ConvertPixelFromRGB(Pixel& pixel)
 
     float min = std::min({ R, G, B });
     float max = std::max({ R, G, B });
-    float delta = max - min;
+    float C = max - min;
 
     float H = 0.0f;
 
-    if (delta == 0) {
-    } else if (max == R && G >= B) {
-        H = NORM_SIXTY * (G - B) / delta;
-    } else if (max == R && G < B) {
-        H = NORM_SIXTY * (G - B) / delta + 1;
+    if (C == 0) {
+    } else if (max == R) {
+        H = NORM_SIXTY * ((G - B) / C);
     } else if (max == G) {
-        H = NORM_SIXTY * (B - R) / delta + 1.0f / 3.0f;
+        H = NORM_SIXTY * ((B - R) / C + 2.0f);
     } else if (max == B) {
-        H = NORM_SIXTY * (R - G) / delta + 2.0f / 3.0f;
+        H = NORM_SIXTY * ((R - G) / C + 4.0f);
     }
 
     float S = 0.0f;
 
-    if (max != 0) {
-        S = 1 - min / max;
-    }
-
     float V = max;
+
+    if (max != 0) {
+        S = C / V;
+    }
 
     pixel.channels[0] = H;
     pixel.channels[1] = S;
@@ -46,53 +44,46 @@ void HsvConverter::ConvertPixelToRGB(Pixel& pixel)
     float S = pixel.channels[1];
     float V = pixel.channels[2];
 
-    int Hi = static_cast<int>(std::floor(H * 6)) % 6;
 
-    float Vmin = (1 - S) * V;
+    float C = V * S;
 
-    float a = (V - Vmin) * std::fmod(H, 6.0f) / 6.0f;
+    float Hi = H / NORM_SIXTY;
 
-    float Vinc = Vmin + a;
-    float Vdec = V - a;
+    float X = C * (1 - std::abs(std::fmod(Hi, 2.0f) - 1));
 
     float R = 0;
     float G = 0;
     float B = 0;
 
-    switch (Hi) {
-        case 0:
-            R = V;
-            G = Vinc;
-            B = Vmin;
-            break;
-        case 1:
-            R = Vdec;
-            G = V;
-            B = Vinc;
-            break;
-        case 2:
-            R = Vmin;
-            G = V;
-            B = Vinc;
-            break;
-        case 3:
-            R = Vmin;
-            G = Vdec;
-            B = V;
-            break;
-        case 4:
-            R = Vinc;
-            G = Vmin;
-            B = Vdec;
-            break;
-        case 5:
-            R = V;
-            G = Vmin;
-            B = Vdec;
-            break;
+    if (0 <= Hi && Hi < 1) {
+        R = C;
+        G = X;
+        B = 0;
+    } else if (1 <= Hi && Hi < 2) {
+        R = X;
+        G = C;
+        B = 0;
+    } else if (2 <= Hi && Hi < 3) {
+        R = 0;
+        G = C;
+        B = X;
+    } else if (3 <= Hi && Hi < 4) {
+        R = 0;
+        G = X;
+        B = C;
+    } else if (4 <= Hi && Hi < 5) {
+        R = X;
+        G = 0;
+        B = C;
+    } else if (5 <= Hi && Hi < 6) {
+        R = C;
+        G = 0;
+        B = X;
     }
 
-    pixel.channels[0] = R;
-    pixel.channels[1] = G;
-    pixel.channels[2] = B;
+    float m = V - C;
+
+    pixel.channels[0] = R + m;
+    pixel.channels[1] = G + m;
+    pixel.channels[2] = B + m;
 }
