@@ -44,7 +44,6 @@ void HsvConverter::ConvertPixelToRGB(Pixel& pixel)
     float S = pixel.channels[1];
     float V = pixel.channels[2];
 
-
     float C = V * S;
 
     float Hi = H / NORM_SIXTY;
