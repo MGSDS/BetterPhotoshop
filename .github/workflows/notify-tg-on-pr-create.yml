@@ -1,0 +1,24 @@
+name: telegram message
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: send telegram message on pr
+        uses: appleboy/telegram-action@master
+        with:
+          to: -658878131
+          token: 5602157506:AAEXWgCnPCeLNifxGeStqpB9piDpdvrllTs
+          message: |
+            ${{ github.actor }} opened ${{ github.event.pull_request.type }} PR ${{ github.event.pull_request.number }}
+            
+            Title: ${{ github.event.pull_request.title }}
+            
+            Repository: ${{ github.repository }}
+            
+            See pull_request: https://github.com/${{ github.repository }}/pull/${{github.event.pull_request.number}}

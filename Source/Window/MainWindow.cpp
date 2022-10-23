@@ -3,17 +3,14 @@
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
 #include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
+#include <Window/Dialogs/NewImageDialog.hpp>
 
-#include <QDialog>
 #include <QFileDialog>
 #include <QPixmap>
 #include <QtWidgets>
 
 #include <string>
 
-QSize NEW_IMAGE_MIN_SIZE = { 1, 1 };
-QSize NEW_IMAGE_MAX_SIZE = { 32768, 32768 };
-QSize NEW_IMAGE_DEFAULT_SIZE = { 1280, 720 };
 std::string NEW_IMAGE_DEFAULT_NAME = "Untitled";
 ColorModel DEFAULT_COLOR_MODEL = ColorModel::RGB;
 
@@ -21,17 +18,21 @@ MainWindow::MainWindow(const WindowSettings& settings)
     : m_BaseTitle(settings.Title)
     , m_SelectedColorModel(DEFAULT_COLOR_MODEL)
 {
-    resize(settings.Width, settings.Height);
-
-    if (settings.IsMaximized) {
-        setWindowState(Qt::WindowMaximized);
-    }
-
-    setWindowTitle(m_BaseTitle.c_str());
+    InitWindow(settings);
 
     InitMenuBar();
     InitImageView();
     InitImageFileFilters();
+}
+
+void MainWindow::InitWindow(const WindowSettings& settings)
+{
+    setWindowTitle(m_BaseTitle.c_str());
+
+    resize(settings.Width, settings.Height);
+    if (settings.IsMaximized) {
+        setWindowState(Qt::WindowMaximized);
+    }
 }
 
 void MainWindow::InitMenuBar()
@@ -66,7 +67,7 @@ void MainWindow::InitMenuBar()
             auto* colorModelActionGroup = new QActionGroup(this);
             colorModelActionGroup->setExclusive(true);
 
-            for (const auto& [colorModelStr, colorModelEnum] : STRING_TO_ENUM_COLOR_MODEL_MAPPING) {
+            for (const auto& [colorModelEnum, colorModelStr] : ENUM_TO_STRING_COLOR_MODEL_MAPPING) {
                 auto* modelAction = colorModelMenu->addAction(colorModelStr.c_str());
                 modelAction->setCheckable(true);
                 colorModelActionGroup->addAction(modelAction);
@@ -90,6 +91,8 @@ void MainWindow::InitImageView()
 {
     m_ImageView = std::make_unique<ImageViewWithInfo>(this);
     setCentralWidget(m_ImageView.get());
+
+    UpdateColorModelText(m_SelectedColorModel);
 }
 
 void MainWindow::InitImageFileFilters()
@@ -109,52 +112,13 @@ void MainWindow::InitImageFileFilters()
 
 void MainWindow::OnFileNewAction()
 {
-    QDialog dialog(this);
-    dialog.setWindowTitle("New Image");
-    dialog.setFixedSize(200, 150);
-
-    auto labelWidth = new QLabel();
-    labelWidth->setText("Width");
-    labelWidth->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    auto spinBoxWidth = new QSpinBox();
-    spinBoxWidth->setMinimum(NEW_IMAGE_MIN_SIZE.width());
-    spinBoxWidth->setMaximum(NEW_IMAGE_MAX_SIZE.width());
-    spinBoxWidth->setValue(NEW_IMAGE_DEFAULT_SIZE.width());
-
-    auto widthLayout = new QHBoxLayout();
-    widthLayout->addWidget(labelWidth);
-    widthLayout->addWidget(spinBoxWidth);
-
-    auto labelHeight = new QLabel();
-    labelHeight->setText("Height");
-    labelHeight->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    auto spinBoxHeight = new QSpinBox();
-    spinBoxHeight->setMinimum(NEW_IMAGE_MIN_SIZE.height());
-    spinBoxHeight->setMaximum(NEW_IMAGE_MAX_SIZE.height());
-    spinBoxHeight->setValue(NEW_IMAGE_DEFAULT_SIZE.height());
-
-    auto heightLayout = new QHBoxLayout();
-    heightLayout->addWidget(labelHeight);
-    heightLayout->addWidget(spinBoxHeight);
-
-    auto okButton = new QPushButton();
-    okButton->setText("Ok");
-    okButton->setDefault(true);
-    connect(okButton, &QPushButton::pressed, &dialog, &QDialog::accept);
-
-    auto dialogLayout = new QVBoxLayout();
-    dialogLayout->addLayout(widthLayout);
-    dialogLayout->addLayout(heightLayout);
-    dialogLayout->addWidget(okButton);
-
-    dialog.setLayout(dialogLayout);
-
-    if (!dialog.exec()) {
+    NewImageDialog dialog;
+    if (!dialog.Exec()) {
         return;
     }
 
-    int width = spinBoxWidth->value();
-    int height = spinBoxHeight->value();
+    int width = dialog.GetWidth();
+    int height = dialog.GetHeight();
     Log::Debug("OnFileNewAction: New image width: {}, height: {}", width, height);
 
     m_SelectedColorModel = DEFAULT_COLOR_MODEL;
@@ -248,6 +212,8 @@ void MainWindow::OnFileSaveAsAction()
 
 void MainWindow::OnImageColorModelActionSelected(ColorModel selectedColorModel)
 {
+    UpdateColorModelText(selectedColorModel);
+
     if (selectedColorModel == m_SelectedColorModel) {
         return;
     }
@@ -258,6 +224,17 @@ void MainWindow::OnImageColorModelActionSelected(ColorModel selectedColorModel)
     if (m_Image) {
         SetImage(ConvertImageToNewModel(*m_Image, prevModel, m_SelectedColorModel));
     }
+}
+
+void MainWindow::UpdateColorModelText(ColorModel colorModel)
+{
+    auto it = ENUM_TO_STRING_COLOR_MODEL_MAPPING.find(colorModel);
+    if (it == ENUM_TO_STRING_COLOR_MODEL_MAPPING.end()) {
+        Log::Error("UpdateColorModelText: can't map enum {} to color model string", static_cast<int32_t>(colorModel));
+        return;
+    }
+
+    m_ImageView->SetColorModelText(it->second.c_str());
 }
 
 void MainWindow::SetImage(std::unique_ptr<Image>&& image)

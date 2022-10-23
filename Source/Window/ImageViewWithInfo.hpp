@@ -12,15 +12,18 @@ class ImageViewWithInfo : public QWidget
 
 public:
     ImageViewWithInfo(QWidget* parent = nullptr, QObject* sceneParent = nullptr);
-    ~ImageViewWithInfo();
+    ~ImageViewWithInfo() override = default;
+
     void SetImage(const Image* image);
+    void SetColorModelText(const QString& text);
 
 private slots:
-    void OnImageAppeared();
-    void OnImageDisappeared();
     void OnImageSizeChanged(const QSize& newSize);
     void OnCursorPosChanged(const QPointF& newPos);
     void OnZoomChanged(float newZoom);
+
+private:
+    void ClearImageInfo();
 
 private:
     ImageView* m_ImageView = nullptr;
@@ -30,4 +33,5 @@ private:
     QLabel* m_SizeLabel = nullptr;
     QLabel* m_CoordsLabel = nullptr;
     QLabel* m_ZoomLabel = nullptr;
+    QLabel* m_ColorModelLabel = nullptr;
 };

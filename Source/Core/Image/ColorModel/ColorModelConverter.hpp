@@ -16,14 +16,14 @@ enum ColorModel
     YCoCg,
 };
 
-static const std::unordered_map<std::string, ColorModel> STRING_TO_ENUM_COLOR_MODEL_MAPPING = {
-    { "RGB", ColorModel::RGB },
-    { "CMY", ColorModel::CMY },
-    { "HSL", ColorModel::HSL },
-    { "HSV", ColorModel::HSV },
-    { "YCbCr.601", ColorModel::YCbCr601 },
-    { "YCbCr.709", ColorModel::YCbCr709 },
-    { "YCoCg", ColorModel::YCoCg },
+static const std::unordered_map<ColorModel, std::string> ENUM_TO_STRING_COLOR_MODEL_MAPPING = {
+    { ColorModel::RGB, "RGB" },
+    { ColorModel::CMY, "CMY" },
+    { ColorModel::HSL, "HSL" },
+    { ColorModel::HSV, "HSV" },
+    { ColorModel::YCbCr601, "YCbCr.601" },
+    { ColorModel::YCbCr709, "YCbCr.709" },
+    { ColorModel::YCoCg, "YCoCg" },
 };
 
 class ColorModelConverter
