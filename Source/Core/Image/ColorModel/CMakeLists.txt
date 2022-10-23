@@ -3,4 +3,7 @@ target_sources(Photoshop PUBLIC
     ColorModelConverter.cpp
     HslConverter.cpp
     RgbConverter.cpp
+    HsvConverter.cpp
+    YCbCrConverter.cpp
+    YCoCgConverter.cpp
 )
