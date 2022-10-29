@@ -26,6 +26,17 @@ static const std::unordered_map<ColorModel, std::string> ENUM_TO_STRING_COLOR_MO
     { ColorModel::YCoCg, "YCoCg" },
 };
 
+static const std::unordered_map<ColorModel, std::unordered_map<ActiveChannel, std::string>>
+    ENUM_TO_CHANNEL_NAMES_BY_ACTIVE_CHANNEL_COLOR_MODEL_MAPPING = {
+        { ColorModel::RGB, { { ALL, "All" }, { ZEROTH, "Red" }, { FIRST, "Green" }, { SECOND, "Blue" } } },
+        { ColorModel::CMY, { { ALL, "All" }, { ZEROTH, "Cyan" }, { FIRST, "Magenta" }, { SECOND, "Yellow" } } },
+        { ColorModel::HSL, { { ALL, "All" }, { ZEROTH, "Hue" }, { FIRST, "Saturation" }, { SECOND, "Lightness" } } },
+        { ColorModel::HSV, { { ALL, "All" }, { ZEROTH, "Hue" }, { FIRST, "Saturation" }, { SECOND, "Value" } } },
+        { ColorModel::YCbCr601, { { ALL, "All" }, { ZEROTH, "Luminance" }, { FIRST, "Blue diff. chroma" }, { SECOND, "Red diff. chroma" } } },
+        { ColorModel::YCbCr709, { { ALL, "All" }, { ZEROTH, "Luminance" }, { FIRST, "Blue diff. chroma" }, { SECOND, "Red diff. chroma" } } },
+        { ColorModel::YCoCg, { { ALL, "All" }, { ZEROTH, "Luma" }, { FIRST, "Chrominance green" }, { SECOND, "Chrominance orange" } } }
+    };
+
 class ColorModelConverter
 {
 public:

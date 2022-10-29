@@ -107,6 +107,23 @@ LoadedImageData Image::FromFile(const std::string& fileName)
     return { reader->ReadImage(data), *imageFormat };
 }
 
+std::unique_ptr<Image> Image::CopyWithChannelMask(const Image& image, ActiveChannel activeChannel)
+{
+    auto copiedImage = std::make_unique<Image>(image);
+    if (activeChannel == ActiveChannel::ALL) {
+        return copiedImage;
+    }
+
+    for (size_t i = 0; i < copiedImage->GetPixelsCount(); i++) {
+        Pixel& pixel = copiedImage->PixelAt(i);
+        for (int j = 0; j < 3; j++) {
+            pixel.channels[j] = pixel.channels[static_cast<size_t>(activeChannel)];
+        }
+    }
+
+    return copiedImage;
+}
+
 void Image::WriteToFile(const std::string& fileName, ImageFormat format) const
 {
     std::ofstream ofs(fileName, std::ios::binary);

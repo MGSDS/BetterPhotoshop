@@ -13,10 +13,18 @@
 
 std::string NEW_IMAGE_DEFAULT_NAME = "Untitled";
 ColorModel DEFAULT_COLOR_MODEL = ColorModel::RGB;
+ActiveChannel DEFAULT_ACTIVE_CHANNEL = ActiveChannel::ALL;
+
+static void SetActionGroupEnabled(QActionGroup* actionGroup, bool enabled = true)
+{
+    actionGroup->setVisible(enabled);
+    actionGroup->setEnabled(enabled);
+}
 
 MainWindow::MainWindow(const WindowSettings& settings)
     : m_BaseTitle(settings.Title)
     , m_SelectedColorModel(DEFAULT_COLOR_MODEL)
+    , m_ActiveChannel(DEFAULT_ACTIVE_CHANNEL)
 {
     InitWindow(settings);
 
@@ -41,6 +49,9 @@ void MainWindow::InitMenuBar()
 
     auto* fileMenu = menu->addMenu("File");
     {
+        fileMenu->setToolTipsVisible(true);
+        fileMenu->addSection("Actual image");
+
         auto* newAction = fileMenu->addAction("New");
         newAction->setShortcut(QKeySequence::New);
         connect(newAction, &QAction::triggered, this, &MainWindow::OnFileNewAction);
@@ -58,6 +69,13 @@ void MainWindow::InitMenuBar()
         m_SaveAsAction->setShortcut(QKeySequence::SaveAs);
         m_SaveAsAction->setEnabled(false);
         connect(m_SaveAsAction, &QAction::triggered, this, &MainWindow::OnFileSaveAsAction);
+
+        fileMenu->addSection("Image view");
+
+        m_SaveViewAsAction = fileMenu->addAction("Save view as");
+        m_SaveViewAsAction->setWhatsThis("Saving choosen color model and channels view as it is");
+        m_SaveViewAsAction->setEnabled(false);
+        connect(m_SaveViewAsAction, &QAction::triggered, this, &MainWindow::OnFileSaveViewAsAction);
     }
 
     auto* imageMenu = menu->addMenu("Image");
@@ -84,6 +102,31 @@ void MainWindow::InitMenuBar()
                 });
             }
         }
+
+        auto* activeChannelMenu = imageMenu->addMenu("Active channel");
+        {
+            for (const auto& [colorModelEnum, activeChannelToNameMap] :
+                 ENUM_TO_CHANNEL_NAMES_BY_ACTIVE_CHANNEL_COLOR_MODEL_MAPPING) {
+                auto* channelActionGroup = new QActionGroup(this);
+                channelActionGroup->setExclusive(true);
+
+                for (const auto& [activeChannelEnum, activeChannelName] : activeChannelToNameMap) {
+                    auto* channelAction = activeChannelMenu->addAction(activeChannelName.c_str());
+                    channelAction->setCheckable(true);
+                    channelAction->setChecked(activeChannelEnum == DEFAULT_ACTIVE_CHANNEL);
+                    channelActionGroup->addAction(channelAction);
+
+                    connect(channelAction, &QAction::toggled, this, [this, activeChannel = activeChannelEnum](bool checked) {
+                        if (checked) {
+                            OnActiveChannelSelected(activeChannel);
+                        }
+                    });
+                }
+
+                SetActionGroupEnabled(channelActionGroup, colorModelEnum == DEFAULT_COLOR_MODEL);
+                m_ColorModelActionGroupMapping[colorModelEnum] = channelActionGroup;
+            }
+        }
     }
 }
 
@@ -93,6 +136,7 @@ void MainWindow::InitImageView()
     setCentralWidget(m_ImageView.get());
 
     UpdateColorModelText(m_SelectedColorModel);
+    UpdateActiveChannelsText(m_ActiveChannel);
 }
 
 void MainWindow::InitImageFileFilters()
@@ -210,9 +254,41 @@ void MainWindow::OnFileSaveAsAction()
     m_LastSelectedSaveFormat = selectedImageFormat;
 }
 
+void MainWindow::OnFileSaveViewAsAction()
+{
+    if (!m_Image) {
+        Log::Warn("OnFileSaveAsAction: no image to save");
+        return;
+    }
+
+    QString selectedFilter;
+    auto fileFilters = (m_ActiveChannel == ActiveChannel::ALL) ? m_ImageFileFilters : "PGM Image (*.pgm)";
+    auto filename = QFileDialog::getSaveFileName(this, "Save view As", QString(), fileFilters, &selectedFilter);
+    if (filename.isEmpty()) {
+        return;
+    }
+
+    auto formatInfo = FILTER_TO_IMAGE_FORMAT_INFO_MAPPING.find(selectedFilter.toStdString());
+    if (formatInfo == FILTER_TO_IMAGE_FORMAT_INFO_MAPPING.end()) {
+        Log::Error("OnFileSaveViewAsAction: can't map filter to image format info");
+        return;
+    }
+
+    const char* selectedFileExtension = formatInfo->second.FileExtension.c_str();
+    ImageFormat selectedImageFormat = formatInfo->second.Format;
+
+    if (!filename.endsWith(selectedFileExtension)) {
+        filename.append(selectedFileExtension);
+    }
+
+    auto imageWithChannelMask = Image::CopyWithChannelMask(*m_Image, m_ActiveChannel);
+    TrySaveImageWithoutConversion(*imageWithChannelMask, filename.toStdString(), selectedImageFormat);
+}
+
 void MainWindow::OnImageColorModelActionSelected(ColorModel selectedColorModel)
 {
     UpdateColorModelText(selectedColorModel);
+    OnActiveChannelSelected(ActiveChannel::ALL);
 
     if (selectedColorModel == m_SelectedColorModel) {
         return;
@@ -220,6 +296,9 @@ void MainWindow::OnImageColorModelActionSelected(ColorModel selectedColorModel)
 
     ColorModel prevModel = m_SelectedColorModel;
     m_SelectedColorModel = selectedColorModel;
+
+    SetActionGroupEnabled(m_ColorModelActionGroupMapping[prevModel], false);
+    SetActionGroupEnabled(m_ColorModelActionGroupMapping[m_SelectedColorModel]);
 
     if (m_Image) {
         SetImage(ConvertImageToNewModel(*m_Image, prevModel, m_SelectedColorModel));
@@ -237,38 +316,62 @@ void MainWindow::UpdateColorModelText(ColorModel colorModel)
     m_ImageView->SetColorModelText(it->second.c_str());
 }
 
+void MainWindow::OnActiveChannelSelected(ActiveChannel selectedActiveChannel)
+{
+    m_ActiveChannel = selectedActiveChannel;
+    Log::Debug("OnActiveChannelSelected: selected active channel: {}", static_cast<int>(selectedActiveChannel));
+
+    UpdateActiveChannelsText(m_ActiveChannel);
+
+    if (m_Image) {
+        SetImage(std::move(m_Image));
+    }
+}
+
+void MainWindow::UpdateActiveChannelsText(ActiveChannel activeChannel)
+{
+    const auto& channelName =
+        ENUM_TO_CHANNEL_NAMES_BY_ACTIVE_CHANNEL_COLOR_MODEL_MAPPING
+            .at(m_SelectedColorModel)
+            .at(activeChannel);
+
+    Log::Debug("UpdateActiveChannelsText: set channel text to '{}'", channelName.c_str());
+    m_ImageView->SetActiveChannelText(channelName.c_str());
+}
+
 void MainWindow::SetImage(std::unique_ptr<Image>&& image)
 {
     m_Image = std::move(image);
-    m_ImageView->SetImage(m_Image.get());
+    m_ImageView->SetImage(Image::CopyWithChannelMask(*m_Image, m_ActiveChannel).get());
 
     bool enableSaveActions = (m_Image != nullptr);
     m_SaveAction->setEnabled(enableSaveActions);
     m_SaveAsAction->setEnabled(enableSaveActions);
+    m_SaveViewAsAction->setEnabled(enableSaveActions);
 }
 
 bool MainWindow::TrySaveImage(const Image& image, const std::string& filename, ImageFormat format)
 {
     if (m_SelectedColorModel == ColorModel::RGB || format == ImageFormat::Ppm) {
-        Log::Debug("TrySaveImage: no need to convert image to rgb color model");
-        return TrySaveRgbImage(image, filename, format);
+        Log::Debug("TrySaveActualImage: no need to convert image to rgb color model");
+        return TrySaveImageWithoutConversion(image, filename, format);
     }
 
-    Log::Debug("TrySaveImage: converting image to rgb color model");
+    Log::Debug("TrySaveActualImage: converting image to rgb color model");
     auto rgbImage = ConvertImageToNewModel(image, m_SelectedColorModel, ColorModel::RGB);
-    return TrySaveRgbImage(*rgbImage, filename, format);
+    return TrySaveImageWithoutConversion(*rgbImage, filename, format);
 }
 
-bool MainWindow::TrySaveRgbImage(const Image& image, const std::string& filename, ImageFormat format)
+bool MainWindow::TrySaveImageWithoutConversion(const Image& image, const std::string& filename, ImageFormat format)
 {
-    Log::Debug("TrySaveRgbImage: writing image to file: {}", filename);
+    Log::Debug("TrySaveImageWithoutConversion: writing image to file: {}", filename);
 
     try {
         image.WriteToFile(filename, format);
-        Log::Debug("TrySaveRgbImage: image is successfully saved");
+        Log::Debug("TrySaveImageWithoutConversion: image is successfully saved");
         return true;
     } catch (const std::exception& exception) {
-        Log::Error("TrySaveRgbImage: an error occured while saving image to file: {}", exception.what());
+        Log::Error("TrySaveImageWithoutConversion: an error occured while saving image to file: {}", exception.what());
         return false;
     }
 }

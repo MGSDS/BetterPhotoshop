@@ -16,6 +16,7 @@ public:
 
     void SetImage(const Image* image);
     void SetColorModelText(const QString& text);
+    void SetActiveChannelText(const QString& text);
 
 private slots:
     void OnImageSizeChanged(const QSize& newSize);
@@ -34,4 +35,5 @@ private:
     QLabel* m_CoordsLabel = nullptr;
     QLabel* m_ZoomLabel = nullptr;
     QLabel* m_ColorModelLabel = nullptr;
+    QLabel* m_ActiveChannelLabel = nullptr;
 };

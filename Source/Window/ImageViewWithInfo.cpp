@@ -19,6 +19,7 @@ ImageViewWithInfo::ImageViewWithInfo(QWidget* parent, QObject* sceneParent)
     , m_CoordsLabel(new QLabel(this))
     , m_ZoomLabel(new QLabel(this))
     , m_ColorModelLabel(new QLabel(this))
+    , m_ActiveChannelLabel(new QLabel(this))
 {
     m_LabelsLayout = new QHBoxLayout();
 
@@ -26,6 +27,7 @@ ImageViewWithInfo::ImageViewWithInfo(QWidget* parent, QObject* sceneParent)
     m_CoordsLabel->setMinimumWidth(80);
     m_ZoomLabel->setMinimumWidth(50);
     m_ColorModelLabel->setMinimumWidth(80);
+    m_ActiveChannelLabel->setMinimumWidth(80);
 
     std::vector<QLabel*> leftLabels = { m_SizeLabel, m_CoordsLabel, m_ZoomLabel };
     for (auto* label : leftLabels) {
@@ -37,7 +39,7 @@ ImageViewWithInfo::ImageViewWithInfo(QWidget* parent, QObject* sceneParent)
     m_LabelsLayout->addWidget(CreateLineSeparator(this));
     m_LabelsLayout->addStretch();
 
-    std::vector<QLabel*> rightLabels = { m_ColorModelLabel };
+    std::vector<QLabel*> rightLabels = { m_ColorModelLabel, m_ActiveChannelLabel };
     for (auto* label : rightLabels) {
         label->setAlignment(Qt::AlignCenter);
         m_LabelsLayout->addWidget(CreateLineSeparator(this));
@@ -67,6 +69,11 @@ void ImageViewWithInfo::SetImage(const Image* image)
 void ImageViewWithInfo::SetColorModelText(const QString& text)
 {
     m_ColorModelLabel->setText(text);
+}
+
+void ImageViewWithInfo::SetActiveChannelText(const QString& text)
+{
+    m_ActiveChannelLabel->setText(text);
 }
 
 void ImageViewWithInfo::OnImageSizeChanged(const QSize& newSize)

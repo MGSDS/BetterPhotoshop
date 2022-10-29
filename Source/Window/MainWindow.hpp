@@ -58,10 +58,11 @@ private:
 
     void SetImage(std::unique_ptr<Image>&& image);
     bool TrySaveImage(const Image& image, const std::string& filename, ImageFormat format);
-    bool TrySaveRgbImage(const Image& image, const std::string& filename, ImageFormat format);
+    bool TrySaveImageWithoutConversion(const Image& image, const std::string& filename, ImageFormat format);
     void SetImagePath(const std::string& newPath);
 
-    void UpdateColorModelText(ColorModel colorModel);
+    void UpdateColorModelText(ColorModel selectedColorModel);
+    void UpdateActiveChannelsText(ActiveChannel activeChannels);
 
     std::unique_ptr<Image> ConvertImageToNewModel(const Image& image, ColorModel currentModel, ColorModel newModel);
 
@@ -70,15 +71,19 @@ private slots:
     void OnFileOpenAction();
     void OnFileSaveAction();
     void OnFileSaveAsAction();
+    void OnFileSaveViewAsAction();
 
     void OnImageColorModelActionSelected(ColorModel selectedColorModel);
+    void OnActiveChannelSelected(ActiveChannel activeChannels);
 
 private:
     std::unique_ptr<ImageViewWithInfo> m_ImageView = nullptr;
     std::unique_ptr<Image> m_Image = nullptr;
+    ActiveChannel m_ActiveChannel;
 
     QAction* m_SaveAction = nullptr;
     QAction* m_SaveAsAction = nullptr;
+    QAction* m_SaveViewAsAction = nullptr;
 
     std::string m_BaseTitle = "";
     std::string m_ImagePath = "";
@@ -87,4 +92,6 @@ private:
 
     ColorModel m_SelectedColorModel;
     QAction* m_DefaultColorModelAction = nullptr;
+
+    std::unordered_map<ColorModel, QActionGroup*> m_ColorModelActionGroupMapping;
 };

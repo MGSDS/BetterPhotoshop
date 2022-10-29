@@ -22,6 +22,15 @@ struct LoadedImageData
     ImageFormat Format;
 };
 
+enum ActiveChannel
+{
+    ALL = -1,
+    ZEROTH = 0,
+    FIRST = 1,
+    SECOND = 2,
+    // THIRD  = 3 // temporary not supported
+};
+
 class Image
 {
 public:
@@ -30,6 +39,8 @@ public:
     Image(const Image& other) = default;
 
     static LoadedImageData FromFile(const std::string& fileName);
+    static std::unique_ptr<Image> CopyWithChannelMask(const Image& image, ActiveChannel activeChannel);
+
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
 
     uint8_t* ToDataRGBA32FPx4();
