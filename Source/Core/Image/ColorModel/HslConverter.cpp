@@ -66,8 +66,10 @@ void HslConverter::ConvertPixelFromRGB(Pixel& pixel)
     float H = NORM_SIXTY;
     if (C == 0.0f) {
         H = 0.0f;
+    } else if (V == R && G >= B) {
+        H = NORM_SIXTY * ((G - B) / C);
     } else if (V == R) {
-        H *= (0.0f + (G - B) / C);
+        H *= (0.0f + (G - B) / C + 6.0f);
     } else if (V == G) {
         H *= (2.0f + (B - R) / C);
     } else if (V == B) {
