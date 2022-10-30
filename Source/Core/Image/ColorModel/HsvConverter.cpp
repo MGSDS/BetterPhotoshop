@@ -17,8 +17,10 @@ void HsvConverter::ConvertPixelFromRGB(Pixel& pixel)
     float H = 0.0f;
 
     if (C == 0) {
-    } else if (max == R) {
+    } else if (max == R && G >= B) {
         H = NORM_SIXTY * ((G - B) / C);
+    } else if (max == R) {
+        H = NORM_SIXTY * ((G - B) / C + 6.0f);
     } else if (max == G) {
         H = NORM_SIXTY * ((B - R) / C + 2.0f);
     } else if (max == B) {
