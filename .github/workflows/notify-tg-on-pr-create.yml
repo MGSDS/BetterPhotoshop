@@ -21,4 +21,4 @@ jobs:
             
             Repository: ${{ github.repository }}
             
-            See pull_request: https://github.com/${{ github.repository }}/pull/${{github.event.pull_request.number}}
+            View pull request: https://github.com/${{ github.repository }}/pull/${{github.event.pull_request.number}}
