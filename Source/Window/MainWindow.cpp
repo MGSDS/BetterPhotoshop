@@ -14,6 +14,7 @@
 std::string NEW_IMAGE_DEFAULT_NAME = "Untitled";
 ColorModel DEFAULT_COLOR_MODEL = ColorModel::RGB;
 ActiveChannel DEFAULT_ACTIVE_CHANNEL = ActiveChannel::ALL;
+float DEFAULT_GAMMA_VALUE = 1.0f;
 
 static void SetActionGroupEnabled(QActionGroup* actionGroup, bool enabled = true)
 {
@@ -25,6 +26,7 @@ MainWindow::MainWindow(const WindowSettings& settings)
     : m_BaseTitle(settings.Title)
     , m_SelectedColorModel(DEFAULT_COLOR_MODEL)
     , m_ActiveChannel(DEFAULT_ACTIVE_CHANNEL)
+    , m_Gamma(DEFAULT_GAMMA_VALUE)
 {
     InitWindow(settings);
 
@@ -127,6 +129,16 @@ void MainWindow::InitMenuBar()
                 m_ColorModelActionGroupMapping[colorModelEnum] = channelActionGroup;
             }
         }
+
+        auto* gammaMenu = imageMenu->addMenu("Gamma correction");
+        {
+            auto* assignGammaAction = gammaMenu->addAction("Assign gamma");
+            connect(assignGammaAction, &QAction::triggered, this, &MainWindow::OnImageAssignGammaAction);
+
+            m_ConvertGammaAction = gammaMenu->addAction("Convert gamma");
+            m_ConvertGammaAction->setEnabled(false);
+            connect(m_ConvertGammaAction, &QAction::triggered, this, &MainWindow::OnImageConvertGammaAction);
+        }
     }
 }
 
@@ -137,6 +149,7 @@ void MainWindow::InitImageView()
 
     UpdateColorModelText(m_SelectedColorModel);
     UpdateActiveChannelsText(m_ActiveChannel);
+    m_ImageView->SetCurrentGammaText(QString::number(m_Gamma));
 }
 
 void MainWindow::InitImageFileFilters()
@@ -169,6 +182,7 @@ void MainWindow::OnFileNewAction()
     m_DefaultColorModelAction->setChecked(true);
 
     SetImage(std::make_unique<Image>(width, height));
+    m_ImageView->CenterOnCurrentImage();
     SetImagePath(std::string());
 }
 
@@ -205,6 +219,7 @@ void MainWindow::OnFileOpenAction()
     }
 
     SetImage(std::move(loadedImage));
+    m_ImageView->CenterOnCurrentImage();
     SetImagePath(filename.toStdString());
     m_LastSelectedSaveFormat = imageData.Format;
 }
@@ -281,8 +296,8 @@ void MainWindow::OnFileSaveViewAsAction()
         filename.append(selectedFileExtension);
     }
 
-    auto imageWithChannelMask = Image::CopyWithChannelMask(*m_Image, m_ActiveChannel);
-    TrySaveImageWithoutConversion(*imageWithChannelMask, filename.toStdString(), selectedImageFormat);
+    auto visibleImage = TransformImageForQt(*m_Image);
+    TrySaveImageWithoutConversion(visibleImage, filename.toStdString(), selectedImageFormat);
 }
 
 void MainWindow::OnImageColorModelActionSelected(ColorModel selectedColorModel)
@@ -342,12 +357,13 @@ void MainWindow::UpdateActiveChannelsText(ActiveChannel activeChannel)
 void MainWindow::SetImage(std::unique_ptr<Image>&& image)
 {
     m_Image = std::move(image);
-    m_ImageView->SetImage(Image::CopyWithChannelMask(*m_Image, m_ActiveChannel).get());
+    SetImageForQt(m_Image.get());
 
     bool enableSaveActions = (m_Image != nullptr);
     m_SaveAction->setEnabled(enableSaveActions);
     m_SaveAsAction->setEnabled(enableSaveActions);
     m_SaveViewAsAction->setEnabled(enableSaveActions);
+    m_ConvertGammaAction->setEnabled(enableSaveActions);
 }
 
 bool MainWindow::TrySaveImage(const Image& image, const std::string& filename, ImageFormat format)
@@ -398,4 +414,73 @@ std::unique_ptr<Image> MainWindow::ConvertImageToNewModel(const Image& image, Co
     auto newImage = fromRGBConverter->FromRGB(*rgbImage);
 
     return newImage;
+}
+
+void MainWindow::OnImageAssignGammaAction()
+{
+    bool hasPressedOk = false;
+    auto newGamma = QInputDialog::getDouble(this, "Assign new gamma", "New gamma", m_Gamma, 0.0,
+                                            std::numeric_limits<int>::max(), 2, &hasPressedOk, {}, 0.01);
+
+    if (!hasPressedOk) {
+        return;
+    }
+
+    SetGamma(static_cast<float>(newGamma));
+
+    if (!m_Image) {
+        return;
+    }
+
+    SetImageForQt(m_Image.get());
+}
+
+void MainWindow::OnImageConvertGammaAction()
+{
+    bool hasPressedOk = false;
+    auto newGamma = QInputDialog::getDouble(this, "Convert gamma", "New gamma", m_Gamma, 0.0,
+                                            std::numeric_limits<int>::max(), 2, &hasPressedOk, {}, 0.01);
+
+    if (!hasPressedOk) {
+        return;
+    }
+
+    SetGamma(DEFAULT_GAMMA_VALUE);
+
+    if (!m_Image) {
+        return;
+    }
+
+    m_Image->CorrectForGamma(newGamma);
+    SetImageForQt(m_Image.get());
+}
+
+void MainWindow::SetGamma(float newGamma)
+{
+    m_Gamma = std::max(newGamma, 0.0f);
+    if (m_Gamma < 0.001f) {
+        m_Gamma = 1.0f;
+    }
+
+    m_ImageView->SetCurrentGammaText(QString::number(m_Gamma));
+}
+
+Image MainWindow::TransformImageForQt(const Image& image)
+{
+    auto newImage = image;
+    newImage.CorrectForGamma(m_Gamma);
+    newImage = Image::CopyWithChannelMask(newImage, m_ActiveChannel);
+
+    return newImage;
+}
+
+void MainWindow::SetImageForQt(const Image* image)
+{
+    if (!image) {
+        m_ImageView->SetImage(nullptr);
+        return;
+    }
+
+    auto transformedImage = TransformImageForQt(*image);
+    m_ImageView->SetImage(&transformedImage);
 }

@@ -15,8 +15,11 @@ public:
     ~ImageViewWithInfo() override = default;
 
     void SetImage(const Image* image);
+    void CenterOnCurrentImage();
+
     void SetColorModelText(const QString& text);
     void SetActiveChannelText(const QString& text);
+    void SetCurrentGammaText(const QString& text);
 
 private slots:
     void OnImageSizeChanged(const QSize& newSize);
@@ -36,4 +39,5 @@ private:
     QLabel* m_ZoomLabel = nullptr;
     QLabel* m_ColorModelLabel = nullptr;
     QLabel* m_ActiveChannelLabel = nullptr;
+    QLabel* m_CurrentGammaLabel = nullptr;
 };

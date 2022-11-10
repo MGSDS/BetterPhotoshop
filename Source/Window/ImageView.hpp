@@ -13,9 +13,8 @@ class ImageView : public QGraphicsView
 public:
     ImageView(QWidget* parent = nullptr);
     ~ImageView() = default;
-    void SetImage(const Image* image);
 
-private:
+    void SetImage(const Image* image);
     void CenterOnCurrentImage();
 
 private slots:

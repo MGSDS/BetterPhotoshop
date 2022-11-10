@@ -107,21 +107,30 @@ LoadedImageData Image::FromFile(const std::string& fileName)
     return { reader->ReadImage(data), *imageFormat };
 }
 
-std::unique_ptr<Image> Image::CopyWithChannelMask(const Image& image, ActiveChannel activeChannel)
+Image Image::CopyWithChannelMask(const Image& image, ActiveChannel activeChannel)
 {
-    auto copiedImage = std::make_unique<Image>(image);
+    auto copiedImage = image;
     if (activeChannel == ActiveChannel::ALL) {
         return copiedImage;
     }
 
-    for (size_t i = 0; i < copiedImage->GetPixelsCount(); i++) {
-        Pixel& pixel = copiedImage->PixelAt(i);
+    for (size_t i = 0; i < copiedImage.GetPixelsCount(); i++) {
+        Pixel& pixel = copiedImage.PixelAt(i);
         for (int j = 0; j < 3; j++) {
             pixel.channels[j] = pixel.channels[static_cast<size_t>(activeChannel)];
         }
     }
 
     return copiedImage;
+}
+
+void Image::CorrectForGamma(float gammaValue)
+{
+    for (auto& pixel : m_Pixels) {
+        for (int i = 0; i < 3; i++) {
+            pixel.channels[i] = std::pow(pixel.channels[i], 1.0f / gammaValue);
+        }
+    }
 }
 
 void Image::WriteToFile(const std::string& fileName, ImageFormat format) const

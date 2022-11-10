@@ -66,6 +66,8 @@ private:
 
     std::unique_ptr<Image> ConvertImageToNewModel(const Image& image, ColorModel currentModel, ColorModel newModel);
 
+    void SetGamma(float newGamma);
+
 private slots:
     void OnFileNewAction();
     void OnFileOpenAction();
@@ -76,6 +78,12 @@ private slots:
     void OnImageColorModelActionSelected(ColorModel selectedColorModel);
     void OnActiveChannelSelected(ActiveChannel activeChannels);
 
+    void OnImageAssignGammaAction();
+    void OnImageConvertGammaAction();
+
+    Image TransformImageForQt(const Image& image);
+    void SetImageForQt(const Image* image);
+
 private:
     std::unique_ptr<ImageViewWithInfo> m_ImageView = nullptr;
     std::unique_ptr<Image> m_Image = nullptr;
@@ -84,6 +92,7 @@ private:
     QAction* m_SaveAction = nullptr;
     QAction* m_SaveAsAction = nullptr;
     QAction* m_SaveViewAsAction = nullptr;
+    QAction* m_ConvertGammaAction = nullptr;
 
     std::string m_BaseTitle = "";
     std::string m_ImagePath = "";
@@ -92,6 +101,8 @@ private:
 
     ColorModel m_SelectedColorModel;
     QAction* m_DefaultColorModelAction = nullptr;
+
+    float m_Gamma;
 
     std::unordered_map<ColorModel, QActionGroup*> m_ColorModelActionGroupMapping;
 };

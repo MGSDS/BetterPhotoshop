@@ -132,17 +132,14 @@ void ImageView::SetImage(const Image* img)
     QPixmap pixmap = QPixmap::fromImage(*image);
     m_Image = std::unique_ptr<QGraphicsItem>{ m_Scene->addPixmap(pixmap) };
     emit imageSizeChanged(QSize(img->GetWidth(), img->GetHeight()));
-
-    CenterOnCurrentImage();
-
-    if (imageHasAppeared) {
-        emit zoomChanged(1.0);
-        emit cursorPosChanged(mapToScene(cursor().pos()));
-    }
 }
 
 void ImageView::CenterOnCurrentImage()
 {
+    if (!m_Image) {
+        return;
+    }
+
     resetTransform();
     m_CurrentZoom = 1.0;
 
@@ -152,4 +149,7 @@ void ImageView::CenterOnCurrentImage()
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     scale(1.0, 1.0);
     setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+
+    emit zoomChanged(1.0);
+    emit cursorPosChanged(mapToScene(cursor().pos()));
 }

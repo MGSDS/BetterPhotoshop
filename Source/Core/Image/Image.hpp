@@ -39,7 +39,9 @@ public:
     Image(const Image& other) = default;
 
     static LoadedImageData FromFile(const std::string& fileName);
-    static std::unique_ptr<Image> CopyWithChannelMask(const Image& image, ActiveChannel activeChannel);
+    static Image CopyWithChannelMask(const Image& image, ActiveChannel activeChannel);
+
+    void CorrectForGamma(float gammaValue);
 
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
 
