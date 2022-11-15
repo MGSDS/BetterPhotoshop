@@ -495,7 +495,6 @@ void MainWindow::SetImageForQt(const Image* image)
 
 void MainWindow::OnLineDrawAction() {
     //TODO: disable buttons while drawing
-    //TODO: write about drawind
     QMessageBox msgBox;
     msgBox.setText("Drawing mode. Click on two points to draw a line.");
     msgBox.setInformativeText("Enable drawing mode?");
@@ -546,9 +545,8 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
 
             //FIXME: Shitty code
             auto newImage =  std::make_unique<Image>(Painter::DrawLine(*m_Image,
-                                                    m_Gamma,
                                                     getPairPoint(m_SelectedPoints[0]),
-                                                    getPairPoint(m_SelectedPoints[0]),
+                                                    getPairPoint(m_SelectedPoints[1]),
                                                     lineWidth));
             this->SetImage(std::move(newImage));
         }
