@@ -1,4 +1,5 @@
 #include "MainWindow.hpp"
+#include "LineDialog.hpp"
 
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
 #include <Core/Image/Image.hpp>
@@ -534,8 +535,8 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
 
     if(m_SelectedPoints.size() >= 2) {
         bool hasPressedOk = false;
-        int lineWidth = QInputDialog::getInt(this, "Draw line", "Line Width", 1, 1,
-                                             std::numeric_limits<int>::max(), 2, &hasPressedOk, {});
+        QList<int> res = LineDialog::getInts(this, &hasPressedOk);
+        int lineWidth = res[0];
         m_DrawingMode = false;
         if (hasPressedOk) {
             auto getPairPoint = [](QPointF point)
@@ -543,8 +544,8 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
                 return std::pair<float, float>(point.x(), point.y());
             };
 
-            Pixel color = Pixel(0, 0, 0, 1);
-            //TODO: Add color selection
+            Pixel color = Pixel(res[1] / 255.0f, res[2] / 255.0f, res[3] / 255.0f, res[4] / 255.0f);
+
             auto newImage =  std::make_unique<Image>(Painter::DrawLine(*m_Image,
                                                     getPairPoint(m_SelectedPoints[0]),
                                                     getPairPoint(m_SelectedPoints[1]),

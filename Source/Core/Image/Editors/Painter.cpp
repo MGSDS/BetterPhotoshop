@@ -39,6 +39,7 @@ Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x
     }
 
     float dx = x1 - x0;
+    
     float dy = y1 - y0;
     float gradient = 1.0f;
     if (dx != 0.0f)

@@ -3,6 +3,7 @@ target_sources(Photoshop PUBLIC
     ImageView.cpp
     ImageViewWithInfo.cpp
     MainWindow.cpp
+    LineDialog.cpp
 )
 
 add_subdirectory(Dialogs)
