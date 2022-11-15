@@ -535,8 +535,7 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
     msgBox.setDefaultButton(QMessageBox::Ok);
     msgBox.exec();
 
-    if(m_SelectedPoints.size() >= 2)
-    {
+    if(m_SelectedPoints.size() >= 2) {
         bool hasPressedOk = false;
         QList<int> res = LineDialog::getInts(this, &hasPressedOk);
         int lineWidth = res[0];

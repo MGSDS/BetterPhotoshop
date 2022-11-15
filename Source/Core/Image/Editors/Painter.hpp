@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Core/Image/Image.hpp"
-
 #include <cmath>
 
-class Painter {
+class Painter
+{
 public:
     static Image DrawLine(
             const Image& image,
