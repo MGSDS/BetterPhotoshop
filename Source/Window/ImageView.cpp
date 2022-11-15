@@ -63,8 +63,7 @@ void ImageView::mousePressEvent(QMouseEvent* event)
         m_IsMoveButtonPressed = true;
         m_PrevPanX = event->position().x();
         m_PrevPanY = event->position().y();
-    }
-    else if(event->button() == SELECT_BUTTON) {
+    } else if (event->button() == SELECT_BUTTON) {
         emit selectButtonClicked(mapToScene(event->pos()));
     }
 }

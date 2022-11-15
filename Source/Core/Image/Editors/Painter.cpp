@@ -1,10 +1,12 @@
 #include "Painter.hpp"
-Image Painter::DrawLine(const Image& image, std::pair<float, float> a, std::pair<float, float> b, int width, float imageGamma, Pixel color) {
+
+Image Painter::DrawLine(const Image& image, std::pair<float, float> a, std::pair<float, float> b, int width, float imageGamma, Pixel color)
+{
     auto line = DrawLine(image.GetWidth(), image.GetHeight(), a.first, a.second, b.first, b.second, width, color);
 
     auto source = Image(image);
 
-    source.CorrectForGamma(1.0f/imageGamma);
+    source.CorrectForGamma(1.0f / imageGamma);
 
     for (size_t i = 0; i < source.GetPixelsCount(); i++) {
         auto& pixel = line.PixelAt(i);
@@ -19,31 +21,27 @@ Image Painter::DrawLine(const Image& image, std::pair<float, float> a, std::pair
     return source;
 }
 
-
-
-Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x1, float y1, int width, Pixel color) {
-    //Xiaolin Wu's line algorithm
+Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x1, float y1, int width, Pixel color)
+{
+    // Xiaolin Wu's line algorithm
     auto res = Image(im_width, im_height, Pixel(0.0f, 0.0f, 0.0f, 0.0f));
 
     bool steep = std::abs(y1 - y0) > std::abs(x1 - x0);
-    if (steep)
-    {
+    if (steep) {
         std::swap(x0, y0);
         std::swap(x1, y1);
     }
 
-    if (x0 > x1)
-    {
+    if (x0 > x1) {
         std::swap(x0, x1);
         std::swap(y0, y1);
     }
 
     float dx = x1 - x0;
-    
+
     float dy = y1 - y0;
     float gradient = 1.0f;
-    if (dx != 0.0f)
-    {
+    if (dx != 0.0f) {
         gradient = dy / dx;
     }
 
@@ -55,21 +53,16 @@ Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x
     int xpxl1 = static_cast<int>(xend);
     int ypxl1 = std::floor(yend);
 
-    if (steep)
-    {
+    if (steep) {
         SetPixel(res, ypxl1, xpxl1, color, 1.0f - std::fmod(yend, 1.0f) * xgap);
-        for(int i = 1; i < width; i++)
-        {
+        for (int i = 1; i < width; i++) {
             SetPixel(res, ypxl1 + i, xpxl1, color, 1.0f);
         }
 
         SetPixel(res, ypxl1 + width, xpxl1, color, std::fmod(yend, 1.0f) * xgap);
-    }
-    else
-    {
+    } else {
         SetPixel(res, xpxl1, ypxl1, color, 1.0f - std::fmod(yend, 1.0f) * xgap);
-        for (int i = 1; i < width; i++)
-        {
+        for (int i = 1; i < width; i++) {
             SetPixel(res, xpxl1, ypxl1 + i, color, 1.0f);
         }
 
@@ -78,53 +71,41 @@ Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x
 
     float intery = yend + gradient;
 
-    xend =std::round(x1);
+    xend = std::round(x1);
     yend = y1 + gradient * (xend - x1);
     xgap = std::fmod(x1 + 0.5f, 1.0f);
     int xpxl2 = static_cast<int>(xend);
     int ypxl2 = std::floor(yend);
 
-    if (steep)
-    {
+    if (steep) {
         SetPixel(res, ypxl2, xpxl2, color, 1.0f - std::fmod(yend, 1.0f) * xgap);
-        for (int i = 1; i < width; i++)
-        {
+        for (int i = 1; i < width; i++) {
             SetPixel(res, ypxl2 + i, xpxl2, color, 1.0f);
         }
         SetPixel(res, ypxl2 + width, xpxl2, color, std::fmod(yend, 1.0f) * xgap);
-    }
-    else
-    {
+    } else {
         SetPixel(res, xpxl2, ypxl2, color, 1.0f - std::fmod(yend, 1.0f) * xgap);
-        for (int i = 1; i < width; i++)
-        {
+        for (int i = 1; i < width; i++) {
             SetPixel(res, xpxl2, ypxl2 + i, color, 1.0f);
         }
 
         SetPixel(res, xpxl2, ypxl2 + width, color, std::fmod(yend, 1.0f) * xgap);
     }
 
-    if (steep)
-    {
-        for (int x = xpxl1 + 1; x < xpxl2; x++)
-        {
+    if (steep) {
+        for (int x = xpxl1 + 1; x < xpxl2; x++) {
             SetPixel(res, std::floor(intery), x, color, 1.0f - std::fmod(intery, 1.0f));
-            for (int i = 1; i < width; i++)
-            {
+            for (int i = 1; i < width; i++) {
                 SetPixel(res, std::floor(intery) + i, x, color, 1.0f);
             }
 
             SetPixel(res, std::floor(intery) + width, x, color, std::fmod(intery, 1.0f));
             intery += gradient;
         }
-    }
-    else
-    {
-        for (int x = xpxl1 + 1; x < xpxl2; x++)
-        {
+    } else {
+        for (int x = xpxl1 + 1; x < xpxl2; x++) {
             SetPixel(res, x, std::floor(intery), color, 1.0f - std::fmod(intery, 1.0f));
-            for (int i = 1; i < width; i++)
-            {
+            for (int i = 1; i < width; i++) {
                 SetPixel(res, x, std::floor(intery) + i, color, 1.0f);
             }
 
@@ -136,8 +117,8 @@ Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x
     return res;
 }
 
-
-void Painter::SetPixel(Image &image, int x, int y, Pixel color, float alpha) {
+void Painter::SetPixel(Image& image, int x, int y, Pixel color, float alpha)
+{
     if (x < 0 || x >= image.GetWidth() || y < 0 || y >= image.GetHeight()) {
         return;
     }
