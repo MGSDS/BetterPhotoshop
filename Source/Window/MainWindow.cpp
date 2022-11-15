@@ -142,10 +142,9 @@ void MainWindow::InitMenuBar()
 
         auto* editingMenu = imageMenu->addMenu("Edit");
         {
-            auto *drawLineAction = editingMenu->addAction("Draw line");
+            auto* drawLineAction = editingMenu->addAction("Draw line");
             connect(drawLineAction, &QAction::triggered, this, &MainWindow::OnLineDrawAction);
         }
-
     }
 }
 
@@ -496,19 +495,17 @@ void MainWindow::SetImageForQt(const Image* image)
 
 void MainWindow::OnLineDrawAction()
 {
-    //TODO: disable buttons while drawing
+    // TODO: disable buttons while drawing
     QMessageBox msgBox;
     msgBox.setText("Drawing mode. Click on two points to draw a line.");
     msgBox.setInformativeText("Enable drawing mode?");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::Yes);
     int ret = msgBox.exec();
-    if (ret == QMessageBox::Yes){
+    if (ret == QMessageBox::Yes) {
         m_DrawingMode = true;
         Log::Info("Drawing mode enabled");
-    }
-    else
-    {
+    } else {
         Log::Info("Drawing mode not enabled");
     }
 }
@@ -528,33 +525,30 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
     m_SelectedPoints.push_back(pos);
 
     QMessageBox msgBox;
-    std::string  msg = "Point (" + std::to_string(static_cast<int>(pos.x()))  + ","
-            + std::to_string(static_cast<int>(pos.y()))+ ") selected";
+    std::string msg = "Point (" + std::to_string(static_cast<int>(pos.x())) + "," + std::to_string(static_cast<int>(pos.y())) + ") selected";
     msgBox.setText(QString(msg.c_str()));
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.setDefaultButton(QMessageBox::Ok);
     msgBox.exec();
 
-    if(m_SelectedPoints.size() >= 2) {
+    if (m_SelectedPoints.size() >= 2) {
         bool hasPressedOk = false;
         QList<int> res = LineDialog::getInts(this, &hasPressedOk);
         int lineWidth = res[0];
         m_DrawingMode = false;
         if (hasPressedOk) {
-            auto getPairPoint = [](QPointF point)
-            {
+            auto getPairPoint = [](QPointF point) {
                 return std::pair<float, float>(point.x(), point.y());
             };
 
             Pixel color = Pixel(res[1] / 255.0f, res[2] / 255.0f, res[3] / 255.0f, res[4] / 255.0f);
 
-            auto newImage =  std::make_unique<Image>(Painter::DrawLine(*m_Image,
-                                                    getPairPoint(m_SelectedPoints[0]),
-                                                    getPairPoint(m_SelectedPoints[1]),
-                                                    lineWidth, m_Gamma, m_ActiveChannel, color));
+            auto newImage = std::make_unique<Image>(Painter::DrawLine(*m_Image,
+                                                                      getPairPoint(m_SelectedPoints[0]),
+                                                                      getPairPoint(m_SelectedPoints[1]),
+                                                                      lineWidth, m_Gamma, color));
             this->SetImage(std::move(newImage));
         }
         m_SelectedPoints.clear();
     }
 }
-

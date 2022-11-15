@@ -118,6 +118,7 @@ void ImageViewWithInfo::ClearImageInfo()
     }
 }
 
-void ImageViewWithInfo::OnSelectButtonClicked(const QPointF &pos) {
+void ImageViewWithInfo::OnSelectButtonClicked(const QPointF& pos)
+{
     emit selectButtonClicked(pos);
 }

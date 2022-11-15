@@ -1,31 +1,18 @@
 #include "Painter.hpp"
 
-Image Painter::DrawLine(
-        const Image& image,
-        std::pair<float, float> a,
-        std::pair<float, float> b,
-        int width,
-        float imageGamma,
-        ActiveChannel channel,
-        Pixel color)
+Image Painter::DrawLine(const Image& image, std::pair<float, float> a, std::pair<float, float> b, int width, float imageGamma, Pixel color)
 {
     auto line = DrawLine(image.GetWidth(), image.GetHeight(), a.first, a.second, b.first, b.second, width, color);
 
     auto source = Image(image);
 
-    source.CorrectForGamma(1.0f/imageGamma);
+    source.CorrectForGamma(1.0f / imageGamma);
 
     for (size_t i = 0; i < source.GetPixelsCount(); i++) {
         auto& pixel = line.PixelAt(i);
         auto& sourcePixel = source.PixelAt(i);
-        if (channel == ActiveChannel::ALL) {
-            for (int j = 0; j < 4; j++) {
-                sourcePixel.channels[j] =
-                        pixel.channels[j] * pixel.channels[3] + sourcePixel.channels[j] * (1 - pixel.channels[3]);
-            }
-        } else {
-            sourcePixel.channels[channel] =
-                    pixel.channels[channel] * pixel.channels[3] + sourcePixel.channels[channel] * (1 - pixel.channels[3]);
+        for (int j = 0; j < 4; j++) {
+            sourcePixel.channels[j] = pixel.channels[j] * pixel.channels[3] + sourcePixel.channels[j] * (1 - pixel.channels[3]);
         }
     }
 
@@ -36,7 +23,7 @@ Image Painter::DrawLine(
 
 Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x1, float y1, int width, Pixel color)
 {
-    //Xiaolin Wu's line algorithm
+    // Xiaolin Wu's line algorithm
     auto res = Image(im_width, im_height, Pixel(0.0f, 0.0f, 0.0f, 0.0f));
 
     bool steep = std::abs(y1 - y0) > std::abs(x1 - x0);
@@ -51,7 +38,7 @@ Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x
     }
 
     float dx = x1 - x0;
-    
+
     float dy = y1 - y0;
     float gradient = 1.0f;
     if (dx != 0.0f) {
@@ -68,7 +55,7 @@ Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x
 
     if (steep) {
         SetPixel(res, ypxl1, xpxl1, color, 1.0f - std::fmod(yend, 1.0f) * xgap);
-        for(int i = 1; i < width; i++) {
+        for (int i = 1; i < width; i++) {
             SetPixel(res, ypxl1 + i, xpxl1, color, 1.0f);
         }
 
@@ -84,7 +71,7 @@ Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x
 
     float intery = yend + gradient;
 
-    xend =std::round(x1);
+    xend = std::round(x1);
     yend = y1 + gradient * (xend - x1);
     xgap = std::fmod(x1 + 0.5f, 1.0f);
     int xpxl2 = static_cast<int>(xend);
@@ -115,7 +102,7 @@ Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x
             SetPixel(res, std::floor(intery) + width, x, color, std::fmod(intery, 1.0f));
             intery += gradient;
         }
-    } else{
+    } else {
         for (int x = xpxl1 + 1; x < xpxl2; x++) {
             SetPixel(res, x, std::floor(intery), color, 1.0f - std::fmod(intery, 1.0f));
             for (int i = 1; i < width; i++) {
@@ -130,8 +117,8 @@ Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x
     return res;
 }
 
-
-void Painter::SetPixel(Image &image, int x, int y, Pixel color, float alpha) {
+void Painter::SetPixel(Image& image, int x, int y, Pixel color, float alpha)
+{
     if (x < 0 || x >= image.GetWidth() || y < 0 || y >= image.GetHeight()) {
         return;
     }

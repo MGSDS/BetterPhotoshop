@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
-#include <Window/ImageViewWithInfo.hpp>
 #include <Core/Image/Editors/Painter.hpp>
+#include <Window/ImageViewWithInfo.hpp>
 
 #include <QAction>
 #include <QDialog>

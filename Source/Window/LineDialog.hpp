@@ -7,10 +7,10 @@ class QLabel;
 
 class LineDialog : public QDialog
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    explicit LineDialog(QWidget *parent = nullptr);
-    static QList<int> getInts(QWidget *parent, bool *ok = nullptr);
+    explicit LineDialog(QWidget* parent = nullptr);
+    static QList<int> getInts(QWidget* parent, bool* ok = nullptr);
 
 private:
     QList<QLineEdit*> fields;
