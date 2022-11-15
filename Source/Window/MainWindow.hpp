@@ -74,6 +74,8 @@ private slots:
     void OnFileSaveAction();
     void OnFileSaveAsAction();
     void OnFileSaveViewAsAction();
+    void OnLineDrawAction();
+    void OnImageLeftClick(QPoint pos);
 
     void OnImageColorModelActionSelected(ColorModel selectedColorModel);
     void OnActiveChannelSelected(ActiveChannel activeChannels);

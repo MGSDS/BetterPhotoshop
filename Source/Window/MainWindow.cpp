@@ -139,6 +139,13 @@ void MainWindow::InitMenuBar()
             m_ConvertGammaAction->setEnabled(false);
             connect(m_ConvertGammaAction, &QAction::triggered, this, &MainWindow::OnImageConvertGammaAction);
         }
+
+        auto* editingMenu = imageMenu->addMenu("Edit");
+        {
+            auto *drawLineAction = editingMenu->addAction("Draw line");
+            connect(drawLineAction, &QAction::triggered, this, &MainWindow::OnLineDrawAction);
+        }
+
     }
 }
 
@@ -150,6 +157,7 @@ void MainWindow::InitImageView()
     UpdateColorModelText(m_SelectedColorModel);
     UpdateActiveChannelsText(m_ActiveChannel);
     m_ImageView->SetCurrentGammaText(QString::number(m_Gamma));
+//    connect(m_ImageView.get(), &ImageViewWithInfo::mouseLeftClick, this, &MainWindow::OnImageLeftClick);
 }
 
 void MainWindow::InitImageFileFilters()
@@ -364,6 +372,7 @@ void MainWindow::SetImage(std::unique_ptr<Image>&& image)
     m_SaveAsAction->setEnabled(enableSaveActions);
     m_SaveViewAsAction->setEnabled(enableSaveActions);
     m_ConvertGammaAction->setEnabled(enableSaveActions);
+    auto ptr = m_ImageView.get();
 }
 
 bool MainWindow::TrySaveImage(const Image& image, const std::string& filename, ImageFormat format)
@@ -484,3 +493,30 @@ void MainWindow::SetImageForQt(const Image* image)
     auto transformedImage = TransformImageForQt(*image);
     m_ImageView->SetImage(&transformedImage);
 }
+
+void MainWindow::OnLineDrawAction() {
+    //TODO: disable buttons while drawing
+    //TODO: write about drawind
+    QMessageBox msgBox;
+    msgBox.setText("Drawing mode. Click on two points to draw a line.");
+    msgBox.setInformativeText("Enable drawing mode?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::Yes);
+    int ret = msgBox.exec();
+    if (ret == QMessageBox::Yes){
+        //TODO: Enable drawing mode
+        Log::Info("Drawing mode enabled");
+    }
+    else {
+        Log::Info("Drawing mode not enabled");
+    }
+}
+
+void MainWindow::OnImageLeftClick(QPoint pos) {
+    Log::Info("Drawing mode disabled. Left click {},{}", pos.x(), pos.y());
+    //TODO: draw a line
+//    bool hasPressedOk = false;
+//    int lineWidth = QInputDialog::getInt(this, "Draw line", "Line Width", 1, 1,
+//                                         std::numeric_limits<int>::max(), 2, &hasPressedOk, {});
+}
+
