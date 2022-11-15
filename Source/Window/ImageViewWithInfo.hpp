@@ -25,6 +25,10 @@ private slots:
     void OnImageSizeChanged(const QSize& newSize);
     void OnCursorPosChanged(const QPointF& newPos);
     void OnZoomChanged(float newZoom);
+    void OnSelectButtonClicked(const QPointF& pos);
+
+signals:
+    void selectButtonClicked(const QPointF& pos);
 
 private:
     void ClearImageInfo();

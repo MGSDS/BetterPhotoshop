@@ -29,7 +29,6 @@ MainWindow::MainWindow(const WindowSettings& settings)
     , m_Gamma(DEFAULT_GAMMA_VALUE)
 {
     InitWindow(settings);
-
     InitMenuBar();
     InitImageView();
     InitImageFileFilters();
@@ -157,7 +156,7 @@ void MainWindow::InitImageView()
     UpdateColorModelText(m_SelectedColorModel);
     UpdateActiveChannelsText(m_ActiveChannel);
     m_ImageView->SetCurrentGammaText(QString::number(m_Gamma));
-//    connect(m_ImageView.get(), &ImageViewWithInfo::mouseLeftClick, this, &MainWindow::OnImageLeftClick);
+    connect(m_ImageView.get(), &ImageViewWithInfo::selectButtonClicked, this, &MainWindow::OnImageSelectButtonClick);
 }
 
 void MainWindow::InitImageFileFilters()
@@ -504,7 +503,7 @@ void MainWindow::OnLineDrawAction() {
     msgBox.setDefaultButton(QMessageBox::Yes);
     int ret = msgBox.exec();
     if (ret == QMessageBox::Yes){
-        //TODO: Enable drawing mode
+        m_DrawingMode = true;
         Log::Info("Drawing mode enabled");
     }
     else {
@@ -512,11 +511,48 @@ void MainWindow::OnLineDrawAction() {
     }
 }
 
-void MainWindow::OnImageLeftClick(QPoint pos) {
-    Log::Info("Drawing mode disabled. Left click {},{}", pos.x(), pos.y());
-    //TODO: draw a line
-//    bool hasPressedOk = false;
-//    int lineWidth = QInputDialog::getInt(this, "Draw line", "Line Width", 1, 1,
-//                                         std::numeric_limits<int>::max(), 2, &hasPressedOk, {});
+void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
+{
+    if (!m_DrawingMode) {
+        return;
+    }
+
+    Log::Info("Drawing mode enabled. Left click {},{}", pos.x(), pos.y());
+    if (!(pos.x() >= 0 && pos.x() <= m_Image->GetWidth() && pos.y() >= 0 && pos.y() <= m_Image->GetHeight())) {
+        Log::Info("Point is located outside of the image. Skipping");
+        return;
+    }
+
+    m_SelectedPoints.push_back(pos);
+
+    QMessageBox msgBox;
+    std::string  msg = "Point (" + std::to_string(static_cast<int>(pos.x()))  + ","
+            + std::to_string(static_cast<int>(pos.y()))+ ") selected";
+    msgBox.setText(QString(msg.c_str()));
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.exec();
+
+    if(m_SelectedPoints.size() >= 2) {
+        bool hasPressedOk = false;
+        int lineWidth = QInputDialog::getInt(this, "Draw line", "Line Width", 1, 1,
+                                             std::numeric_limits<int>::max(), 2, &hasPressedOk, {});
+        m_DrawingMode = false;
+        if (hasPressedOk) {
+            auto getPairPoint = [](QPointF point)
+            {
+                return std::pair<float, float>(point.x(), point.y());
+            };
+
+            //FIXME: Shitty code
+            auto newImage =  std::make_unique<Image>(Painter::DrawLine(*m_Image,
+                                                    m_Gamma,
+                                                    getPairPoint(m_SelectedPoints[0]),
+                                                    getPairPoint(m_SelectedPoints[0]),
+                                                    lineWidth));
+            this->SetImage(std::move(newImage));
+        }
+        m_SelectedPoints.clear();
+    }
 }
 

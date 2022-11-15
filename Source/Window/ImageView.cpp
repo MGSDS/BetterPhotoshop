@@ -8,7 +8,8 @@
 #include <QPixmap>
 #include <QtWidgets>
 
-static Qt::MouseButton MOVE_BUTTON = Qt::MouseButton::LeftButton;
+static Qt::MouseButton MOVE_BUTTON = Qt::MouseButton::RightButton;
+static Qt::MouseButton SELECT_BUTTON = Qt::MouseButton::LeftButton;
 static QRect PAN_RECTANGLE = QRect(-100000, -100000, 200000, 200000);
 static qreal SCALE_STEP = 0.05;
 static qreal MIN_ZOOM = 0.1;
@@ -58,13 +59,14 @@ void ImageView::mousePressEvent(QMouseEvent* event)
 
     event->accept();
 
-    if (event->button() != MOVE_BUTTON) {
-        return;
+    if (event->button() == MOVE_BUTTON) {
+        m_IsMoveButtonPressed = true;
+        m_PrevPanX = event->position().x();
+        m_PrevPanY = event->position().y();
     }
-
-    m_IsMoveButtonPressed = true;
-    m_PrevPanX = event->position().x();
-    m_PrevPanY = event->position().y();
+    else if(event->button() == SELECT_BUTTON) {
+        emit selectButtonClicked(mapToScene(event->pos()));
+    }
 }
 
 void ImageView::mouseReleaseEvent(QMouseEvent* event)

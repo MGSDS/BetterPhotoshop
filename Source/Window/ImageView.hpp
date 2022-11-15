@@ -27,6 +27,7 @@ signals:
     void imageSizeChanged(const QSize& newSize);
     void cursorPosChanged(const QPointF& newPos);
     void zoomChanged(float newZoom);
+    void selectButtonClicked(const QPointF& pos);
 
 private:
     std::unique_ptr<QGraphicsScene> m_Scene = nullptr;
