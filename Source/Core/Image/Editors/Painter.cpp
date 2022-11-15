@@ -9,7 +9,7 @@ Image Painter::DrawLine(const Image& image, std::pair<float, float> a, std::pair
     int y1 = static_cast<int>(b.second);
 
     DrawLine(res, x0, y0, x1, y1);
-    x0 -= width / 2;
+    y0 -= width / 2;
     y1 -= width / 2;
     while (--width > 0) {
         DrawLine(res, x0, y0, x1, y1);
