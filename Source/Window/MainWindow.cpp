@@ -494,7 +494,8 @@ void MainWindow::SetImageForQt(const Image* image)
     m_ImageView->SetImage(&transformedImage);
 }
 
-void MainWindow::OnLineDrawAction() {
+void MainWindow::OnLineDrawAction()
+{
     //TODO: disable buttons while drawing
     QMessageBox msgBox;
     msgBox.setText("Drawing mode. Click on two points to draw a line.");
@@ -506,7 +507,8 @@ void MainWindow::OnLineDrawAction() {
         m_DrawingMode = true;
         Log::Info("Drawing mode enabled");
     }
-    else {
+    else
+    {
         Log::Info("Drawing mode not enabled");
     }
 }
@@ -533,7 +535,8 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
     msgBox.setDefaultButton(QMessageBox::Ok);
     msgBox.exec();
 
-    if(m_SelectedPoints.size() >= 2) {
+    if(m_SelectedPoints.size() >= 2)
+    {
         bool hasPressedOk = false;
         QList<int> res = LineDialog::getInts(this, &hasPressedOk);
         int lineWidth = res[0];
@@ -549,7 +552,7 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
             auto newImage =  std::make_unique<Image>(Painter::DrawLine(*m_Image,
                                                     getPairPoint(m_SelectedPoints[0]),
                                                     getPairPoint(m_SelectedPoints[1]),
-                                                    lineWidth, m_Gamma, color));
+                                                    lineWidth, m_Gamma, m_ActiveChannel, color));
             this->SetImage(std::move(newImage));
         }
         m_SelectedPoints.clear();
