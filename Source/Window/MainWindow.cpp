@@ -543,11 +543,12 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
                 return std::pair<float, float>(point.x(), point.y());
             };
 
-            //FIXME: Shitty code
+            Pixel color = Pixel(0, 0, 0, 1);
+            //TODO: Add color selection
             auto newImage =  std::make_unique<Image>(Painter::DrawLine(*m_Image,
                                                     getPairPoint(m_SelectedPoints[0]),
                                                     getPairPoint(m_SelectedPoints[1]),
-                                                    lineWidth));
+                                                    lineWidth, m_Gamma, color));
             this->SetImage(std::move(newImage));
         }
         m_SelectedPoints.clear();

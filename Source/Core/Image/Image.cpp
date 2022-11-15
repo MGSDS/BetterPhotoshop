@@ -150,12 +150,17 @@ const uint8_t* Image::ToDataRGBA32FPx4() const
     return reinterpret_cast<const uint8_t*>(&m_Pixels[0]);
 }
 
-Image::Image(size_t width, size_t height)
-    : m_Width(width)
-    , m_Height(height)
-    , m_Size(width * height)
+Image::Image(size_t width, size_t height) : m_Width(width), m_Height(height), m_Size(width * height)
 {
     m_Pixels = std::vector<Pixel>(m_Size, Pixel::WhiteRgb());
+}
+
+Image::Image(size_t width, size_t height, Pixel pixel)
+        : m_Width(width)
+        , m_Height(height)
+        , m_Size(width * height)
+{
+    m_Pixels = std::vector<Pixel>(m_Size, pixel);
 }
 
 Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels)

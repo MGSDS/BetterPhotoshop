@@ -2,11 +2,13 @@
 
 #include "Core/Image/Image.hpp"
 
+#include <cmath>
+
 class Painter {
 public:
-    static Image DrawLine(const Image& image, std::pair<float, float> a, std::pair<float, float> b, int width);
+    static Image DrawLine(const Image& image, std::pair<float, float> a, std::pair<float, float> b, int width, float imageGamma, Pixel color);
 private:
     Painter() { }
-    static void DrawLine(Image& image, int x0, int y0, int x1, int y1);
-    static void SetPixel(Image& image, int x, int y, float c0 = 0.0f, float c1 = 0.0f, float c2 = 0.0f, float c3 = 1.0f);
+    static Image DrawLine(int im_width, int im_height, float x0, float y0, float x1, float y1, int width, Pixel color);
+    static void SetPixel(Image& image, int x, int y, Pixel color, float alpha);
 };

@@ -36,6 +36,7 @@ class Image
 public:
     Image(size_t width, size_t height);
     Image(size_t width, size_t height, const std::vector<Pixel>& pixels);
+    Image(size_t width, size_t height, Pixel pixel);
     Image(const Image& other) = default;
 
     static LoadedImageData FromFile(const std::string& fileName);
