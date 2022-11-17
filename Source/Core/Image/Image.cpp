@@ -178,9 +178,9 @@ void Image::AddLayer(const Image& image)
         Log::Error("Adding layer: image size ({}, {}) does not match current image size ({}, {}).", image.GetWidth(), image.GetHeight(), m_Width, m_Height);
         throw std::runtime_error("Image size does not match.");
     }
-   for (int i = 0; i < this->GetPixelsCount(); ++i) {
-       for (int j = 0; j < 3; ++j) {
-           this->PixelAt(i).channels[j] = this->PixelAt(i).channels[j] * (1 - image.PixelAt(i).channels[3]) + image.PixelAt(i).channels[j] * image.PixelAt(i).channels[3];
-       }
-   }
+    for (int i = 0; i < this->GetPixelsCount(); ++i) {
+        for (int j = 0; j < 3; ++j) {
+            this->PixelAt(i).channels[j] = this->PixelAt(i).channels[j] * (1 - image.PixelAt(i).channels[3]) + image.PixelAt(i).channels[j] * image.PixelAt(i).channels[3];
+        }
+    }
 }

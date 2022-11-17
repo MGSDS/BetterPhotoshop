@@ -537,7 +537,7 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
         int lineWidth = res[0];
         m_DrawingMode = false;
         if (hasPressedOk) {
-            Pixel color = Pixel(res[1] / 255.0f, res[2] / 255.0f, res[3] / 255.0f, res[4]/255.0f);
+            Pixel color = Pixel(res[1] / 255.0f, res[2] / 255.0f, res[3] / 255.0f, res[4] / 255.0f);
             auto line = Painter::DrawLine(m_Image->GetWidth(), m_Image->GetHeight(),
                                           m_SelectedPoints[0].x(), m_SelectedPoints[0].y(),
                                           m_SelectedPoints[1].x(), m_SelectedPoints[1].y(),
