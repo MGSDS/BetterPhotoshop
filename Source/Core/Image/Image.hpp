@@ -61,7 +61,6 @@ public:
 
 private:
     Image() = default;
-    float m_Gamma = 1.0f;
     size_t m_Width = 0;
     size_t m_Height = 0;
     size_t m_Size = 0;
