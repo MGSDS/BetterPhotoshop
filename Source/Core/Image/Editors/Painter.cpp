@@ -1,27 +1,6 @@
 #include "Painter.hpp"
 
-Image Painter::DrawLine(const Image& image, std::pair<float, float> a, std::pair<float, float> b, int width, float imageGamma, Pixel color)
-{
-    auto line = DrawLine(image.GetWidth(), image.GetHeight(), a.first, a.second, b.first, b.second, width, color);
-
-    auto source = Image(image);
-
-    source.CorrectForGamma(1.0f / imageGamma);
-
-    for (size_t i = 0; i < source.GetPixelsCount(); i++) {
-        auto& pixel = line.PixelAt(i);
-        auto& sourcePixel = source.PixelAt(i);
-        for (int j = 0; j < 4; j++) {
-            sourcePixel.channels[j] = pixel.channels[j] * pixel.channels[3] + sourcePixel.channels[j] * (1 - pixel.channels[3]);
-        }
-    }
-
-    source.CorrectForGamma(imageGamma);
-
-    return source;
-}
-
-Image Painter::DrawLine(int im_width, int im_height, float x0, float y0, float x1, float y1, int width, Pixel color)
+Image Painter::DrawLine(size_t im_width, size_t im_height, float x0, float y0, float x1, float y1, int width, Pixel color)
 {
     // Xiaolin Wu's line algorithm
     auto res = Image(im_width, im_height, Pixel(0.0f, 0.0f, 0.0f, 0.0f));

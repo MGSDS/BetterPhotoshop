@@ -537,17 +537,14 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
         int lineWidth = res[0];
         m_DrawingMode = false;
         if (hasPressedOk) {
-            auto getPairPoint = [](QPointF point) {
-                return std::pair<float, float>(point.x(), point.y());
-            };
-
-            Pixel color = Pixel(res[1] / 255.0f, res[2] / 255.0f, res[3] / 255.0f, res[4] / 255.0f);
-
-            auto newImage = std::make_unique<Image>(Painter::DrawLine(*m_Image,
-                                                                      getPairPoint(m_SelectedPoints[0]),
-                                                                      getPairPoint(m_SelectedPoints[1]),
-                                                                      lineWidth, m_Gamma, color));
-            this->SetImage(std::move(newImage));
+            Pixel color = Pixel(res[1] / 255.0f, res[2] / 255.0f, res[3] / 255.0f, res[4]/255.0f);
+            auto line = Painter::DrawLine(m_Image->GetWidth(), m_Image->GetHeight(),
+                                          m_SelectedPoints[0].x(), m_SelectedPoints[0].y(),
+                                          m_SelectedPoints[1].x(), m_SelectedPoints[1].y(),
+                                          lineWidth, color);
+            line.CorrectForGamma(m_Gamma);
+            m_Image->AddLayer(line);
+            this->SetImage(std::move(m_Image));
         }
         m_SelectedPoints.clear();
     }
