@@ -1,6 +1,8 @@
 #include "MainWindow.hpp"
 
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
+#include <Core/Image/Gamma/PowGammaCorrection.hpp>
+#include <Core/Image/Gamma/SrgbGammaCorrection.hpp>
 #include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
 #include <Window/Dialogs/NewImageDialog.hpp>
@@ -451,7 +453,7 @@ void MainWindow::OnImageConvertGammaAction()
         return;
     }
 
-    m_Image->CorrectForGamma(newGamma);
+    ApplyGammaCorrection(*m_Image, newGamma);
     SetImageForQt(m_Image.get());
 }
 
@@ -459,16 +461,18 @@ void MainWindow::SetGamma(float newGamma)
 {
     m_Gamma = std::max(newGamma, 0.0f);
     if (m_Gamma < 0.001f) {
-        m_Gamma = 1.0f;
+        m_Gamma = 0.0f;
     }
 
-    m_ImageView->SetCurrentGammaText(QString::number(m_Gamma));
+    QString labelText = (m_Gamma == 0.0f) ? "0 (sRGB)" : QString::number(m_Gamma);
+    m_ImageView->SetCurrentGammaText(labelText);
 }
 
 Image MainWindow::TransformImageForQt(const Image& image)
 {
     auto newImage = image;
-    newImage.CorrectForGamma(m_Gamma);
+
+    ApplyGammaCorrection(newImage, m_Gamma);
     newImage = Image::CopyWithChannelMask(newImage, m_ActiveChannel);
 
     return newImage;
@@ -483,4 +487,13 @@ void MainWindow::SetImageForQt(const Image* image)
 
     auto transformedImage = TransformImageForQt(*image);
     m_ImageView->SetImage(&transformedImage);
+}
+
+void MainWindow::ApplyGammaCorrection(Image& image, float gammaValue)
+{
+    if (m_Gamma == 0.0f) {
+        Gamma::CorrectToSrgb(image);
+    } else {
+        Gamma::Correct(image, gammaValue);
+    }
 }

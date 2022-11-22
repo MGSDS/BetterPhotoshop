@@ -124,15 +124,6 @@ Image Image::CopyWithChannelMask(const Image& image, ActiveChannel activeChannel
     return copiedImage;
 }
 
-void Image::CorrectForGamma(float gammaValue)
-{
-    for (auto& pixel : m_Pixels) {
-        for (int i = 0; i < 3; i++) {
-            pixel.channels[i] = std::pow(pixel.channels[i], 1.0f / gammaValue);
-        }
-    }
-}
-
 void Image::WriteToFile(const std::string& fileName, ImageFormat format) const
 {
     std::ofstream ofs(fileName, std::ios::binary);

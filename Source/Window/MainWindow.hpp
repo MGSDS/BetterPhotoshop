@@ -67,6 +67,7 @@ private:
     std::unique_ptr<Image> ConvertImageToNewModel(const Image& image, ColorModel currentModel, ColorModel newModel);
 
     void SetGamma(float newGamma);
+    void ApplyGammaCorrection(Image& image, float gammaValue);
 
 private slots:
     void OnFileNewAction();

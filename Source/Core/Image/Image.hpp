@@ -41,8 +41,6 @@ public:
     static LoadedImageData FromFile(const std::string& fileName);
     static Image CopyWithChannelMask(const Image& image, ActiveChannel activeChannel);
 
-    void CorrectForGamma(float gammaValue);
-
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
 
     uint8_t* ToDataRGBA32FPx4();
