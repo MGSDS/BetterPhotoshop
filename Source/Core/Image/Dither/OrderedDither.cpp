@@ -19,7 +19,7 @@ static const float TRESHOLDS[N][N] = {
 std::unique_ptr<Image> OrderedDither::Apply(const Image& image, uint8_t bitsPerChannel)
 {
     if (bitsPerChannel == 0 || bitsPerChannel > 8) {
-        throw new std::runtime_error("Maximum bit depth () exceeded.");
+        throw new std::out_of_range("Specified bitsPerChannel value is out of range.");
     }
 
     float quantSize = 1.0f / ((1u << bitsPerChannel) - 1);
