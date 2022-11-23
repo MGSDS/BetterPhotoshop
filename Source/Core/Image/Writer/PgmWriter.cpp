@@ -3,8 +3,8 @@
 #include "Core/Image/Dither/Dither.hpp"
 #include "Core/Utils/Utils.hpp"
 
-#include <string>
 #include <cmath>
+#include <string>
 
 void PgmWriter::WriteHeader(const Image& image, std::ostream& os)
 {
@@ -23,7 +23,7 @@ void PgmWriter::Write(const Image& image, std::ostream& os, uint8_t bitsPerChann
                                   pixel.channels[1] +
                                   pixel.channels[2]) /
                                  3.0f;
-        
+
         os.put(Utils::ByteFromNorm(meanChannelValue));
     }
     os.flush();

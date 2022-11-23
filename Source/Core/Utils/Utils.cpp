@@ -61,6 +61,7 @@ bool Utils::DataStartsWith(const std::vector<uint8_t>& data, const std::vector<u
     return data.size() >= prefix.size() && memcmp(&data[0], &prefix[0], prefix.size()) == 0;
 }
 
-bool Utils::OutOfBounds(int i, int j, size_t h, size_t w) {
+bool Utils::OutOfBounds(int i, int j, size_t h, size_t w)
+{
     return i < 0 || j < 0 || i >= h || j >= w;
 }

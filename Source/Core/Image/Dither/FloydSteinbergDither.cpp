@@ -22,7 +22,7 @@ std::unique_ptr<Image> FloydSteinbergDither::Apply(const Image& image, uint8_t b
     }
 
     std::unique_ptr<Image> newImage = std::make_unique<Image>(image);
-    
+
     Dither::QuantizeWithErrorsSpreading(*newImage, bitsPerChannel, FloydSteinbergDither::TRAVERSE);
 
     return newImage;

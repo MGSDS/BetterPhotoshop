@@ -14,8 +14,7 @@
 
 std::unique_ptr<Dither> Dither::GetDither(DitherAlgo ditherAlgo)
 {
-    switch (ditherAlgo)
-    {
+    switch (ditherAlgo) {
         case DitherAlgo::ATKINSON: return std::make_unique<AtkinsonDither>();
         case DitherAlgo::FLOYD_STEINBERG: return std::make_unique<FloydSteinbergDither>();
         case DitherAlgo::ORDERED: return std::make_unique<OrderedDither>();
@@ -25,7 +24,8 @@ std::unique_ptr<Dither> Dither::GetDither(DitherAlgo ditherAlgo)
     }
 }
 
-float Dither::GetQuantSize(uint8_t bitsPerChannel) {
+float Dither::GetQuantSize(uint8_t bitsPerChannel)
+{
     return 1.0f / ((1u << bitsPerChannel) - 1);
 }
 
@@ -42,7 +42,7 @@ void Dither::QuantizePixel(Pixel& pixel, uint8_t bitsPerChannel)
     }
 }
 
-void Dither::SetErrors(float errors[3], const Pixel& prev, const Pixel& quantized) 
+void Dither::SetErrors(float errors[3], const Pixel& prev, const Pixel& quantized)
 {
     for (size_t i = 0; i < 3; i++) {
         errors[i] = prev.channels[i] - quantized.channels[i];
@@ -57,10 +57,9 @@ void Dither::AddErrors(Pixel& pixel, float errors[3], float weight)
 }
 
 void Dither::QuantizeWithErrorsSpreading(
-    Image& image, 
-    uint8_t bitsPerChannel, 
-    std::vector<std::tuple<std::pair<int32_t, int32_t>, float>> traverse
-)
+    Image& image,
+    uint8_t bitsPerChannel,
+    std::vector<std::tuple<std::pair<int32_t, int32_t>, float>> traverse)
 {
     size_t height = image.GetHeight();
     size_t width = image.GetWidth();

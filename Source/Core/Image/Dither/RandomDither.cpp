@@ -3,13 +3,13 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
-#include <stdexcept>
 #include <random>
+#include <stdexcept>
 
-static float GetRandomFloat(float maxValue) {
+static float GetRandomFloat(float maxValue)
+{
     return maxValue * (rand() / (static_cast<float>(RAND_MAX)));
 }
-
 
 std::unique_ptr<Image> RandomDither::Apply(const Image& image, uint8_t bitsPerChannel)
 {

@@ -6,7 +6,6 @@
 #include <stdexcept>
 #include <vector>
 
-
 const std::vector<std::tuple<std::pair<int32_t, int32_t>, float>> AtkinsonDither::TRAVERSE = {
     { { 0, 1 }, 0.125f },
     { { 0, 2 }, 0.125f },
@@ -23,7 +22,7 @@ std::unique_ptr<Image> AtkinsonDither::Apply(const Image& image, uint8_t bitsPer
     }
 
     std::unique_ptr<Image> newImage = std::make_unique<Image>(image);
-    
+
     Dither::QuantizeWithErrorsSpreading(*newImage, bitsPerChannel, AtkinsonDither::TRAVERSE);
 
     return newImage;

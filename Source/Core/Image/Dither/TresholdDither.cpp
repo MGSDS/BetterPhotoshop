@@ -5,13 +5,13 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
-#include <stdexcept>
 #include <random>
+#include <stdexcept>
 
-static float GetRandomInt(int maxValue) {
+static float GetRandomInt(int maxValue)
+{
     return rand() % maxValue;
 }
-
 
 std::unique_ptr<Image> TresholdDither::Apply(const Image& image, uint8_t bitsPerChannel)
 {

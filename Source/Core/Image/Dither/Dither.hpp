@@ -37,8 +37,7 @@ public:
     static void SetErrors(float errors[3], const Pixel& prev, const Pixel& quantized);
     static void AddErrors(Pixel& pixel, float errors[3], float weight);
     static void QuantizeWithErrorsSpreading(
-        Image& image, 
-        uint8_t bitsPerChannel, 
-        std::vector<std::tuple<std::pair<int32_t, int32_t>, float>> traverse
-    );
+        Image& image,
+        uint8_t bitsPerChannel,
+        std::vector<std::tuple<std::pair<int32_t, int32_t>, float>> traverse);
 };
