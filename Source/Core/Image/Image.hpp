@@ -40,6 +40,7 @@ public:
 
     static LoadedImageData FromFile(const std::string& fileName);
     static Image CopyWithChannelMask(const Image& image, ActiveChannel activeChannel);
+    static std::unique_ptr<Image> MonochromeGradient(size_t width, size_t height);
 
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
 

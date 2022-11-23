@@ -5,8 +5,10 @@
 #include <Core/Image/Reader/ImageReader.hpp>
 #include <Core/Image/Writer/ImageWriter.hpp>
 
+#include <algorithm>
 #include <exception>
 #include <fstream>
+#include <memory>
 
 Pixel::Pixel(float ch0, float ch1, float ch2, float ch3)
 {
@@ -155,4 +157,20 @@ Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels)
     , m_Size(width * height)
     , m_Pixels(pixels)
 {
+}
+
+std::unique_ptr<Image> Image::MonochromeGradient(size_t width, size_t height)
+{
+    auto newImage = std::make_unique<Image>(width, height);
+    float step = 1.0f / (width - 1);
+    for (size_t j = 0; j < width; j++) {
+        float pixelValue = std::clamp(step * j, 0.0f, 1.0f);
+        for (size_t i = 0; i < height; i++) {
+            Pixel& pixel = newImage->PixelAt(i, j);
+            for (int k = 0; k < 3; k++) {
+                pixel.channels[k] = pixelValue;
+            }
+        }
+    }
+    return newImage;
 }
