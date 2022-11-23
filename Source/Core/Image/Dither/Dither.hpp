@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <unordered_map>
 
 enum DitherAlgo : uint8_t
 {
@@ -12,6 +13,14 @@ enum DitherAlgo : uint8_t
     ORDERED,
     RANDOM,
     TRESHOLD
+};
+
+static const std::unordered_map<DitherAlgo, std::string> ENUM_TO_STRING_DITHER_ALGO_MAPPING = {
+    { DitherAlgo::ATKINSON, "Atkinson" },
+    { DitherAlgo::FLOYD_STEINBERG, "Floyd-Steinberg" },
+    { DitherAlgo::ORDERED, "Ordered (8x8)" },
+    { DitherAlgo::RANDOM, "Random" },
+    { DitherAlgo::TRESHOLD, "Treshold" }
 };
 
 class Dither
