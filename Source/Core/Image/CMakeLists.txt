@@ -3,5 +3,6 @@ target_sources(Photoshop PUBLIC
 )
 
 add_subdirectory(ColorModel)
+add_subdirectory(Dither)
 add_subdirectory(Reader)
 add_subdirectory(Writer)
