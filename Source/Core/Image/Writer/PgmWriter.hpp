@@ -5,7 +5,7 @@
 class PgmWriter : public ImageWriter
 {
 public:
-    void Write(const Image& image, std::ostream& os) const override;
+    void Write(const Image& image, std::ostream& os, uint8_t bitsPerChannel = 8) const override;
 
     ~PgmWriter() override = default;
 
