@@ -39,5 +39,5 @@ public:
     static void QuantizeWithErrorsSpreading(
         Image& image,
         uint8_t bitsPerChannel,
-        std::vector<std::tuple<std::pair<int32_t, int32_t>, float>> traverse);
+        const std::vector<std::tuple<std::pair<int32_t, int32_t>, float>>& traverse);
 };

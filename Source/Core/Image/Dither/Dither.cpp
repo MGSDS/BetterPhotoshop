@@ -59,7 +59,7 @@ void Dither::AddErrors(Pixel& pixel, float errors[3], float weight)
 void Dither::QuantizeWithErrorsSpreading(
     Image& image,
     uint8_t bitsPerChannel,
-    std::vector<std::tuple<std::pair<int32_t, int32_t>, float>> traverse)
+    const std::vector<std::tuple<std::pair<int32_t, int32_t>, float>>& traverse)
 {
     size_t height = image.GetHeight();
     size_t width = image.GetWidth();
