@@ -148,7 +148,7 @@ void MainWindow::InitMenuBar()
             auto* ditherActionGroup = new QActionGroup(this);
             ditherActionGroup->setExclusive(true);
 
-            for (const auto& [ditherAlgoEnum, ditherAlgoName] :  ENUM_TO_STRING_DITHER_ALGO_MAPPING) {
+            for (const auto& [ditherAlgoEnum, ditherAlgoName] : ENUM_TO_STRING_DITHER_ALGO_MAPPING) {
                 auto* ditheringAction = ditheringMenu->addAction(ditherAlgoName.c_str());
                 ditherActionGroup->addAction(ditheringAction);
                 connect(ditheringAction, &QAction::triggered, this, [this, ditherAlgo = ditherAlgoEnum]() {
@@ -157,7 +157,6 @@ void MainWindow::InitMenuBar()
             }
             SetActionGroupEnabled(ditherActionGroup, true);
         }
-
     }
 }
 
@@ -520,7 +519,8 @@ void MainWindow::ApplyGammaCorrection(Image& image, float gammaValue)
     }
 }
 
-void MainWindow::OnDitheringActionSelected(DitherAlgo ditheringType){
+void MainWindow::OnDitheringActionSelected(DitherAlgo ditheringType)
+{
     bool ok = false;
     int depth = QInputDialog::getDouble(this, "Dithering", "Depth", 1, 1, 8, 0, &ok, {}, 1);
     if (!ok) {
