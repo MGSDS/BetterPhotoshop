@@ -143,11 +143,8 @@ void MainWindow::InitMenuBar()
             connect(m_ConvertGammaAction, &QAction::triggered, this, &MainWindow::OnImageConvertGammaAction);
         }
 
-        auto* editingMenu = imageMenu->addMenu("Edit");
-        {
-            auto* drawLineAction = editingMenu->addAction("Draw line");
-            connect(drawLineAction, &QAction::triggered, this, &MainWindow::OnLineDrawAction);
-        }
+        auto* drawLineAction = imageMenu->addAction("Draw line");
+        connect(drawLineAction, &QAction::triggered, this, &MainWindow::OnLineDrawAction);
     }
 }
 
