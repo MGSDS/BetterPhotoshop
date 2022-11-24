@@ -1,7 +1,8 @@
 #include "MainWindow.hpp"
-
+#include "Core/Image/Gamma/PowGammaCorrection.hpp"
+#include "Core/Utils/Utils.hpp"
+#include "Window/Dialogs/LineDialog.hpp"
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
-#include <Core/Image/Gamma/PowGammaCorrection.hpp>
 #include <Core/Image/Gamma/SrgbGammaCorrection.hpp>
 #include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
@@ -141,6 +142,9 @@ void MainWindow::InitMenuBar()
             m_ConvertGammaAction->setEnabled(false);
             connect(m_ConvertGammaAction, &QAction::triggered, this, &MainWindow::OnImageConvertGammaAction);
         }
+
+        auto* drawLineAction = imageMenu->addAction("Draw line");
+        connect(drawLineAction, &QAction::triggered, this, &MainWindow::OnLineDrawAction);
     }
 }
 
@@ -152,6 +156,7 @@ void MainWindow::InitImageView()
     UpdateColorModelText(m_SelectedColorModel);
     UpdateActiveChannelsText(m_ActiveChannel);
     m_ImageView->SetCurrentGammaText(QString::number(m_Gamma));
+    connect(m_ImageView.get(), &ImageViewWithInfo::selectButtonClicked, this, &MainWindow::OnImageSelectButtonClick);
 }
 
 void MainWindow::InitImageFileFilters()
@@ -487,6 +492,84 @@ void MainWindow::SetImageForQt(const Image* image)
 
     auto transformedImage = TransformImageForQt(*image);
     m_ImageView->SetImage(&transformedImage);
+}
+
+void MainWindow::OnLineDrawAction()
+{
+    // TODO: disable buttons while drawing
+    QMessageBox msgBox;
+    msgBox.setText("Drawing mode. Click on two points to draw a line.");
+    msgBox.setInformativeText("Enable drawing mode?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::Yes);
+    int ret = msgBox.exec();
+    if (ret == QMessageBox::Yes) {
+        m_DrawingMode = true;
+        Log::Info("Drawing mode enabled");
+    } else {
+        Log::Info("Drawing mode not enabled");
+    }
+}
+
+void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
+{
+    if (!m_DrawingMode) {
+        return;
+    }
+
+    Log::Info("Drawing mode enabled. Left click {},{}", pos.x(), pos.y());
+    if (!(pos.x() >= 0 && pos.x() <= m_Image->GetWidth() && pos.y() >= 0 && pos.y() <= m_Image->GetHeight())) {
+        Log::Info("Point is located outside of the image. Skipping");
+        return;
+    }
+
+    m_SelectedPoints.push_back(pos);
+
+    QMessageBox msgBox;
+    std::string msg = "Point (" + std::to_string(static_cast<int>(pos.x())) + "," + std::to_string(static_cast<int>(pos.y())) + ") selected";
+    msgBox.setText(QString(msg.c_str()));
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.exec();
+
+    if (m_SelectedPoints.size() >= 2) {
+        bool hasPressedOk = false;
+        QList<int> res = LineDialog::getInts(this, &hasPressedOk);
+        int lineWidth = res[0];
+        m_DrawingMode = false;
+        if (hasPressedOk) {
+            Pixel color = Pixel(Utils::NormByte(res[1], 255.0f),
+                                Utils::NormByte(res[2], 255.0f),
+                                Utils::NormByte(res[3], 255.0f),
+                                Utils::NormByte(res[4], 255.0f));
+
+            switch (m_ActiveChannel) {
+                case ActiveChannel::ZEROTH:
+                    color.channels[1] = 0;
+                    color.channels[2] = 0;
+                    break;
+                case ActiveChannel::FIRST:
+                    color.channels[0] = 0;
+                    color.channels[2] = 0;
+                    break;
+                case ActiveChannel::SECOND:
+                    color.channels[0] = 0;
+                    color.channels[1] = 0;
+                    break;
+                case ActiveChannel::ALL:
+                    break;
+            }
+
+            auto line = Painter::DrawLine(m_Image->GetWidth(), m_Image->GetHeight(),
+                                          m_SelectedPoints[0].x(), m_SelectedPoints[0].y(),
+                                          m_SelectedPoints[1].x(), m_SelectedPoints[1].y(),
+                                          lineWidth, color);
+            Gamma::Correct(line, m_Gamma);
+            m_Image->AddLayer(line);
+            this->SetImage(std::move(m_Image));
+        }
+        m_SelectedPoints.clear();
+    }
 }
 
 void MainWindow::ApplyGammaCorrection(Image& image, float gammaValue)

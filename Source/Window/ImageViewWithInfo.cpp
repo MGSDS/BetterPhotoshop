@@ -57,6 +57,7 @@ ImageViewWithInfo::ImageViewWithInfo(QWidget* parent, QObject* sceneParent)
     connect(m_ImageView, &ImageView::imageSizeChanged, this, &ImageViewWithInfo::OnImageSizeChanged);
     connect(m_ImageView, &ImageView::cursorPosChanged, this, &ImageViewWithInfo::OnCursorPosChanged);
     connect(m_ImageView, &ImageView::zoomChanged, this, &ImageViewWithInfo::OnZoomChanged);
+    connect(m_ImageView, &ImageView::selectButtonClicked, this, &ImageViewWithInfo::OnSelectButtonClicked);
 }
 
 void ImageViewWithInfo::SetImage(const Image* image)
@@ -115,4 +116,9 @@ void ImageViewWithInfo::ClearImageInfo()
     for (auto* label : labels) {
         label->clear();
     }
+}
+
+void ImageViewWithInfo::OnSelectButtonClicked(const QPointF& pos)
+{
+    emit selectButtonClicked(pos);
 }
