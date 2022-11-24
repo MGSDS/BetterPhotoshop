@@ -13,7 +13,7 @@ NewImageDialog::NewImageDialog(QWidget* parent)
     : QDialog(parent)
     , m_WidthSpinBox(new QSpinBox())
     , m_HeightSpinBox(new QSpinBox())
-    , m_IsGradientCheckBox(new QCheckBox("Gradient"))
+    , m_IsGradientCheckBox(new QCheckBox())
 {
     setWindowTitle("New Image");
     setFixedSize(200, 150);
