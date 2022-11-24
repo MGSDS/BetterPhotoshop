@@ -574,6 +574,7 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
         m_SelectedPoints.clear();
     }
 }
+
 void MainWindow::ApplyGammaCorrection(Image& image, float gammaValue)
 {
     if (m_Gamma == 0.0f) {
