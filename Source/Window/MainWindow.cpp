@@ -1,7 +1,7 @@
 #include "MainWindow.hpp"
 #include "Core/Image/Gamma/PowGammaCorrection.hpp"
 #include "Core/Utils/Utils.hpp"
-#include "LineDialog.hpp"
+#include "Window/Dialogs/LineDialog.hpp"
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
 #include <Core/Image/Gamma/SrgbGammaCorrection.hpp>
 #include <Core/Image/Image.hpp>
