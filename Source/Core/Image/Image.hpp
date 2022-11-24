@@ -42,7 +42,6 @@ public:
     static LoadedImageData FromFile(const std::string& fileName);
     static Image CopyWithChannelMask(const Image& image, ActiveChannel activeChannel);
 
-    void CorrectForGamma(float gammaValue);
     void AddLayer(const Image& image);
 
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
@@ -61,6 +60,7 @@ public:
 
 private:
     Image() = default;
+
     size_t m_Width = 0;
     size_t m_Height = 0;
     size_t m_Size = 0;
