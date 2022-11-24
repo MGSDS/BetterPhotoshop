@@ -1,4 +1,5 @@
 #include "MainWindow.hpp"
+#include "Core/Image/Gamma/PowGammaCorrection.hpp"
 #include "Core/Utils/Utils.hpp"
 #include "LineDialog.hpp"
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
@@ -548,7 +549,7 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
                                           m_SelectedPoints[0].x(), m_SelectedPoints[0].y(),
                                           m_SelectedPoints[1].x(), m_SelectedPoints[1].y(),
                                           lineWidth, color);
-            line.CorrectForGamma(m_Gamma);
+            Gamma::Correct(line, m_Gamma);
             m_Image->AddLayer(line);
             this->SetImage(std::move(m_Image));
         }
