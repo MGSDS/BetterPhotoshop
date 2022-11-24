@@ -195,12 +195,17 @@ void MainWindow::OnFileNewAction()
 
     int width = dialog.GetWidth();
     int height = dialog.GetHeight();
-    Log::Debug("OnFileNewAction: New image width: {}, height: {}", width, height);
+    bool isGrayscaleGradient = dialog.IsGradient();
+    Log::Debug("OnFileNewAction: New image width: {}, height: {}. Is gradient: {}", width, height, isGrayscaleGradient);
 
     m_SelectedColorModel = DEFAULT_COLOR_MODEL;
     m_DefaultColorModelAction->setChecked(true);
 
-    SetImage(std::make_unique<Image>(width, height));
+    if (isGrayscaleGradient) {
+        SetImage(Image::MonochromeGradient(width, height));
+    } else {
+        SetImage(std::make_unique<Image>(width, height));
+    }
     m_ImageView->CenterOnCurrentImage();
     SetImagePath(std::string());
 }
