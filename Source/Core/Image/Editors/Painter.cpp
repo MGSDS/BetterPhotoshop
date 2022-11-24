@@ -1,9 +1,9 @@
 #include "Painter.hpp"
 
-Image Painter::DrawLine(size_t im_width, size_t im_height, float x0, float y0, float x1, float y1, int width, Pixel color)
+Image Painter::DrawLine(size_t imWidth, size_t imHeight, float x0, float y0, float x1, float y1, int width, const Pixel& color)
 {
     // Xiaolin Wu's line algorithm
-    auto res = Image(im_width, im_height, Pixel(0.0f, 0.0f, 0.0f, 0.0f));
+    auto res = Image(imWidth, imHeight, Pixel(0.0f, 0.0f, 0.0f, 0.0f));
 
     bool steep = std::abs(y1 - y0) > std::abs(x1 - x0);
     if (steep) {

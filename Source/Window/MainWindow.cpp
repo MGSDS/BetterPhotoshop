@@ -372,7 +372,6 @@ void MainWindow::SetImage(std::unique_ptr<Image>&& image)
     m_SaveAsAction->setEnabled(enableSaveActions);
     m_SaveViewAsAction->setEnabled(enableSaveActions);
     m_ConvertGammaAction->setEnabled(enableSaveActions);
-    auto ptr = m_ImageView.get();
 }
 
 bool MainWindow::TrySaveImage(const Image& image, const std::string& filename, ImageFormat format)

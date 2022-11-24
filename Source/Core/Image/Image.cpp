@@ -151,18 +151,19 @@ const uint8_t* Image::ToDataRGBA32FPx4() const
 }
 
 Image::Image(size_t width, size_t height)
-    : m_Width(width), m_Height(height), m_Size(width * height)
-{
-    m_Pixels = std::vector<Pixel>(m_Size, Pixel::WhiteRgb());
-}
+    : m_Width(width),
+    m_Height(height),
+    m_Size(width * height),
+    m_Pixels(m_Size, Pixel::WhiteRgb())
+{ }
 
 Image::Image(size_t width, size_t height, Pixel pixel)
-    : m_Width(width)
-    , m_Height(height)
-    , m_Size(width * height)
-{
-    m_Pixels = std::vector<Pixel>(m_Size, pixel);
-}
+    : m_Width(width),
+    m_Height(height),
+    m_Size(width * height),
+    m_Pixels(m_Size, pixel)
+
+{ }
 
 Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels)
     : m_Width(width)

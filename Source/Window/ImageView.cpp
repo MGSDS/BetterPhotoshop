@@ -8,8 +8,8 @@
 #include <QPixmap>
 #include <QtWidgets>
 
-static Qt::MouseButton MOVE_BUTTON = Qt::MouseButton::RightButton;
-static Qt::MouseButton SELECT_BUTTON = Qt::MouseButton::LeftButton;
+static Qt::MouseButton MOVE_BUTTON = Qt::MouseButton::LeftButton;
+static Qt::MouseButton SELECT_BUTTON = Qt::MouseButton::RightButton;
 static QRect PAN_RECTANGLE = QRect(-100000, -100000, 200000, 200000);
 static qreal SCALE_STEP = 0.05;
 static qreal MIN_ZOOM = 0.1;
