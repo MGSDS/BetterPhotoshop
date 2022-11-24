@@ -18,21 +18,21 @@ LineDialog::LineDialog(QWidget* parent)
     gridLayout->addWidget(thickness, 0, 1);
     fields.append(thickness);
 
-    gridLayout->addWidget(new QLabel("R"), 1, 0);
+    gridLayout->addWidget(new QLabel("1(R)"), 1, 0);
     auto* red = new QLineEdit();
     red->setText("0");
     red->setValidator(new QIntValidator(0, 255, this));
     gridLayout->addWidget(red, 1, 1);
     fields.append(red);
 
-    gridLayout->addWidget(new QLabel("G"), 2, 0);
+    gridLayout->addWidget(new QLabel("2(G)"), 2, 0);
     auto* green = new QLineEdit();
     green->setText("0");
     green->setValidator(new QIntValidator(0, 255, this));
     gridLayout->addWidget(green, 2, 1);
     fields.append(green);
 
-    gridLayout->addWidget(new QLabel("B"), 4, 0);
+    gridLayout->addWidget(new QLabel("3(B)"), 4, 0);
     auto* blue = new QLineEdit();
     blue->setText("0");
     blue->setValidator(new QIntValidator(0, 255, this));

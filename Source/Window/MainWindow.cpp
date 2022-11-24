@@ -545,6 +545,24 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
                                 Utils::NormByte(res[2], 255.0f),
                                 Utils::NormByte(res[3], 255.0f),
                                 Utils::NormByte(res[4], 255.0f));
+
+            switch (m_ActiveChannel) {
+                case ActiveChannel::ZEROTH:
+                    color.channels[1] = 0;
+                    color.channels[2] = 0;
+                    break;
+                case ActiveChannel::FIRST:
+                    color.channels[0] = 0;
+                    color.channels[2] = 0;
+                    break;
+                case ActiveChannel::SECOND:
+                    color.channels[0] = 0;
+                    color.channels[1] = 0;
+                    break;
+                case ActiveChannel::ALL:
+                    break;
+            }
+
             auto line = Painter::DrawLine(m_Image->GetWidth(), m_Image->GetHeight(),
                                           m_SelectedPoints[0].x(), m_SelectedPoints[0].y(),
                                           m_SelectedPoints[1].x(), m_SelectedPoints[1].y(),
