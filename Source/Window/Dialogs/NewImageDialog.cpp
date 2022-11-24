@@ -13,6 +13,7 @@ NewImageDialog::NewImageDialog(QWidget* parent)
     : QDialog(parent)
     , m_WidthSpinBox(new QSpinBox())
     , m_HeightSpinBox(new QSpinBox())
+    , m_IsGradientCheckBox(new QCheckBox())
 {
     setWindowTitle("New Image");
     setFixedSize(200, 150);
@@ -35,6 +36,15 @@ NewImageDialog::NewImageDialog(QWidget* parent)
     m_HeightSpinBox->setMaximum(NEW_IMAGE_MAX_SIZE.height());
     m_HeightSpinBox->setValue(NEW_IMAGE_DEFAULT_SIZE.height());
 
+    auto gradientCheckBox = new QLabel();
+    gradientCheckBox->setText("B&W Gradient");
+    gradientCheckBox->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    m_IsGradientCheckBox->setChecked(false);
+
+    auto gradientLayout = new QHBoxLayout();
+    gradientLayout->addWidget(gradientCheckBox);
+    gradientLayout->addWidget(m_IsGradientCheckBox);
+
     auto heightLayout = new QHBoxLayout();
     heightLayout->addWidget(labelHeight);
     heightLayout->addWidget(m_HeightSpinBox);
@@ -47,6 +57,7 @@ NewImageDialog::NewImageDialog(QWidget* parent)
     auto dialogLayout = new QVBoxLayout();
     dialogLayout->addLayout(widthLayout);
     dialogLayout->addLayout(heightLayout);
+    dialogLayout->addLayout(gradientLayout);
     dialogLayout->addWidget(okButton);
 
     setLayout(dialogLayout);
