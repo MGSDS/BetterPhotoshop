@@ -144,12 +144,13 @@ const uint8_t* Image::ToDataRGBA32FPx4() const
 }
 
 Image::Image(size_t width, size_t height)
-    : m_Width(width)
-    , m_Height(height)
-    , m_Size(width * height)
-{
-    m_Pixels = std::vector<Pixel>(m_Size, Pixel::WhiteRgb());
-}
+    : m_Width(width), m_Height(height), m_Size(width * height), m_Pixels(m_Size, Pixel::WhiteRgb())
+{}
+
+Image::Image(size_t width, size_t height, Pixel pixel)
+    : m_Width(width), m_Height(height), m_Size(width * height), m_Pixels(m_Size, pixel)
+
+{}
 
 Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels)
     : m_Width(width)
@@ -174,3 +175,19 @@ std::unique_ptr<Image> Image::MonochromeGradient(size_t width, size_t height)
     }
     return newImage;
 }
+
+void Image::AddLayer(const Image& image)
+{
+    if (image.GetHeight() != m_Height || image.GetWidth() != m_Width) {
+        Log::Error("Adding layer: image size ({}, {}) does not match current image size ({}, {}).", image.GetWidth(), image.GetHeight(), m_Width, m_Height);
+        throw std::runtime_error("Image size does not match.");
+    }
+    for (int i = 0; i < this->GetPixelsCount(); ++i) {
+        Pixel& pixel = this->PixelAt(i);
+        const Pixel& layerPixel = image.PixelAt(i);
+        for (int j = 0; j < 3; ++j) {
+            pixel.channels[j] = pixel.channels[j] * (1 - layerPixel.channels[3]) + layerPixel.channels[j] * layerPixel.channels[3];
+        }
+    }
+}
+

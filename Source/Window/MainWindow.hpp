@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
+#include <Core/Image/Editors/Painter.hpp>
 #include <Window/ImageViewWithInfo.hpp>
 
 #include <QAction>
@@ -76,6 +77,8 @@ private slots:
     void OnFileSaveAction();
     void OnFileSaveAsAction();
     void OnFileSaveViewAsAction();
+    void OnLineDrawAction();
+    void OnImageSelectButtonClick(const QPointF& pos);
 
     void OnImageColorModelActionSelected(ColorModel selectedColorModel);
     void OnActiveChannelSelected(ActiveChannel activeChannels);
@@ -101,6 +104,8 @@ private:
     std::string m_ImagePath = "";
     ImageFormat m_LastSelectedSaveFormat = ImageFormat::Pgm;
     QString m_ImageFileFilters = "";
+    bool m_DrawingMode = false;
+    std::vector<QPointF> m_SelectedPoints;
 
     ColorModel m_SelectedColorModel;
     QAction* m_DefaultColorModelAction = nullptr;

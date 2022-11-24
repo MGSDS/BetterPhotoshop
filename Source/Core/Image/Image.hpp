@@ -36,11 +36,14 @@ class Image
 public:
     Image(size_t width, size_t height);
     Image(size_t width, size_t height, const std::vector<Pixel>& pixels);
+    Image(size_t width, size_t height, Pixel pixel);
     Image(const Image& other) = default;
 
     static LoadedImageData FromFile(const std::string& fileName);
     static Image CopyWithChannelMask(const Image& image, ActiveChannel activeChannel);
     static std::unique_ptr<Image> MonochromeGradient(size_t width, size_t height);
+
+    void AddLayer(const Image& image);
 
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
 
