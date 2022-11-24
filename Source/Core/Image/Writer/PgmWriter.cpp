@@ -1,6 +1,9 @@
 #include "PgmWriter.hpp"
+
+#include "Core/Image/Dither/Dither.hpp"
 #include "Core/Utils/Utils.hpp"
 
+#include <cmath>
 #include <string>
 
 void PgmWriter::WriteHeader(const Image& image, std::ostream& os)
@@ -10,7 +13,7 @@ void PgmWriter::WriteHeader(const Image& image, std::ostream& os)
     os << 255 << '\n';
 }
 
-void PgmWriter::Write(const Image& image, std::ostream& os) const
+void PgmWriter::Write(const Image& image, std::ostream& os, uint8_t bitsPerChannel) const
 {
     WriteHeader(image, os);
     for (size_t i = 0; i < image.GetPixelsCount(); i++) {

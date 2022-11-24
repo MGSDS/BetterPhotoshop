@@ -15,4 +15,5 @@ public:
     static std::string ToLower(const std::string& str);
     static std::string GetFileExtension(const std::string& path);
     static bool DataStartsWith(const std::vector<uint8_t>& data, const std::vector<uint8_t>& prefix);
+    static bool OutOfBounds(int i, int j, size_t h, size_t w);
 };

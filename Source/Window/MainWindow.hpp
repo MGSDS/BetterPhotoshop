@@ -9,6 +9,7 @@
 #include <QMainWindow>
 #include <QString>
 
+#include "Core/Image/Dither/Dither.hpp"
 #include <memory>
 
 struct WindowSettings
@@ -81,6 +82,7 @@ private slots:
 
     void OnImageColorModelActionSelected(ColorModel selectedColorModel);
     void OnActiveChannelSelected(ActiveChannel activeChannels);
+    void OnDitheringActionSelected(DitherAlgo ditheringType);
 
     void OnImageAssignGammaAction();
     void OnImageConvertGammaAction();

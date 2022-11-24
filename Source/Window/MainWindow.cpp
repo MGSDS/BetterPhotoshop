@@ -1,4 +1,5 @@
 #include "MainWindow.hpp"
+#include "Core/Image/Dither/Dither.hpp"
 #include "Core/Image/Gamma/PowGammaCorrection.hpp"
 #include "Core/Utils/Utils.hpp"
 #include "Window/Dialogs/LineDialog.hpp"
@@ -143,6 +144,21 @@ void MainWindow::InitMenuBar()
             connect(m_ConvertGammaAction, &QAction::triggered, this, &MainWindow::OnImageConvertGammaAction);
         }
 
+        auto* ditheringMenu = imageMenu->addMenu("Dithering");
+        {
+            auto* ditherActionGroup = new QActionGroup(this);
+            ditherActionGroup->setExclusive(true);
+
+            for (const auto& [ditherAlgoEnum, ditherAlgoName] : ENUM_TO_STRING_DITHER_ALGO_MAPPING) {
+                auto* ditheringAction = ditheringMenu->addAction(ditherAlgoName.c_str());
+                ditherActionGroup->addAction(ditheringAction);
+                connect(ditheringAction, &QAction::triggered, this, [this, ditherAlgo = ditherAlgoEnum]() {
+                    OnDitheringActionSelected(ditherAlgo);
+                });
+            }
+            SetActionGroupEnabled(ditherActionGroup, true);
+        }
+
         auto* drawLineAction = imageMenu->addAction("Draw line");
         connect(drawLineAction, &QAction::triggered, this, &MainWindow::OnLineDrawAction);
     }
@@ -183,12 +199,17 @@ void MainWindow::OnFileNewAction()
 
     int width = dialog.GetWidth();
     int height = dialog.GetHeight();
-    Log::Debug("OnFileNewAction: New image width: {}, height: {}", width, height);
+    bool isGrayscaleGradient = dialog.IsGradient();
+    Log::Debug("OnFileNewAction: New image width: {}, height: {}. Is gradient: {}", width, height, isGrayscaleGradient);
 
     m_SelectedColorModel = DEFAULT_COLOR_MODEL;
     m_DefaultColorModelAction->setChecked(true);
 
-    SetImage(std::make_unique<Image>(width, height));
+    if (isGrayscaleGradient) {
+        SetImage(Image::MonochromeGradient(width, height));
+    } else {
+        SetImage(std::make_unique<Image>(width, height));
+    }
     m_ImageView->CenterOnCurrentImage();
     SetImagePath(std::string());
 }
@@ -579,4 +600,17 @@ void MainWindow::ApplyGammaCorrection(Image& image, float gammaValue)
     } else {
         Gamma::Correct(image, gammaValue);
     }
+}
+
+void MainWindow::OnDitheringActionSelected(DitherAlgo ditheringType)
+{
+    bool ok = false;
+    int depth = QInputDialog::getDouble(this, "Dithering", "Depth", 1, 1, 8, 0, &ok, {}, 1);
+    if (!ok) {
+        return;
+    }
+
+    auto algo = Dither::GetDither(ditheringType);
+    auto image = algo->Apply(*m_Image, depth);
+    SetImage(std::move(image));
 }

@@ -13,5 +13,5 @@ public:
 
     static std::unique_ptr<ImageWriter> GetWriter(ImageFormat format);
 
-    virtual void Write(const Image& image, std::ostream& os) const = 0;
+    virtual void Write(const Image& image, std::ostream& os, uint8_t bitsPerChannel = 8) const = 0;
 };
