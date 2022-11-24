@@ -190,4 +190,3 @@ void Image::AddLayer(const Image& image)
         }
     }
 }
-

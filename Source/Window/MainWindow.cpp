@@ -144,7 +144,6 @@ void MainWindow::InitMenuBar()
             connect(m_ConvertGammaAction, &QAction::triggered, this, &MainWindow::OnImageConvertGammaAction);
         }
 
-
         auto* ditheringMenu = imageMenu->addMenu("Dithering");
         {
             auto* ditherActionGroup = new QActionGroup(this);
