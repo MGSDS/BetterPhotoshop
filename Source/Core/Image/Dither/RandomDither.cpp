@@ -13,9 +13,6 @@ static float GetRandomFloat(float maxValue)
 
 std::unique_ptr<Image> RandomDither::Apply(const Image& image, uint8_t bitsPerChannel)
 {
-    //Random dithering
-
-
     if (bitsPerChannel == 0 || bitsPerChannel > 8) {
         throw new std::out_of_range("Specified bitsPerChannel value is out of range.");
     }
