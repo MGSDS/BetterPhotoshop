@@ -6,13 +6,6 @@
 #include "zlib.h"
 #include <cmath>
 
-#define CHECK_ERR(err, msg) { \
-    if (err != Z_OK) { \
-        std::cerr << msg << " error: " << err << std::endl; \
-        exit(1); \
-    } \
-}
-
 std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t> &data) {
     if (!IsPngHeader(data)) {
         throw std::invalid_argument("Invalid PNG header");
@@ -216,7 +209,7 @@ PngReader::DecodePaletteImage(const std::vector<uint8_t>& rawImg, const PngHeade
     for (int i = 0; i < header.height; i++) {
         for (int j = 0; j < header.width; ++j) {
             uint8_t px = scanlines[i][j * bpp];
-            Pixel pixel = Pixel(palette[px].r / 255.0f, palette[px].g / 255.0f, palette[px].b / 255.0f, 1.0f);
+            Pixel pixel = Pixel(palette[px].red / 255.0f, palette[px].green / 255.0f, palette[px].blue / 255.0f, 1.0f);
             pixels.push_back(pixel);
         }
     }
