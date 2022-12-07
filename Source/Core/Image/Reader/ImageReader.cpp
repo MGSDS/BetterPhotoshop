@@ -64,5 +64,9 @@ std::optional<ImageFormat> ImageReader::GetImageFormat(const std::vector<uint8_t
         return ImageFormat::Ppm;
     }
 
+    if (Utils::DataStartsWith(data, IMAGE_FORMAT_TO_FILE_PREFIX[ImageFormat::Png])) {
+        return ImageFormat::Png;
+    }
+
     return {};
 }
