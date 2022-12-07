@@ -38,20 +38,13 @@ public:
 private:
     static bool IsPngHeader(const std::vector<uint8_t>& data);
     static std::vector<Chunk> ReadChunks(const std::vector<uint8_t>& data);
-    static std::unique_ptr<Image> DecodeImage(const std::vector<Chunk>& chunks, const PngHeader& header,const std::vector<plteChunk>& palette);
 
-    static std::unique_ptr<Image> DecodeGrayscaleImage(const std::vector<Chunk> &chunks, const PngHeader &header);
-
-    static std::unique_ptr<Image>
-    DecodeRGBImage(const std::vector<Chunk> &chunks, const PngHeader &header, const std::vector<plteChunk> &palette);
-
-    static std::unique_ptr<Image>
-    DecodePaletteImage(const std::vector<Chunk> &chunks, const PngHeader &header, const std::vector<plteChunk> &palette);
-
-    static std::unique_ptr<Image> DecodeGrayscaleAlphaImage(const std::vector<Chunk> &chunks, const PngHeader &header);
-
-    static std::unique_ptr<Image>
-    DecodeRGBAImage(const std::vector<Chunk> &chunks, const PngHeader &header, const std::vector<plteChunk> &palette);
+    static std::unique_ptr<Image> DecodeImage(const std::vector<uint8_t>& rawImg, const PngHeader& header,const std::vector<plteChunk>& palette);
+    static std::unique_ptr<Image> DecodeGrayscaleImage(const std::vector<uint8_t>& rawImg, const PngHeader &header);
+    static std::unique_ptr<Image> DecodeRGBImage(const std::vector<uint8_t>& rawImg, const PngHeader &header, const std::vector<plteChunk> &palette);
+    static std::unique_ptr<Image> DecodePaletteImage(const std::vector<uint8_t>& rawImg, const PngHeader &header, const std::vector<plteChunk> &palette);
+    static std::unique_ptr<Image> DecodeGrayscaleAlphaImage(const std::vector<uint8_t>& rawImg, const PngHeader &header);
+    static std::unique_ptr<Image> DecodeRGBAImage(const std::vector<uint8_t>& rawImg, const PngHeader &header, const std::vector<plteChunk> &palette);
 
     static std::vector<uint8_t> Inflate(const std::vector<uint8_t>& data);
 
@@ -60,4 +53,5 @@ private:
     static std::vector<uint8_t> UnfilterUp(const std::vector<uint8_t>& scanline, const std::vector<uint8_t>& prevScanline, uint32_t width, uint8_t bpp);
     static std::vector<uint8_t> UnfilterAverage(const std::vector<uint8_t>& scanline, const std::vector<uint8_t>& prevScanline, uint32_t width, uint8_t bpp);
     static std::vector<uint8_t> UnfilterPaeth(const std::vector<uint8_t>& scanline, const std::vector<uint8_t>& prevScanline, uint32_t width, uint8_t bpp);
+    static uint8_t PaethPredictor(uint8_t a, uint8_t b, uint8_t c);
 };
