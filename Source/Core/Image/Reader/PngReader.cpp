@@ -46,18 +46,27 @@ std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t>& data)
         throw std::invalid_argument("Invalid PNG");
     }
 
-    std::vector<plteChunk> palette;
+    std::vector<PlteChunk> palette;
 
     for (int i = 1; i < chunks.size() - 1; i++) {
         if (chunks[i].type == 0x504C5445) {
             for (int j = 0; j < chunks[i].data.size(); j += 3) {
-                plteChunk color{
+                PlteChunk color{
                     chunks[i].data[j],
                     chunks[i].data[j + 1],
                     chunks[i].data[j + 2]
                 };
                 palette.push_back(color);
             }
+            break;
+        }
+    }
+
+    float gamma = 0.0f;
+    for (int i = 1; i < chunks.size() - 1; i++) {
+        if (chunks[i].type == 0x67414D41) {
+            gamma = static_cast<float>((chunks[i].data[0] << 24) | (chunks[i].data[1] << 16) | (chunks[i].data[2] << 8) | chunks[i].data[3]);
+            gamma /= 100000.0f;
             break;
         }
     }
@@ -80,6 +89,7 @@ std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t>& data)
     rawImg = Inflate(rawImg);
 
     auto image = DecodeImage(rawImg, header, palette);
+    image->SetGamma(gamma);
     return image;
 }
 
@@ -109,7 +119,7 @@ std::vector<Chunk> PngReader::ReadChunks(const std::vector<uint8_t>& data)
 }
 
 std::unique_ptr<Image> PngReader::DecodeImage(const std::vector<uint8_t>& rawImg, const PngHeader& header,
-                                              const std::vector<plteChunk>& palette)
+                                              const std::vector<PlteChunk>& palette)
 {
     switch (header.colorType) {
         case 0:
@@ -142,7 +152,7 @@ std::unique_ptr<Image> PngReader::DecodeGrayscaleImage(const std::vector<std::ve
 }
 
 std::unique_ptr<Image>
-PngReader::DecodeRGBImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<plteChunk>& palette)
+PngReader::DecodeRGBImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<PlteChunk>& palette)
 {
     std::vector<Pixel> pixels;
 
@@ -159,7 +169,7 @@ PngReader::DecodeRGBImage(const std::vector<std::vector<uint8_t>>& scanlines, co
 }
 
 std::unique_ptr<Image>
-PngReader::DecodePaletteImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<plteChunk>& palette)
+PngReader::DecodePaletteImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<PlteChunk>& palette)
 {
     std::vector<Pixel> pixels;
 
@@ -183,7 +193,7 @@ std::unique_ptr<Image> PngReader::DecodeGrayscaleAlphaImage(const std::vector<st
 }
 
 std::unique_ptr<Image>
-PngReader::DecodeRGBAImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<plteChunk>& palette)
+PngReader::DecodeRGBAImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<PlteChunk>& palette)
 {
     throw std::invalid_argument("RGBA not implemented");
     //не нужно реализовывать

@@ -11,19 +11,22 @@
     std::vector<uint8_t> { 73, 69, 78, 68 }
 #define PNG \
     std::vector<uint8_t> { 137, 80, 78, 71, 13, 10, 26, 10 }
+#define GAMA \
+    std::vector<uint8_t> { 103, 65, 77, 65 }
 
 void PngWriter::Write(const Image& image, std::ostream& os, uint8_t bitsPerChannel, bool grayscale) const
 {
     os << PNG[0] << PNG[1] << PNG[2] << PNG[3] << PNG[4] << PNG[5] << PNG[6] << PNG[7];
     WriteIHDR(image, os, grayscale);
+    WriteGamma(image, os);
     WriteData(image, os, grayscale);
     WriteFooter(os);
 }
 
 void PngWriter::WriteFooter(std::ostream& stream)
 {
-    uint32_t size = 0;
-    stream << (size >> 24) << (size >> 16) << (size >> 8) << size;
+    uint8_t size = 0;
+    stream << size << size << size << size;
     stream << IEND[0] << IEND[1] << IEND[2] << IEND[3];
     stream << static_cast<uint8_t>(0xAE) << static_cast<uint8_t>(0x42) << static_cast<uint8_t>(0x60) << static_cast<uint8_t>(0x82);
 }
@@ -46,7 +49,6 @@ void PngWriter::WriteIHDR(const Image& image, std::ostream& stream, bool graysca
     std::vector<uint8_t> data;
     uint32_t width = image.GetWidth();
     uint32_t height = image.GetHeight();
-    uint32_t size = 13;
     data.push_back(width >> 24);
     data.push_back(width >> 16);
     data.push_back(width >> 8);
@@ -61,8 +63,7 @@ void PngWriter::WriteIHDR(const Image& image, std::ostream& stream, bool graysca
     } else {
         data.push_back(0);
     }
-    data.push_back(8);
-    data.push_back(2);
+
     data.push_back(0);
     data.push_back(0);
     data.push_back(0);
@@ -118,4 +119,15 @@ std::vector<uint8_t> PngWriter::Deflate(const std::vector<uint8_t>& data)
     compressedData.resize(stream.total_out);
     deflateEnd(&stream);
     return compressedData;
+}
+
+void PngWriter::WriteGamma(const Image& image, std::ostream& stream)
+{
+    std::vector<uint8_t> data;
+    uint32_t gamma = 100000 * image.GetGamma();
+    data.push_back(gamma >> 24);
+    data.push_back(gamma >> 16);
+    data.push_back(gamma >> 8);
+    data.push_back(gamma);
+    WriteChunk(GAMA, data, stream);
 }

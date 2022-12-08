@@ -23,7 +23,7 @@ struct PngHeader
     bool Validate();
 };
 
-struct plteChunk
+struct PlteChunk
 {
     uint8_t red;
     uint8_t green;
@@ -40,12 +40,12 @@ private:
     static bool IsPngHeader(const std::vector<uint8_t>& data);
     static std::vector<Chunk> ReadChunks(const std::vector<uint8_t>& data);
 
-    static std::unique_ptr<Image> DecodeImage(const std::vector<uint8_t>& rawImg, const PngHeader& header, const std::vector<plteChunk>& palette);
+    static std::unique_ptr<Image> DecodeImage(const std::vector<uint8_t>& rawImg, const PngHeader& header, const std::vector<PlteChunk>& palette);
     static std::unique_ptr<Image> DecodeGrayscaleImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header);
-    static std::unique_ptr<Image> DecodeRGBImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<plteChunk>& palette);
-    static std::unique_ptr<Image> DecodePaletteImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<plteChunk>& palette);
+    static std::unique_ptr<Image> DecodeRGBImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<PlteChunk>& palette);
+    static std::unique_ptr<Image> DecodePaletteImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<PlteChunk>& palette);
     static std::unique_ptr<Image> DecodeGrayscaleAlphaImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header);
-    static std::unique_ptr<Image> DecodeRGBAImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<plteChunk>& palette);
+    static std::unique_ptr<Image> DecodeRGBAImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<PlteChunk>& palette);
 
     static std::vector<std::vector<uint8_t>> DecodeScanlines(const std::vector<uint8_t>& rawImg, uint8_t bpp, uint32_t width, uint32_t height);
 

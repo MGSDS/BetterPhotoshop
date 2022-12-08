@@ -45,6 +45,7 @@ public:
 
     void AddLayer(const Image& image);
     void SetGamma(float gamma);
+    float GetGamma() const;
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
 
     uint8_t* ToDataRGBA32FPx4();
