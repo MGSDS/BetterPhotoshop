@@ -1,13 +1,14 @@
+#include "PngReader.h"
+#include "zlib.h"
+#include <Core/Utils/Utils.hpp>
+#include <algorithm>
+#include <cmath>
 #include <memory>
 #include <stdexcept>
-#include "PngReader.h"
 #include <vector>
-#include <algorithm>
-#include "zlib.h"
-#include <cmath>
-#include <Core/Utils/Utils.hpp>
 
-std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t> &data) {
+std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t>& data)
+{
     if (!IsPngHeader(data)) {
         throw std::invalid_argument("Invalid PNG header");
     }
@@ -19,13 +20,13 @@ std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t> &data) {
     }
 
     PngHeader header{
-            .width = static_cast<uint32_t>((ihdr.data[0] << 24) | (ihdr.data[1] << 16) | (ihdr.data[2] << 8) | ihdr.data[3]),
-            .height = static_cast<uint32_t>((ihdr.data[4] << 24) | (ihdr.data[5] << 16) | (ihdr.data[6] << 8) | ihdr.data[7]),
-            .bitDepth = ihdr.data[8],
-            .colorType = ihdr.data[9],
-            .compressionMethod = ihdr.data[10],
-            .filterMethod = ihdr.data[11],
-            .interlaceMethod = ihdr.data[12]
+        .width = static_cast<uint32_t>((ihdr.data[0] << 24) | (ihdr.data[1] << 16) | (ihdr.data[2] << 8) | ihdr.data[3]),
+        .height = static_cast<uint32_t>((ihdr.data[4] << 24) | (ihdr.data[5] << 16) | (ihdr.data[6] << 8) | ihdr.data[7]),
+        .bitDepth = ihdr.data[8],
+        .colorType = ihdr.data[9],
+        .compressionMethod = ihdr.data[10],
+        .filterMethod = ihdr.data[11],
+        .interlaceMethod = ihdr.data[12]
     };
 
     if (header.bitDepth != 8) {
@@ -51,9 +52,9 @@ std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t> &data) {
         if (chunks[i].type == 0x504C5445) {
             for (int j = 0; j < chunks[i].data.size(); j += 3) {
                 plteChunk color{
-                        chunks[i].data[j],
-                        chunks[i].data[j + 1],
-                        chunks[i].data[j + 2]
+                    chunks[i].data[j],
+                    chunks[i].data[j + 1],
+                    chunks[i].data[j + 2]
                 };
                 palette.push_back(color);
             }
@@ -78,26 +79,21 @@ std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t> &data) {
 
     rawImg = Inflate(rawImg);
 
-    auto image= DecodeImage(rawImg, header, palette);
+    auto image = DecodeImage(rawImg, header, palette);
     return image;
 }
 
-bool PngReader::IsPngHeader(const std::vector<uint8_t> &data) {
+bool PngReader::IsPngHeader(const std::vector<uint8_t>& data)
+{
     if (data.size() <= 8) {
         return false;
     }
 
-    return data[0] == 0x89
-    && data[1] == 0x50
-    && data[2] == 0x4E
-    && data[3] == 0x47
-    && data[4] == 0x0D
-    && data[5] == 0x0A
-    && data[6] == 0x1A
-    && data[7] == 0x0A;
+    return data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47 && data[4] == 0x0D && data[5] == 0x0A && data[6] == 0x1A && data[7] == 0x0A;
 }
 
-std::vector<Chunk> PngReader::ReadChunks(const std::vector<uint8_t> &data) {
+std::vector<Chunk> PngReader::ReadChunks(const std::vector<uint8_t>& data)
+{
     std::vector<Chunk> chunks;
     size_t pos = 8;
     while (pos < data.size()) {
@@ -112,8 +108,9 @@ std::vector<Chunk> PngReader::ReadChunks(const std::vector<uint8_t> &data) {
     return chunks;
 }
 
-std::unique_ptr<Image> PngReader::DecodeImage(const std::vector<uint8_t>& rawImg, const PngHeader &header,
-                                              const std::vector<plteChunk> &palette) {
+std::unique_ptr<Image> PngReader::DecodeImage(const std::vector<uint8_t>& rawImg, const PngHeader& header,
+                                              const std::vector<plteChunk>& palette)
+{
     switch (header.colorType) {
         case 0:
             return DecodeGrayscaleImage(DecodeScanlines(rawImg, 1, header.width, header.height), header);
@@ -130,13 +127,14 @@ std::unique_ptr<Image> PngReader::DecodeImage(const std::vector<uint8_t>& rawImg
     }
 }
 
-std::unique_ptr<Image> PngReader::DecodeGrayscaleImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader &header) {
+std::unique_ptr<Image> PngReader::DecodeGrayscaleImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header)
+{
     std::vector<Pixel> pixels;
 
     for (int i = 0; i < header.height; i++) {
         for (int j = 0; j < header.width; ++j) {
             float px = Utils::NormByte(scanlines[i][j], 255);
-            Pixel pixel = Pixel(px, px, px,1.0f);
+            Pixel pixel = Pixel(px, px, px, 1.0f);
             pixels.push_back(pixel);
         }
     }
@@ -144,7 +142,8 @@ std::unique_ptr<Image> PngReader::DecodeGrayscaleImage(const std::vector<std::ve
 }
 
 std::unique_ptr<Image>
-PngReader::DecodeRGBImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader &header, const std::vector<plteChunk> &palette) {
+PngReader::DecodeRGBImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<plteChunk>& palette)
+{
     std::vector<Pixel> pixels;
 
     for (int i = 0; i < header.height; i++) {
@@ -160,7 +159,8 @@ PngReader::DecodeRGBImage(const std::vector<std::vector<uint8_t>>& scanlines, co
 }
 
 std::unique_ptr<Image>
-PngReader::DecodePaletteImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader &header, const std::vector<plteChunk> &palette) {
+PngReader::DecodePaletteImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<plteChunk>& palette)
+{
     std::vector<Pixel> pixels;
 
     for (int i = 0; i < header.height; i++) {
@@ -176,18 +176,21 @@ PngReader::DecodePaletteImage(const std::vector<std::vector<uint8_t>>& scanlines
     return std::make_unique<Image>(header.width, header.height, pixels);
 }
 
-std::unique_ptr<Image> PngReader::DecodeGrayscaleAlphaImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader &header) {
+std::unique_ptr<Image> PngReader::DecodeGrayscaleAlphaImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header)
+{
     throw std::invalid_argument("Grayscale with alpha not implemented");
     //не нужно реализовывать
 }
 
 std::unique_ptr<Image>
-PngReader::DecodeRGBAImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader &header, const std::vector<plteChunk> &palette) {
+PngReader::DecodeRGBAImage(const std::vector<std::vector<uint8_t>>& scanlines, const PngHeader& header, const std::vector<plteChunk>& palette)
+{
     throw std::invalid_argument("RGBA not implemented");
     //не нужно реализовывать
 }
 
-std::vector<uint8_t> PngReader::Inflate(const std::vector<uint8_t> &data) {
+std::vector<uint8_t> PngReader::Inflate(const std::vector<uint8_t>& data)
+{
     z_stream stream;
     stream.zalloc = Z_NULL;
     stream.zfree = Z_NULL;
@@ -200,7 +203,7 @@ std::vector<uint8_t> PngReader::Inflate(const std::vector<uint8_t> &data) {
     }
 
     stream.avail_in = data.size();
-    stream.next_in = const_cast<uint8_t *>(data.data());
+    stream.next_in = const_cast<uint8_t*>(data.data());
 
     std::vector<uint8_t> result;
     do {
@@ -237,14 +240,10 @@ std::vector<uint8_t> PngReader::Unfilter(const std::vector<uint8_t>& scanline, c
 std::vector<uint8_t> PngReader::UnfilterSub(const std::vector<uint8_t>& scanline, uint32_t width, uint8_t bpp)
 {
     std::vector<uint8_t> result;
-    for(int i = 0; i < width * bpp; i++)
-    {
-        if(i < bpp)
-        {
+    for (int i = 0; i < width * bpp; i++) {
+        if (i < bpp) {
             result.push_back(scanline[i]);
-        }
-        else
-        {
+        } else {
             result.push_back(scanline[i] + result[i - bpp]);
         }
     }
@@ -254,13 +253,11 @@ std::vector<uint8_t> PngReader::UnfilterSub(const std::vector<uint8_t>& scanline
 std::vector<uint8_t> PngReader::UnfilterUp(const std::vector<uint8_t>& scanline, const std::vector<uint8_t>& prevScanline, uint32_t width, uint8_t bpp)
 {
     std::vector<uint8_t> result;
-    if (prevScanline.empty())
-    {
+    if (prevScanline.empty()) {
         return scanline;
     }
 
-    for(int i = 0; i < width * bpp; i++)
-    {
+    for (int i = 0; i < width * bpp; i++) {
         result.push_back(scanline[i] + prevScanline[i]);
     }
     return result;
@@ -269,14 +266,10 @@ std::vector<uint8_t> PngReader::UnfilterUp(const std::vector<uint8_t>& scanline,
 std::vector<uint8_t> PngReader::UnfilterAverage(const std::vector<uint8_t>& scanline, const std::vector<uint8_t>& prevScanline, uint32_t width, uint8_t bpp)
 {
     std::vector<uint8_t> result;
-    for(int i = 0; i < width * bpp; i++)
-    {
-        if(i < bpp)
-        {
+    for (int i = 0; i < width * bpp; i++) {
+        if (i < bpp) {
             result.push_back(scanline[i] + prevScanline[i] / 2);
-        }
-        else
-        {
+        } else {
             result.push_back(scanline[i] + floorf((result[i - bpp] + prevScanline[i]) / 2.0f));
         }
     }
@@ -286,14 +279,10 @@ std::vector<uint8_t> PngReader::UnfilterAverage(const std::vector<uint8_t>& scan
 std::vector<uint8_t> PngReader::UnfilterPaeth(const std::vector<uint8_t>& scanline, const std::vector<uint8_t>& prevScanline, uint32_t width, uint8_t bpp)
 {
     std::vector<uint8_t> result;
-    for(int i = 0; i < width * bpp; i++)
-    {
-        if(i < bpp)
-        {
+    for (int i = 0; i < width * bpp; i++) {
+        if (i < bpp) {
             result.push_back(scanline[i] + prevScanline[i]);
-        }
-        else
-        {
+        } else {
             result.push_back(scanline[i] + PaethPredictor(result[i - bpp], prevScanline[i], prevScanline[i - bpp]));
         }
     }
@@ -306,16 +295,11 @@ uint8_t PngReader::PaethPredictor(uint8_t a, uint8_t b, uint8_t c)
     int pa = abs(p - a);
     int pb = abs(p - b);
     int pc = abs(p - c);
-    if(pa <= pb && pa <= pc)
-    {
+    if (pa <= pb && pa <= pc) {
         return a;
-    }
-    else if(pb <= pc)
-    {
+    } else if (pb <= pc) {
         return b;
-    }
-    else
-    {
+    } else {
         return c;
     }
 }
@@ -325,8 +309,7 @@ std::vector<std::vector<uint8_t>> PngReader::DecodeScanlines(const std::vector<u
     std::vector<std::vector<uint8_t>> scanlines;
     std::vector<uint8_t> prevScanline;
 
-    for(int i = 0; i < height; i++)
-    {
+    for (int i = 0; i < height; i++) {
         std::vector<uint8_t> scanline;
         size_t filter = rawImg[i * (width * bpp + 1)];
         scanline.insert(scanline.end(), rawImg.begin() + i * (width * bpp + 1) + 1, rawImg.begin() + i * (width * bpp + 1) + 1 + width * bpp);
@@ -338,7 +321,8 @@ std::vector<std::vector<uint8_t>> PngReader::DecodeScanlines(const std::vector<u
     return scanlines;
 }
 
-bool PngHeader::Validate() {
+bool PngHeader::Validate()
+{
     if (compressionMethod != 0 || filterMethod != 0) {
         return false;
     }
@@ -351,35 +335,29 @@ bool PngHeader::Validate() {
         return false;
     }
 
-    switch(colorType)
-    {
+    switch (colorType) {
         case 0:
-            if(bitDepth != 1 && bitDepth != 2 && bitDepth != 4 && bitDepth != 8 && bitDepth != 16)
-            {
+            if (bitDepth != 1 && bitDepth != 2 && bitDepth != 4 && bitDepth != 8 && bitDepth != 16) {
                 return false;
             }
             break;
         case 2:
-            if(bitDepth != 8 && bitDepth != 16)
-            {
+            if (bitDepth != 8 && bitDepth != 16) {
                 return false;
             }
             break;
         case 3:
-            if(bitDepth != 1 && bitDepth != 2 && bitDepth != 4 && bitDepth != 8)
-            {
+            if (bitDepth != 1 && bitDepth != 2 && bitDepth != 4 && bitDepth != 8) {
                 return false;
             }
             break;
         case 4:
-            if(bitDepth != 8 && bitDepth != 16)
-            {
+            if (bitDepth != 8 && bitDepth != 16) {
                 return false;
             }
             break;
         case 6:
-            if(bitDepth != 8 && bitDepth != 16)
-            {
+            if (bitDepth != 8 && bitDepth != 16) {
                 return false;
             }
             break;

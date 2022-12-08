@@ -9,7 +9,6 @@
 #include <Core/Log.hpp>
 #include <Window/Dialogs/NewImageDialog.hpp>
 
-
 #include <QFileDialog>
 #include <QPixmap>
 #include <QtWidgets>
