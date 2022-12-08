@@ -17,5 +17,4 @@ public:
     static bool DataStartsWith(const std::vector<uint8_t>& data, const std::vector<uint8_t>& prefix);
     static bool OutOfBounds(int i, int j, size_t h, size_t w);
     static uint32_t Crc32(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end);
-    static std::vector<uint32_t> ToByteArray(uint32_t data);
 };

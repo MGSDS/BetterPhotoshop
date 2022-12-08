@@ -24,6 +24,7 @@ namespace Gamma {
                 channel = std::clamp(channel, 0.0f, 1.0f);
             }
         }
+        image.SetGamma(0.0f);
     }
 
 } // namespace Gamma

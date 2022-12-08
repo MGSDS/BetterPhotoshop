@@ -34,9 +34,9 @@ enum ActiveChannel
 class Image
 {
 public:
-    Image(size_t width, size_t height);
-    Image(size_t width, size_t height, const std::vector<Pixel>& pixels);
-    Image(size_t width, size_t height, Pixel pixel);
+    Image(size_t width, size_t height, float gamma = 1.0f);
+    Image(size_t width, size_t height, const std::vector<Pixel>& pixels, float gamma = 1.0f);
+    Image(size_t width, size_t height, Pixel pixel, float gamma = 1.0f);
     Image(const Image& other) = default;
 
     static LoadedImageData FromFile(const std::string& fileName);
@@ -44,7 +44,7 @@ public:
     static std::unique_ptr<Image> MonochromeGradient(size_t width, size_t height);
 
     void AddLayer(const Image& image);
-
+    void SetGamma(float gamma);
     void WriteToFile(const std::string& fileName, ImageFormat format) const;
 
     uint8_t* ToDataRGBA32FPx4();
@@ -65,5 +65,6 @@ private:
     size_t m_Width = 0;
     size_t m_Height = 0;
     size_t m_Size = 0;
+    float m_Gamma = 1;
     std::vector<Pixel> m_Pixels;
 };

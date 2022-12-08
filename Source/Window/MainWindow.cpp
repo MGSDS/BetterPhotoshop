@@ -488,6 +488,7 @@ void MainWindow::OnImageConvertGammaAction()
 void MainWindow::SetGamma(float newGamma)
 {
     m_Gamma = std::max(newGamma, 0.0f);
+    m_Image->SetGamma(m_Gamma);
     if (m_Gamma < 0.001f) {
         m_Gamma = 0.0f;
     }
