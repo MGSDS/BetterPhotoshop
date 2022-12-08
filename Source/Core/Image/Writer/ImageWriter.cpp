@@ -1,8 +1,8 @@
 #include "ImageWriter.hpp"
 
 #include <Core/Image/Writer/PgmWriter.hpp>
-#include <Core/Image/Writer/PpmWriter.hpp>
 #include <Core/Image/Writer/PngWriter.h>
+#include <Core/Image/Writer/PpmWriter.hpp>
 
 std::unique_ptr<ImageWriter> ImageWriter::GetWriter(ImageFormat format)
 {

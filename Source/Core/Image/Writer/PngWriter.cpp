@@ -1,15 +1,18 @@
 #include "PngWriter.h"
 #include "sstream"
-#include <Core/Utils/Utils.hpp>
 #include "zlib.h"
+#include <Core/Utils/Utils.hpp>
 
-#define IHDR std::vector<uint8_t>{ 73, 72, 68, 82 }
-#define IDAT std::vector<uint8_t>{ 73, 68, 65, 84 }
-#define IEND std::vector<uint8_t>{ 73, 69, 78, 68 }
-#define PNG std::vector<uint8_t>{ 137, 80, 78, 71, 13, 10, 26, 10 }
+#define IHDR \
+    std::vector<uint8_t> { 73, 72, 68, 82 }
+#define IDAT \
+    std::vector<uint8_t> { 73, 68, 65, 84 }
+#define IEND \
+    std::vector<uint8_t> { 73, 69, 78, 68 }
+#define PNG \
+    std::vector<uint8_t> { 137, 80, 78, 71, 13, 10, 26, 10 }
 
-
-void PngWriter::Write(const Image& image, std::ostream& os, uint8_t bitsPerChannel, bool grayscale)const
+void PngWriter::Write(const Image& image, std::ostream& os, uint8_t bitsPerChannel, bool grayscale) const
 {
     os << PNG[0] << PNG[1] << PNG[2] << PNG[3] << PNG[4] << PNG[5] << PNG[6] << PNG[7];
     WriteIHDR(image, os, grayscale);
@@ -55,8 +58,7 @@ void PngWriter::WriteIHDR(const Image& image, std::ostream& stream, bool graysca
     data.push_back(8);
     if (!grayscale) {
         data.push_back(2);
-    }
-    else {
+    } else {
         data.push_back(0);
     }
     data.push_back(8);
@@ -72,21 +74,16 @@ void PngWriter::WriteData(const Image& image, std::ostream& stream, bool graysca
     std::vector<uint8_t> data;
     uint32_t width = image.GetWidth();
     uint32_t height = image.GetHeight();
-    for (uint32_t i = 0; i < height; i++)
-    {
+    for (uint32_t i = 0; i < height; i++) {
         data.push_back(0);
-        for (uint32_t j = 0; j < width; j++)
-        {
+        for (uint32_t j = 0; j < width; j++) {
             Pixel pixel = image.PixelAt(i, j);
             uint8_t r = Utils::ByteFromNorm(pixel.channels[0]);
             uint8_t g = Utils::ByteFromNorm(pixel.channels[1]);
             uint8_t b = Utils::ByteFromNorm(pixel.channels[2]);
-            if (grayscale)
-            {
+            if (grayscale) {
                 data.push_back((r + g + b) / 3);
-            }
-            else
-            {
+            } else {
                 data.push_back(r);
                 data.push_back(g);
                 data.push_back(b);
@@ -108,13 +105,11 @@ std::vector<uint8_t> PngWriter::Deflate(const std::vector<uint8_t>& data)
     stream.avail_out = 0;
     stream.next_out = Z_NULL;
     int ret = deflateInit(&stream, Z_DEFAULT_COMPRESSION);
-    if (ret != Z_OK)
-    {
+    if (ret != Z_OK) {
         throw std::runtime_error("deflateInit failed");
     }
     std::vector<uint8_t> compressedData;
-    do
-    {
+    do {
         compressedData.resize(compressedData.size() + 1024);
         stream.next_out = compressedData.data() + stream.total_out;
         stream.avail_out = compressedData.size() - stream.total_out;

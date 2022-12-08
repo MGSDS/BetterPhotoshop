@@ -1,11 +1,11 @@
 #include "ImageReader.hpp"
 
+#include "PngReader.h"
 #include <Core/Image/ImageFormat.hpp>
 #include <Core/Image/Reader/PgmReader.hpp>
 #include <Core/Image/Reader/PpmReader.hpp>
 #include <Core/Log.hpp>
 #include <Core/Utils/Utils.hpp>
-#include "PngReader.h"
 
 #include <unordered_map>
 #include <vector>

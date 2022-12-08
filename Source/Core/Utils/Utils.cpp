@@ -74,8 +74,7 @@ uint32_t Utils::Crc32(std::vector<uint8_t>::const_iterator begin, std::vector<ui
         for (int j = 0; j < 8; j++) {
             if (c & 1) {
                 c = 0xedb88320 ^ (c >> 1);
-            }
-            else {
+            } else {
                 c = c >> 1;
             }
         }
