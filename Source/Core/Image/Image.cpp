@@ -190,3 +190,13 @@ void Image::AddLayer(const Image& image)
         }
     }
 }
+
+void Image::AssignGamma(float gamma)
+{
+    m_Gamma = gamma;
+}
+
+float Image::GetGamma() const
+{
+    return m_Gamma;
+}

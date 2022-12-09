@@ -11,11 +11,14 @@
     std::vector<uint8_t> { 73, 69, 78, 68 }
 #define PNG \
     std::vector<uint8_t> { 137, 80, 78, 71, 13, 10, 26, 10 }
+#define gAMA \
+    std::vector<uint8_t> { 103, 65, 77, 65 }
 
 void PngWriter::Write(const Image& image, std::ostream& os, uint8_t bitsPerChannel, bool grayscale) const
 {
     os << PNG[0] << PNG[1] << PNG[2] << PNG[3] << PNG[4] << PNG[5] << PNG[6] << PNG[7];
     WriteIHDR(image, os, grayscale);
+    WriteGamma(image, os);
     WriteData(image, os, grayscale);
     WriteFooter(os);
 }
@@ -116,4 +119,15 @@ std::vector<uint8_t> PngWriter::Deflate(const std::vector<uint8_t>& data)
     compressedData.resize(stream.total_out);
     deflateEnd(&stream);
     return compressedData;
+}
+
+void PngWriter::WriteGamma(const Image& image, std::ostream& stream)
+{
+    std::vector<uint8_t> data;
+    uint32_t gamma = image.GetGamma() * 100000;
+    data.push_back(gamma >> 24);
+    data.push_back(gamma >> 16);
+    data.push_back(gamma >> 8);
+    data.push_back(gamma);
+    WriteChunk(gAMA, data, stream);
 }

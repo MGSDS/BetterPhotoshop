@@ -387,6 +387,7 @@ void MainWindow::UpdateActiveChannelsText(ActiveChannel activeChannel)
 void MainWindow::SetImage(std::unique_ptr<Image>&& image)
 {
     m_Image = std::move(image);
+    SetGamma(m_Image->GetGamma());
     SetImageForQt(m_Image.get());
 
     bool enableSaveActions = (m_Image != nullptr);
@@ -494,6 +495,7 @@ void MainWindow::SetGamma(float newGamma)
 
     QString labelText = (m_Gamma == 0.0f) ? "0 (sRGB)" : QString::number(m_Gamma);
     m_ImageView->SetCurrentGammaText(labelText);
+    m_Image->AssignGamma(m_Gamma);
 }
 
 Image MainWindow::TransformImageForQt(const Image& image)
@@ -602,6 +604,7 @@ void MainWindow::ApplyGammaCorrection(Image& image, float gammaValue)
     } else {
         Gamma::Correct(image, gammaValue);
     }
+    image.AssignGamma(gammaValue);
 }
 
 void MainWindow::OnDitheringActionSelected(DitherAlgo ditheringType)

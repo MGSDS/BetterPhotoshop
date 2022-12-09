@@ -77,9 +77,20 @@ std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t>& data)
         throw std::invalid_argument("Invalid PNG");
     }
 
+    //read gamma
+    float gamma = 0.0f;
+    for (int i = 1; i < chunks.size() - 1; i++) {
+        if (chunks[i].type == 0x67414D41) {
+            gamma = static_cast<float>((chunks[i].data[0] << 24) | (chunks[i].data[1] << 16) | (chunks[i].data[2] << 8) | chunks[i].data[3]);
+            gamma /= 100000;
+            break;
+        }
+    }
+
     rawImg = Inflate(rawImg);
 
     auto image = DecodeImage(rawImg, header, palette);
+    image->AssignGamma(gamma);
     return image;
 }
 
