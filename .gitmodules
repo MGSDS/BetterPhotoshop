@@ -1,7 +1,6 @@
 [submodule "Deps/spdlog"]
 	path = Deps/spdlog
 	url = https://github.com/gabime/spdlog.git
-	
 [submodule "Deps/zlib"]
-    path = Deps/zlib
-    url = https://github.com/madler/zlib.git
+	path = Deps/zlib
+	url = https://github.com/madler/zlib
