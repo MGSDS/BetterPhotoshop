@@ -77,7 +77,7 @@ std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t>& data)
         throw std::invalid_argument("Invalid PNG");
     }
 
-    //read gamma
+    // read gamma
     float gamma = 0.0f;
     for (int i = 1; i < chunks.size() - 1; i++) {
         if (chunks[i].type == 0x67414D41) {
