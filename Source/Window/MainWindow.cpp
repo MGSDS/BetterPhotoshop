@@ -235,6 +235,8 @@ void MainWindow::OnFileOpenAction()
         imageData = Image::FromFile(filename.toStdString());
     } catch (const std::exception& exception) {
         Log::Error("OnFileOpenAction: An error occured while reading image from file: {}", exception.what());
+        std::string msg = "An error occured while reading image from file:\n" + std::string(exception.what());
+        QMessageBox::critical(this, "Error", msg.c_str());
         return;
     }
 
@@ -486,7 +488,6 @@ void MainWindow::OnImageConvertGammaAction()
 void MainWindow::SetGamma(float newGamma)
 {
     m_Gamma = std::max(newGamma, 0.0f);
-    m_Image->SetGamma(m_Gamma);
     if (m_Gamma < 0.001f) {
         m_Gamma = 0.0f;
     }

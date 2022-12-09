@@ -143,22 +143,22 @@ const uint8_t* Image::ToDataRGBA32FPx4() const
     return reinterpret_cast<const uint8_t*>(&m_Pixels[0]);
 }
 
-Image::Image(size_t width, size_t height, float gamma)
-    : m_Width(width), m_Height(height), m_Size(width * height), m_Pixels(m_Size, Pixel::WhiteRgb()), m_Gamma(gamma)
+Image::Image(size_t width, size_t height)
+    : m_Width(width), m_Height(height), m_Size(width * height), m_Pixels(m_Size, Pixel::WhiteRgb())
 {}
 
-Image::Image(size_t width, size_t height, Pixel pixel, float gamma)
-    : m_Width(width), m_Height(height), m_Size(width * height), m_Pixels(m_Size, pixel), m_Gamma(gamma)
+Image::Image(size_t width, size_t height, Pixel pixel)
+    : m_Width(width), m_Height(height), m_Size(width * height), m_Pixels(m_Size, pixel)
 
 {}
 
-Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels, float gamma)
+Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels)
     : m_Width(width)
     , m_Height(height)
     , m_Size(width * height)
     , m_Pixels(pixels)
-    , m_Gamma(gamma)
-{}
+{
+}
 
 std::unique_ptr<Image> Image::MonochromeGradient(size_t width, size_t height)
 {
@@ -189,14 +189,4 @@ void Image::AddLayer(const Image& image)
             pixel.channels[j] = pixel.channels[j] * (1 - layerPixel.channels[3]) + layerPixel.channels[j] * layerPixel.channels[3];
         }
     }
-}
-
-void Image::SetGamma(float gamma)
-{
-    m_Gamma = gamma;
-}
-
-float Image::GetGamma() const
-{
-    return m_Gamma;
 }

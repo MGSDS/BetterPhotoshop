@@ -13,7 +13,6 @@ namespace Gamma {
                 pixel.channels[j] = std::pow(pixel.channels[j], 1.0f / gammaValue);
             }
         }
-        image.SetGamma(1.0f);
     }
 
 } // namespace Gamma

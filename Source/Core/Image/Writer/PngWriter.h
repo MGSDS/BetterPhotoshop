@@ -12,6 +12,5 @@ private:
     static void WriteData(const Image& image, std::ostream& stream, bool grayscale);
     static void WriteFooter(std::ostream& stream);
     static void WriteChunk(const std::vector<uint8_t>& chunkType, const std::vector<uint8_t>& data, std::ostream& stream);
-    static void WriteGamma(const Image& image, std::ostream& stream);
     static std::vector<uint8_t> Deflate(const std::vector<uint8_t>& data);
 };
