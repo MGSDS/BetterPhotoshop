@@ -595,7 +595,7 @@ void MainWindow::OnImageSelectButtonClick(const QPointF& pos)
 
 void MainWindow::ApplyGammaCorrection(Image& image, float gammaValue)
 {
-    if (m_Gamma == 0.0f) {
+    if (gammaValue == 0.0f) {
         Gamma::CorrectToSrgb(image);
     } else {
         Gamma::Correct(image, gammaValue);

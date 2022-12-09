@@ -50,8 +50,8 @@ Image Painter::DrawLine(size_t imWidth, size_t imHeight, float x0, float y0, flo
 
     float intery = yend + gradient;
 
-    xend = std::round(x1);
-    yend = y1 + gradient * (xend - x1);
+    xend = std::round(x1) ;
+    yend = y1 + gradient * (xend - x1) - (width - 1.0f) * 0.5f;
     xgap = std::fmod(x1 + 0.5f, 1.0f);
     int xpxl2 = static_cast<int>(xend);
     int ypxl2 = std::floor(yend);
