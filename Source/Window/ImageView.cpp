@@ -8,6 +8,10 @@
 #include <QPixmap>
 #include <QtWidgets>
 
+#include "Core/Image/Filter/GaussianFilter.hpp"
+#include "Core/Image/Filter/SimpleTresholdFilter.hpp"
+#include "Core/Image/Filter/AverageFilter.hpp"
+
 static Qt::MouseButton MOVE_BUTTON = Qt::MouseButton::LeftButton;
 static Qt::MouseButton SELECT_BUTTON = Qt::MouseButton::RightButton;
 static QRect PAN_RECTANGLE = QRect(-100000, -100000, 200000, 200000);
@@ -129,7 +133,13 @@ void ImageView::SetImage(const Image* img)
 
     bool imageHasAppeared = !m_Image;
 
-    auto image = std::make_unique<QImage>(img->ToDataRGBA32FPx4(), img->GetWidth(), img->GetHeight(), QImage::Format_RGBA32FPx4);
+    // GaussianFilter filter(3.0);
+    // SimpleTresholdFilter filter(0.5);
+    AverageFilter filter(15);
+
+    auto newImage = filter.Apply(*img);
+
+    auto image = std::make_unique<QImage>(newImage->ToDataRGBA32FPx4(), newImage->GetWidth(), newImage->GetHeight(), QImage::Format_RGBA32FPx4);
     QPixmap pixmap = QPixmap::fromImage(*image);
     m_Image = std::unique_ptr<QGraphicsItem>{ m_Scene->addPixmap(pixmap) };
     emit imageSizeChanged(QSize(img->GetWidth(), img->GetHeight()));
