@@ -1,15 +1,15 @@
 #include "AverageFilter.hpp"
 
 #include <algorithm>
-#include <stdexcept>
 #include <memory>
 #include <numeric>
+#include <stdexcept>
 #include <vector>
 
 #include <Core/Log.hpp>
 
 AverageFilter::AverageFilter(size_t radius)
-: m_Radius(radius)
+    : m_Radius(radius)
 {
 }
 
@@ -23,10 +23,9 @@ std::unique_ptr<Image> AverageFilter::Apply(const Image& image)
     float kernelValue = 1.0f / (diameter * diameter);
 
     Log::Debug("kernel value: {}", kernelValue);
-    
+
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-
             Pixel& newPixel = newImage->PixelAt(i, j);
             for (size_t channel = 0; channel < 3; channel++) {
                 newPixel.channels[channel] = 0.0f;
@@ -49,7 +48,6 @@ std::unique_ptr<Image> AverageFilter::Apply(const Image& image)
             for (size_t channel = 0; channel < 3; channel++) {
                 newPixel.channels[channel] = std::clamp(newPixel.channels[channel], 0.0f, 1.0f);
             }
-
 
             Log::Debug("{} {} {}", newPixel.channels[0], newPixel.channels[1], newPixel.channels[2]);
         }

@@ -1,25 +1,25 @@
 #include "GaussianFilter.hpp"
 
-#include <cmath>
 #include <algorithm>
-#include <stdexcept>
+#include <cmath>
 #include <memory>
 #include <numeric>
+#include <stdexcept>
 #include <vector>
 
 GaussianFilter::GaussianFilter(float sigma)
-: m_Sigma(sigma)
+    : m_Sigma(sigma)
 {
     // https://stackoverflow.com/questions/3149279/optimal-sigma-for-gaussian-filtering-of-an-image#comment109661968_62002971
     m_Radius = std::ceil(m_Sigma * 3);
 }
 
-static float gauss(float sigma, int x, int y) 
+static float gauss(float sigma, int x, int y)
 {
-   float sigma2 = sigma * sigma;
-   float doublePi = M_PI * 2;
+    float sigma2 = sigma * sigma;
+    float doublePi = M_PI * 2;
 
-   return std::exp(-((x * x + y * y) / (2 * sigma2))) / (M_PI * 2 * sigma2);
+    return std::exp(-((x * x + y * y) / (2 * sigma2))) / (M_PI * 2 * sigma2);
 }
 
 std::unique_ptr<Image> GaussianFilter::Apply(const Image& image)
@@ -48,10 +48,8 @@ std::unique_ptr<Image> GaussianFilter::Apply(const Image& image)
         }
     }
 
-    
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-
             Pixel& newPixel = newImage->PixelAt(i, j);
             for (size_t channel = 0; channel < 3; channel++) {
                 newPixel.channels[channel] = 0.0f;

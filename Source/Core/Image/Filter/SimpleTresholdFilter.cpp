@@ -1,8 +1,8 @@
 #include "SimpleTresholdFilter.hpp"
 #include <Core/Log.hpp>
 
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
 
 SimpleTresholdFilter::SimpleTresholdFilter(float treshold)
 {
@@ -20,7 +20,7 @@ std::unique_ptr<Image> SimpleTresholdFilter::Apply(const Image& image)
     for (size_t i = 0; i < newImage->GetPixelsCount(); i++) {
         Pixel& pixel = newImage->PixelAt(i);
         for (size_t j = 0; j < 3; j++) {
-            pixel.channels[j] = (pixel.channels[j] < m_Treshold) ? 0.0f : 1.0f; 
+            pixel.channels[j] = (pixel.channels[j] < m_Treshold) ? 0.0f : 1.0f;
         }
     }
 

@@ -1,12 +1,12 @@
 #include "MedianFilter.hpp"
 
 #include <algorithm>
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 MedianFilter::MedianFilter(size_t radius)
-: m_Radius(radius)
+    : m_Radius(radius)
 {
 }
 
@@ -19,10 +19,9 @@ std::unique_ptr<Image> MedianFilter::Apply(const Image& image)
     size_t diameter = 2 * m_Radius + 1;
     std::vector<std::vector<float>> windowValues(3, std::vector<float>(diameter * diameter));
     size_t medianIdx = windowValues[0].size() / 2;
-    
+
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-
             for (size_t channel = 0; channel < 3; channel++) {
                 windowValues[channel].clear();
             }
@@ -46,8 +45,7 @@ std::unique_ptr<Image> MedianFilter::Apply(const Image& image)
                 std::nth_element(
                     windowValues[channel].begin(),
                     windowValues[channel].begin() + medianIdx,
-                    windowValues[channel].end()
-                );
+                    windowValues[channel].end());
                 newPixel.channels[channel] = windowValues[channel][medianIdx];
             }
         }
