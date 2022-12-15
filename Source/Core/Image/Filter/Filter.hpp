@@ -5,6 +5,7 @@
 enum FilterAlgo : uint8_t
 {
     AVERAGE,
+    CONTRAST_ADAPTIVE_SHARPENING,
     GAUSSIAN,
     MEDIAN,
     SIMPLETRESHOLD,
@@ -29,6 +30,7 @@ private:
 
 static const std::unordered_map<FilterAlgo, std::string> ENUM_TO_STRING_FILTER_MAPPING = {
     { FilterAlgo::AVERAGE, "Average" },
+    { FilterAlgo::CONTRAST_ADAPTIVE_SHARPENING, "CAS (AMD ©)" },
     { FilterAlgo::GAUSSIAN, "Gaussian" },
     { FilterAlgo::MEDIAN, "Median" },
     { FilterAlgo::SIMPLETRESHOLD, "Simple treshold" },
@@ -37,6 +39,7 @@ static const std::unordered_map<FilterAlgo, std::string> ENUM_TO_STRING_FILTER_M
 
 static const std::unordered_map<FilterAlgo, std::shared_ptr<FilterParameter>> ENUM_TO_STRING_FILTER_PARAMETER_MAPPING = {
     { FilterAlgo::AVERAGE, std::make_shared<FilterParameter>("Radius", 0, 10, 1) },
+    { FilterAlgo::CONTRAST_ADAPTIVE_SHARPENING, std::make_shared<FilterParameter>("Sharpness", 0, 1, 0.5) },
     { FilterAlgo::GAUSSIAN, std::make_shared<FilterParameter>("Radius", 0, 10, 1) },
     { FilterAlgo::MEDIAN, std::make_shared<FilterParameter>("Radius", 0, 10, 1) },
     { FilterAlgo::SIMPLETRESHOLD, std::make_shared<FilterParameter>("Treshold", 0, 1, 0.1) },

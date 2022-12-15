@@ -44,8 +44,6 @@ std::unique_ptr<Image> AverageFilter::Apply(const Image& image)
                 }
             }
 
-            // сраное говно, значения всех каналов по прежнему нулевые
-
             for (size_t channel = 0; channel < 3; channel++) {
                 newPixel.channels[channel] = std::clamp(newPixel.channels[channel], 0.0f, 1.0f);
             }

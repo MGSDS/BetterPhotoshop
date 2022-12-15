@@ -627,6 +627,10 @@ void MainWindow::OnDitheringActionSelected(DitherAlgo ditheringType)
 
 void MainWindow::OnApplyFilterAction(FilterAlgo filter)
 {
+    if (!m_Image) {
+        return;
+    }
+
     const std::string& filterName = ENUM_TO_STRING_FILTER_MAPPING.at(filter);
     auto filterParam = ENUM_TO_STRING_FILTER_PARAMETER_MAPPING.at(filter);
     float param = 0.0f;

@@ -1,5 +1,6 @@
 #include "Filter.hpp"
 #include "AverageFilter.hpp"
+#include "ContrastAdaptiveSharpeningFilter.hpp"
 #include "GaussianFilter.hpp"
 #include "MedianFilter.hpp"
 #include "SimpleTresholdFilter.hpp"
@@ -10,6 +11,8 @@ std::unique_ptr<Filter> Filter::GetFilter(FilterAlgo filterAlgo, float parameter
     switch (filterAlgo) {
         case FilterAlgo::AVERAGE:
             return std::make_unique<AverageFilter>(parameter);
+        case FilterAlgo::CONTRAST_ADAPTIVE_SHARPENING:
+            return std::make_unique<ContrastAdaptiveSharpeningFilter>(parameter);
         case FilterAlgo::GAUSSIAN:
             return std::make_unique<GaussianFilter>(parameter);
         case FilterAlgo::MEDIAN:
