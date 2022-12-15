@@ -18,6 +18,7 @@ public:
     float GetMin() const;
     float GetMax() const;
     float GetValue() const;
+
 private:
     std::string Name;
     float Min;

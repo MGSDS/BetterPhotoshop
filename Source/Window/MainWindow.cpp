@@ -639,4 +639,3 @@ void MainWindow::OnApplyFilterAction(FilterAlgo filter)
     auto image = algo->Apply(*m_Image);
     SetImage(std::move(image));
 }
-

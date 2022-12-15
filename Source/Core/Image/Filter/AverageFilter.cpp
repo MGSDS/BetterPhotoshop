@@ -33,7 +33,7 @@ std::unique_ptr<Image> AverageFilter::Apply(const Image& image)
 
             for (int y = 0; y < diameter; y++) {
                 for (int x = 0; x < diameter; x++) {
-                    //BUG: cast size_t to int
+                    // BUG: cast size_t to int
                     size_t imgRow = std::clamp(i + y - static_cast<int>(m_Radius), 0, (int)height - 1);
                     size_t imgCol = std::clamp(j + x - static_cast<int>(m_Radius), 0, (int)width - 1);
 
