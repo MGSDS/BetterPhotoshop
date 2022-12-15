@@ -9,7 +9,8 @@ enum FilterAlgo : uint8_t
     GAUSSIAN,
     MEDIAN,
     SIMPLETRESHOLD,
-    SOBEL
+    SOBEL,
+    OTSU
 };
 
 struct FilterParameter
@@ -34,7 +35,8 @@ static const std::unordered_map<FilterAlgo, std::string> ENUM_TO_STRING_FILTER_M
     { FilterAlgo::GAUSSIAN, "Gaussian" },
     { FilterAlgo::MEDIAN, "Median" },
     { FilterAlgo::SIMPLETRESHOLD, "Simple treshold" },
-    { FilterAlgo::SOBEL, "Sobel" }
+    { FilterAlgo::SOBEL, "Sobel" },
+    { FilterAlgo::OTSU, "Otsu" }
 };
 
 static const std::unordered_map<FilterAlgo, std::shared_ptr<FilterParameter>> ENUM_TO_STRING_FILTER_PARAMETER_MAPPING = {
@@ -43,7 +45,8 @@ static const std::unordered_map<FilterAlgo, std::shared_ptr<FilterParameter>> EN
     { FilterAlgo::GAUSSIAN, std::make_shared<FilterParameter>("Radius", 0, 10, 1) },
     { FilterAlgo::MEDIAN, std::make_shared<FilterParameter>("Radius", 0, 10, 1) },
     { FilterAlgo::SIMPLETRESHOLD, std::make_shared<FilterParameter>("Treshold", 0, 1, 0.1) },
-    { FilterAlgo::SOBEL, nullptr }
+    { FilterAlgo::SOBEL, nullptr },
+    { FilterAlgo::OTSU, nullptr }
 };
 
 class Filter

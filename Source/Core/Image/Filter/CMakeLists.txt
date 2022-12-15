@@ -6,4 +6,5 @@ target_sources(Photoshop PUBLIC
     MedianFilter.cpp
     Filter.cpp
     SobelFilter.cpp
+    OtsuFilter.cpp
 )
