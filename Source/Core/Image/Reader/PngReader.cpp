@@ -1,4 +1,4 @@
-#include "PngReader.h"
+#include "PngReader.hpp"
 #include "Core/Image/Gamma/PowGammaCorrection.hpp"
 #include "Core/Image/Gamma/SrgbGammaCorrection.hpp"
 #include "zlib.h"

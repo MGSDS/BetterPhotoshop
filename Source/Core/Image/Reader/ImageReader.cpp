@@ -1,6 +1,6 @@
 #include "ImageReader.hpp"
 
-#include "PngReader.h"
+#include "PngReader.hpp"
 #include <Core/Image/ImageFormat.hpp>
 #include <Core/Image/Reader/PgmReader.hpp>
 #include <Core/Image/Reader/PpmReader.hpp>

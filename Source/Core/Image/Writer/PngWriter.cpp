@@ -1,4 +1,4 @@
-#include "PngWriter.h"
+#include "PngWriter.hpp"
 #include "sstream"
 #include "zlib.h"
 #include <Core/Utils/Utils.hpp>
