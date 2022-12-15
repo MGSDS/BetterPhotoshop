@@ -1,5 +1,6 @@
 #include "Filter.hpp"
 #include "AverageFilter.hpp"
+#include "BoxBlurFilter.hpp"
 #include "GaussianFilter.hpp"
 #include "MedianFilter.hpp"
 #include "SimpleTresholdFilter.hpp"
@@ -15,6 +16,8 @@ std::unique_ptr<Filter> Filter::GetFilter(FilterAlgo filterAlgo, float parameter
             return std::make_unique<MedianFilter>(parameter);
         case FilterAlgo::SIMPLETRESHOLD:
             return std::make_unique<SimpleTresholdFilter>(parameter);
+        case FilterAlgo::BOX:
+            return std::make_unique<BoxBlurFilter>(parameter);
         default:
             return nullptr;
     }

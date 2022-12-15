@@ -627,12 +627,16 @@ void MainWindow::OnDitheringActionSelected(DitherAlgo ditheringType)
 
 void MainWindow::OnApplyFilterAction(FilterAlgo filter)
 {
-    bool ok = false;
+
     const std::string& filterName = ENUM_TO_STRING_FILTER_MAPPING.at(filter);
-    const FilterParameter& filterParam = ENUM_TO_STRING_FILTER_PARAMETER_MAPPING.at(filter);
-    float param = QInputDialog::getDouble(this, filterName.c_str(), filterParam.GetName().c_str(), filterParam.GetValue(), filterParam.GetMin(), filterParam.GetMax(), 2, &ok, {}, 0.01);
-    if (!ok) {
-        return;
+    auto filterParam = ENUM_TO_STRING_FILTER_PARAMETER_MAPPING.at(filter);
+    float param = 0.0f;
+    if (filterParam != nullptr) {
+        bool ok = false;
+        param = QInputDialog::getDouble(this, filterName.c_str(), filterParam->GetName().c_str(), filterParam->GetValue(), filterParam->GetMin(), filterParam->GetMax(), 2, &ok, {}, 0.01);
+        if (!ok) {
+            return;
+        }
     }
 
     auto algo = Filter::GetFilter(filter, param);
