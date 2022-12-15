@@ -3,4 +3,5 @@ target_sources(Photoshop PUBLIC
     GaussianFilter.cpp
     SimpleTresholdFilter.cpp
     MedianFilter.cpp
+    Filter.cpp
 )

@@ -26,10 +26,10 @@ std::unique_ptr<Image> MedianFilter::Apply(const Image& image)
                 windowValues[channel].clear();
             }
 
-            for (int offsetH = -m_Radius; offsetH <= m_Radius; offsetH++) {
-                for (int offsetW = -m_Radius; offsetW <= m_Radius; offsetW++) {
-                    size_t y = i + offsetH;
-                    size_t x = j + offsetW;
+            for (int offsetH = 0; offsetH < diameter; offsetH++) {
+                for (int offsetW = 0; offsetW < diameter; offsetW++) {
+                    size_t y = i + offsetH - static_cast<int>(m_Radius);
+                    size_t x = j + offsetW - static_cast<int>(m_Radius);
                     y = std::clamp(y, (size_t)0, height - 1);
                     x = std::clamp(x, (size_t)0, width - 1);
 
