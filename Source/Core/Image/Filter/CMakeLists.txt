@@ -4,5 +4,5 @@ target_sources(Photoshop PUBLIC
     SimpleTresholdFilter.cpp
     MedianFilter.cpp
     Filter.cpp
-    BoxBlurFilter.cpp
+    SobelFilter.cpp
 )

@@ -18,33 +18,33 @@ std::unique_ptr<Image> SobelFilter::Apply(const Image& image)
         { 1, 2, 1 }
     };
 
-    for (int i = 1; i < image.GetHeight() - 1; ++i)
+    for (int i = 0; i < image.GetHeight(); ++i)
     {
-        for (int j = 1; j < image.GetWidth() - 1; ++j)
+        for (int j = 0; j < image.GetWidth(); ++j)
         {
            Pixel& newPixel = newImage->PixelAt(i, j);
 
            float magX = 0.0f;
            for (int ch = 0; ch < 3; ++ch)
            {
-               float pixelX = (kernelX[0][0] * image.PixelAt(i - 1, j - 1).channels[ch]) +
-                               (kernelX[0][1] * image.PixelAt(i - 1, j).channels[ch]) +
-                               (kernelX[0][2] * image.PixelAt(i - 1, j + 1).channels[ch]) +
-                               (kernelX[1][0] * image.PixelAt(i, j - 1).channels[ch]) +
-                               (kernelX[1][1] * image.PixelAt(i, j).channels[ch]) +
-                               (kernelX[1][2] * image.PixelAt(i, j + 1).channels[ch]) +
-                               (kernelX[2][0] * image.PixelAt(i + 1, j - 1).channels[ch]) +
-                               (kernelX[2][1] * image.PixelAt(i + 1, j).channels[ch]) +
-                               (kernelX[2][2] * image.PixelAt(i + 1, j + 1).channels[ch]);
-               float pixelY = (kernelY[0][0] * image.PixelAt(i - 1, j - 1).channels[ch]) +
-                               (kernelY[0][1] * image.PixelAt(i - 1, j).channels[ch]) +
-                               (kernelY[0][2] * image.PixelAt(i - 1, j + 1).channels[ch]) +
-                               (kernelY[1][0] * image.PixelAt(i, j - 1).channels[ch]) +
-                               (kernelY[1][1] * image.PixelAt(i, j).channels[ch]) +
-                               (kernelY[1][2] * image.PixelAt(i, j + 1).channels[ch]) +
-                               (kernelY[2][0] * image.PixelAt(i + 1, j - 1).channels[ch]) +
-                               (kernelY[2][1] * image.PixelAt(i + 1, j).channels[ch]) +
-                               (kernelY[2][2] * image.PixelAt(i + 1, j + 1).channels[ch]);
+               float pixelX = (kernelX[0][0] * GetPixel(image, i - 1, j - 1).channels[ch]) +
+                               (kernelX[0][1] * GetPixel(image, i - 1, j).channels[ch]) +
+                               (kernelX[0][2] * GetPixel(image, i - 1, j + 1).channels[ch]) +
+                               (kernelX[1][0] * GetPixel(image, i, j - 1).channels[ch]) +
+                               (kernelX[1][1] * GetPixel(image, i, j).channels[ch]) +
+                               (kernelX[1][2] * GetPixel(image, i, j + 1).channels[ch]) +
+                               (kernelX[2][0] * GetPixel(image, i + 1, j - 1).channels[ch]) +
+                               (kernelX[2][1] * GetPixel(image, i + 1, j).channels[ch]) +
+                               (kernelX[2][2] * GetPixel(image, i + 1, j + 1).channels[ch]);
+               float pixelY = (kernelY[0][0] * GetPixel(image, i - 1, j - 1).channels[ch]) +
+                               (kernelY[0][1] * GetPixel(image, i - 1, j).channels[ch]) +
+                               (kernelY[0][2] * GetPixel(image, i - 1, j + 1).channels[ch]) +
+                               (kernelY[1][0] * GetPixel(image, i, j - 1).channels[ch]) +
+                               (kernelY[1][1] * GetPixel(image, i, j).channels[ch]) +
+                               (kernelY[1][2] * GetPixel(image, i, j + 1).channels[ch]) +
+                               (kernelY[2][0] * GetPixel(image, i + 1, j - 1).channels[ch]) +
+                               (kernelY[2][1] * GetPixel(image, i + 1, j).channels[ch]) +
+                               (kernelY[2][2] * GetPixel(image, i + 1, j + 1).channels[ch]);
 
                float mag = std::sqrt((pixelX * pixelX) + (pixelY * pixelY));
 
@@ -65,4 +65,11 @@ std::unique_ptr<Image> SobelFilter::Apply(const Image& image)
 
 
     return newImage;
+}
+
+Pixel SobelFilter::GetPixel(const Image& image, int x, int y)
+{
+    x = std::clamp(x, 0, (int)image.GetHeight() - 1);
+    y = std::clamp(y, 0, (int)image.GetWidth() - 1);
+    return image.PixelAt(x, y);
 }
