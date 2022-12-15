@@ -245,6 +245,8 @@ void MainWindow::OnFileOpenAction()
         imageData = Image::FromFile(filename.toStdString());
     } catch (const std::exception& exception) {
         Log::Error("OnFileOpenAction: An error occured while reading image from file: {}", exception.what());
+        std::string msg = "An error occured while reading image from file:\n" + std::string(exception.what());
+        QMessageBox::critical(this, "Error", msg.c_str());
         return;
     }
 
@@ -395,6 +397,7 @@ void MainWindow::UpdateActiveChannelsText(ActiveChannel activeChannel)
 void MainWindow::SetImage(std::unique_ptr<Image>&& image)
 {
     m_Image = std::move(image);
+    SetGamma(m_Image->GetGamma());
     SetImageForQt(m_Image.get());
 
     bool enableSaveActions = (m_Image != nullptr);
@@ -465,6 +468,7 @@ void MainWindow::OnImageAssignGammaAction()
     }
 
     SetGamma(static_cast<float>(newGamma));
+    m_Image->AssignGamma(m_Gamma);
 
     if (!m_Image) {
         return;
@@ -610,6 +614,7 @@ void MainWindow::ApplyGammaCorrection(Image& image, float gammaValue)
     } else {
         Gamma::Correct(image, gammaValue);
     }
+//    image.AssignGamma(gammaValue);
 }
 
 void MainWindow::OnDitheringActionSelected(DitherAlgo ditheringType)

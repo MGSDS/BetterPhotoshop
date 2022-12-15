@@ -65,3 +65,25 @@ bool Utils::OutOfBounds(int i, int j, size_t h, size_t w)
 {
     return i < 0 || j < 0 || i >= h || j >= w;
 }
+
+uint32_t Utils::Crc32(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end)
+{
+    uint32_t Crc32Table[256];
+    for (int i = 0; i < 256; i++) {
+        uint32_t c = i;
+        for (int j = 0; j < 8; j++) {
+            if (c & 1) {
+                c = 0xedb88320 ^ (c >> 1);
+            } else {
+                c = c >> 1;
+            }
+        }
+        Crc32Table[i] = c;
+    }
+
+    uint32_t crc = 0xFFFFFFFF;
+    for (auto b = begin; b != end; b++) {
+        crc = (crc >> 8) ^ Crc32Table[(crc ^ *b) & 0xFF];
+    }
+    return crc ^ 0xFFFFFFFF;
+}

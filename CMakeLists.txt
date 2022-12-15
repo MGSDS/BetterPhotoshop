@@ -30,6 +30,11 @@ add_subdirectory(Resources)
 add_subdirectory(Source)
 
 add_subdirectory(Deps/spdlog)
+add_subdirectory(Deps/zlib)
+
+find_package(ZLIB REQUIRED)
+target_link_libraries(Photoshop PRIVATE ZLIB::ZLIB)
+
 target_compile_definitions(Photoshop PUBLIC SPDLOG_COMPILED_LIB)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT MINGW)
@@ -47,9 +52,11 @@ target_link_libraries(Photoshop PUBLIC
     Qt::Gui
     Qt::Widgets
     spdlog
+    zlib
 )
 
 target_include_directories(Photoshop PUBLIC
     Source
     Deps/spdlog/include
+    Deps/zlib/include
 )
