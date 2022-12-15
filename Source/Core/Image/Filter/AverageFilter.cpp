@@ -31,10 +31,11 @@ std::unique_ptr<Image> AverageFilter::Apply(const Image& image)
                 newPixel.channels[channel] = 0.0f;
             }
 
-            for (int y = -m_Radius; y <= m_Radius; y++) {
-                for (int x = -m_Radius; x <= m_Radius; x++) {
-                    size_t imgRow = std::clamp(i + y, 0, (int)height - 1);
-                    size_t imgCol = std::clamp(j + x, 0, (int)width - 1);
+            for (int y = 0; y < diameter; y++) {
+                for (int x = 0; x < diameter; x++) {
+                    //BUG: cast size_t to int
+                    size_t imgRow = std::clamp(i + y - static_cast<int>(m_Radius), 0, (int)height - 1);
+                    size_t imgCol = std::clamp(j + x - static_cast<int>(m_Radius), 0, (int)width - 1);
 
                     const Pixel& pixel = image.PixelAt(imgRow, imgCol);
                     for (size_t channel = 0; channel < 3; channel++) {
