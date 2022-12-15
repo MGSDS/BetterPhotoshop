@@ -458,6 +458,7 @@ void MainWindow::OnImageAssignGammaAction()
     }
 
     SetGamma(static_cast<float>(newGamma));
+    m_Image->AssignGamma(m_Gamma);
 
     if (!m_Image) {
         return;
@@ -495,7 +496,6 @@ void MainWindow::SetGamma(float newGamma)
 
     QString labelText = (m_Gamma == 0.0f) ? "0 (sRGB)" : QString::number(m_Gamma);
     m_ImageView->SetCurrentGammaText(labelText);
-    m_Image->AssignGamma(m_Gamma);
 }
 
 Image MainWindow::TransformImageForQt(const Image& image)
@@ -604,7 +604,7 @@ void MainWindow::ApplyGammaCorrection(Image& image, float gammaValue)
     } else {
         Gamma::Correct(image, gammaValue);
     }
-    image.AssignGamma(gammaValue);
+//    image.AssignGamma(gammaValue);
 }
 
 void MainWindow::OnDitheringActionSelected(DitherAlgo ditheringType)

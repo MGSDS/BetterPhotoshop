@@ -124,7 +124,7 @@ std::vector<uint8_t> PngWriter::Deflate(const std::vector<uint8_t>& data)
 void PngWriter::WriteGamma(const Image& image, std::ostream& stream)
 {
     std::vector<uint8_t> data;
-    uint32_t gamma = image.GetGamma() * 100000;
+    uint32_t gamma = 1.0f / image.GetGamma() * 100000;
     data.push_back(gamma >> 24);
     data.push_back(gamma >> 16);
     data.push_back(gamma >> 8);
