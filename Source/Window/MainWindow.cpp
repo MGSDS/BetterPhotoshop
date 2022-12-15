@@ -614,7 +614,7 @@ void MainWindow::ApplyGammaCorrection(Image& image, float gammaValue)
     } else {
         Gamma::Correct(image, gammaValue);
     }
-//    image.AssignGamma(gammaValue);
+    //    image.AssignGamma(gammaValue);
 }
 
 void MainWindow::OnDitheringActionSelected(DitherAlgo ditheringType)
