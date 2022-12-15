@@ -159,6 +159,16 @@ void MainWindow::InitMenuBar()
             SetActionGroupEnabled(ditherActionGroup, true);
         }
 
+        auto applyFilterMenu = imageMenu->addMenu("Apply filter");
+        {
+            for (const auto& [filterEnum, filterName] : ENUM_TO_STRING_FILTER_MAPPING) {
+                auto* filterAction = applyFilterMenu->addAction(filterName.c_str());
+                connect(filterAction, &QAction::triggered, this, [this, filter = filterEnum]() {
+                    OnApplyFilterAction(filter);
+                });
+            }
+        }
+
         auto* drawLineAction = imageMenu->addAction("Draw line");
         connect(drawLineAction, &QAction::triggered, this, &MainWindow::OnLineDrawAction);
     }
@@ -614,3 +624,19 @@ void MainWindow::OnDitheringActionSelected(DitherAlgo ditheringType)
     auto image = algo->Apply(*m_Image, depth);
     SetImage(std::move(image));
 }
+
+void MainWindow::OnApplyFilterAction(FilterAlgo filter)
+{
+    bool ok = false;
+    const std::string& filterName = ENUM_TO_STRING_FILTER_MAPPING.at(filter);
+    const FilterParameter& filterParam = ENUM_TO_STRING_FILTER_PARAMETER_MAPPING.at(filter);
+    float param = QInputDialog::getDouble(this, filterName.c_str(), filterParam.GetName().c_str(), filterParam.GetValue(), filterParam.GetMin(), filterParam.GetMax(), 2, &ok, {}, 0.01);
+    if (!ok) {
+        return;
+    }
+
+    auto algo = Filter::GetFilter(filter, param);
+    auto image = algo->Apply(*m_Image);
+    SetImage(std::move(image));
+}
+

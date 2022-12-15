@@ -133,13 +133,7 @@ void ImageView::SetImage(const Image* img)
 
     bool imageHasAppeared = !m_Image;
 
-    // GaussianFilter filter(3.0);
-    // SimpleTresholdFilter filter(0.5);
-    AverageFilter filter(15);
-
-    auto newImage = filter.Apply(*img);
-
-    auto image = std::make_unique<QImage>(newImage->ToDataRGBA32FPx4(), newImage->GetWidth(), newImage->GetHeight(), QImage::Format_RGBA32FPx4);
+    auto image = std::make_unique<QImage>(img->ToDataRGBA32FPx4(), img->GetWidth(), img->GetHeight(), QImage::Format_RGBA32FPx4);
     QPixmap pixmap = QPixmap::fromImage(*image);
     m_Image = std::unique_ptr<QGraphicsItem>{ m_Scene->addPixmap(pixmap) };
     emit imageSizeChanged(QSize(img->GetWidth(), img->GetHeight()));

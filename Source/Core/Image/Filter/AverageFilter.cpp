@@ -48,8 +48,6 @@ std::unique_ptr<Image> AverageFilter::Apply(const Image& image)
             for (size_t channel = 0; channel < 3; channel++) {
                 newPixel.channels[channel] = std::clamp(newPixel.channels[channel], 0.0f, 1.0f);
             }
-
-            Log::Debug("{} {} {}", newPixel.channels[0], newPixel.channels[1], newPixel.channels[2]);
         }
     }
 
