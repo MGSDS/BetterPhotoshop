@@ -56,7 +56,6 @@ std::unique_ptr<Image> SobelFilter::Apply(const Image& image)
             }
         }
     }
-
     return newImage;
 }
 
