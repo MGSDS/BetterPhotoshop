@@ -8,6 +8,10 @@
 #include <QPixmap>
 #include <QtWidgets>
 
+#include "Core/Image/Filter/AverageFilter.hpp"
+#include "Core/Image/Filter/GaussianFilter.hpp"
+#include "Core/Image/Filter/SimpleTresholdFilter.hpp"
+
 static Qt::MouseButton MOVE_BUTTON = Qt::MouseButton::LeftButton;
 static Qt::MouseButton SELECT_BUTTON = Qt::MouseButton::RightButton;
 static QRect PAN_RECTANGLE = QRect(-100000, -100000, 200000, 200000);
