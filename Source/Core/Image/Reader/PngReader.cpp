@@ -80,7 +80,7 @@ std::unique_ptr<Image> PngReader::ReadImage(const std::vector<uint8_t>& data)
     }
 
     // read gamma
-    float gamma = 1 / 2.2f;
+    float gamma = 1.0f;
     for (int i = 1; i < chunks.size() - 1; i++) {
         if (chunks[i].type == 0x67414D41) {
             gamma = static_cast<float>((chunks[i].data[0] << 24) | (chunks[i].data[1] << 16) | (chunks[i].data[2] << 8) | chunks[i].data[3]);
