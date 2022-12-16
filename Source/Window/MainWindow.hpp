@@ -2,6 +2,7 @@
 
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
 #include <Core/Image/Editors/Painter.hpp>
+#include <Core/Image/Filter/Filter.hpp>
 #include <Window/ImageViewWithInfo.hpp>
 
 #include <QAction>
@@ -78,6 +79,7 @@ private slots:
     void OnFileSaveAsAction();
     void OnFileSaveViewAsAction();
     void OnLineDrawAction();
+    void OnApplyFilterAction(FilterAlgo filter);
     void OnImageSelectButtonClick(const QPointF& pos);
 
     void OnImageColorModelActionSelected(ColorModel selectedColorModel);
