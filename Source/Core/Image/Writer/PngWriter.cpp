@@ -18,7 +18,10 @@ void PngWriter::Write(const Image& image, std::ostream& os, uint8_t bitsPerChann
 {
     os << PNG[0] << PNG[1] << PNG[2] << PNG[3] << PNG[4] << PNG[5] << PNG[6] << PNG[7];
     WriteIHDR(image, os, grayscale);
-    WriteGamma(image, os);
+    if (image.GetGamma() != 1.0f) {
+        WriteGamma(image, os);
+    }
+
     WriteData(image, os, grayscale);
     WriteFooter(os);
 }
