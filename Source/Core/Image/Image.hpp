@@ -59,11 +59,15 @@ public:
     Pixel& PixelAt(size_t index);
     const Pixel& PixelAt(size_t index) const;
 
+    void AssignGamma(float gamma);
+    float GetGamma() const;
+
 private:
     Image() = default;
 
     size_t m_Width = 0;
     size_t m_Height = 0;
     size_t m_Size = 0;
+    float m_Gamma = 1.0f;
     std::vector<Pixel> m_Pixels;
 };

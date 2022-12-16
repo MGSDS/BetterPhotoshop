@@ -8,7 +8,7 @@ void PpmWriter::WriteHeader(const Image& image, std::ostream& os)
     os << 255 << '\n';
 }
 
-void PpmWriter::Write(const Image& image, std::ostream& os, uint8_t bitsPerChannel) const
+void PpmWriter::Write(const Image& image, std::ostream& os, uint8_t bitsPerChannel, bool grayscale) const
 {
     WriteHeader(image, os);
     for (size_t i = 0; i < image.GetPixelsCount(); i++) {

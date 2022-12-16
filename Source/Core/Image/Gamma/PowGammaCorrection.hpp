@@ -2,6 +2,8 @@
 
 #include <Core/Image/Image.hpp>
 
+#include <cmath>
+
 namespace Gamma {
 
     static inline void Correct(Image& image, float gammaValue)
