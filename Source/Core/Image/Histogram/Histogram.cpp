@@ -1,7 +1,7 @@
 #include "Histogram.hpp"
 
-#include <algorithm>
 #include "Core/Utils/Utils.hpp"
+#include <algorithm>
 
 std::vector<std::vector<int>> Histogram::Calculate(const Image& image)
 {
@@ -24,7 +24,7 @@ std::unique_ptr<Image> Histogram::Correct(Image& image, const std::vector<std::v
 {
     auto newImage = std::make_unique<Image>(image.GetWidth(), image.GetHeight());
 
-    //find lowest and highest values with ignore
+    // find lowest and highest values with ignore
 
     int lowest = 0;
     int highest = 255;
@@ -47,7 +47,7 @@ std::unique_ptr<Image> Histogram::Correct(Image& image, const std::vector<std::v
         }
     }
 
-    //clip values
+    // clip values
     for (int i = 0; i < image.GetPixelsCount(); ++i) {
         for (int j = 0; j < 3; ++j) {
             uint8_t normalizedValue = Utils::ByteFromNorm(image.PixelAt(i).channels[j]);

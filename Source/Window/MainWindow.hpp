@@ -3,9 +3,9 @@
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
 #include <Core/Image/Editors/Painter.hpp>
 #include <Core/Image/Filter/Filter.hpp>
-#include <Window/ImageViewWithInfo.hpp>
 #include <QSplitter>
 #include <QtCharts/QChartView>
+#include <Window/ImageViewWithInfo.hpp>
 
 #include <QAction>
 #include <QDialog>

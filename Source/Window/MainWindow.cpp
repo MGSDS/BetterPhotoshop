@@ -5,13 +5,13 @@
 #include "Window/Dialogs/LineDialog.hpp"
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
 #include <Core/Image/Gamma/SrgbGammaCorrection.hpp>
+#include <Core/Image/Histogram/Histogram.hpp>
 #include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
-#include <Window/Dialogs/NewImageDialog.hpp>
-#include <Core/Image/Histogram/Histogram.hpp>
-#include <QtWidgets/QMainWindow>
 #include <QtCharts/QBarSet>
 #include <QtCharts/QStackedBarSeries>
+#include <QtWidgets/QMainWindow>
+#include <Window/Dialogs/NewImageDialog.hpp>
 
 #include <QFileDialog>
 #include <QPixmap>
@@ -724,7 +724,6 @@ void MainWindow::OnShowHistogramAction()
 
     auto histogram = Histogram::Calculate(*m_Image);
     ShowHistogram(histogram);
-
 }
 
 void MainWindow::OnCorrectHistogramAction()
@@ -772,9 +771,9 @@ void MainWindow::UpdateHistogram(const std::vector<std::vector<int>>& histogram)
     auto blueBarSet = std::make_unique<QBarSet>("Blue");
     blueBarSet->setColor(Qt::blue);
 
-    //find max value
+    // find max value
     int max = 0;
-    for (const auto & i : histogram) {
+    for (const auto& i : histogram) {
         switch (m_ActiveChannel) {
             case ActiveChannel::ZEROTH:
                 max = std::max(max, i[0]);
@@ -825,7 +824,7 @@ void MainWindow::UpdateHistogram(const std::vector<std::vector<int>>& histogram)
     chart->addSeries(pSeries.release());
     chart->createDefaultAxes();
 
-    if(!m_HistogramView) {
+    if (!m_HistogramView) {
         m_HistogramView = std::make_unique<QChartView>(chart);
         m_HistogramView->hide();
         m_HistogramSettings.IsVisible = false;
