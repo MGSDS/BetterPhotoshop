@@ -180,6 +180,10 @@ void MainWindow::InitMenuBar()
         {
             auto* showHistogramAction = showHistogramMenu->addAction("Show/Hide");
             connect(showHistogramAction, &QAction::triggered, this, &MainWindow::OnShowHistogramAction);
+
+            auto* correctHistogramAction = showHistogramMenu->addAction("Correct");
+            connect(correctHistogramAction, &QAction::triggered, this, &MainWindow::OnCorrectHistogramAction);
+
             auto typeMenu = showHistogramMenu->addMenu("Type");
             {
                 auto* histogramTypeActionGroup = new QActionGroup(this);
@@ -729,7 +733,14 @@ void MainWindow::OnCorrectHistogramAction()
         return;
     }
 
-    auto image = Histogram::Correct(*m_Image);
+    bool ok = false;
+
+    double ignorePixels = QInputDialog::getDouble(this, "Histogram correction", "Ignore pixels", 0.0, 0.0, 0.5, 2, &ok, {}, 0.01);
+    if (!ok) {
+        return;
+    }
+
+    auto image = Histogram::Correct(*m_Image, m_Histogram, ignorePixels);
     SetImage(std::move(image));
 }
 
@@ -748,6 +759,7 @@ void MainWindow::UpdateHistogram(const std::vector<std::vector<int>>& histogram)
 {
     auto chart = new QChart();
     chart->legend()->hide();
+    m_Histogram = histogram;
 
     auto pSeries = std::make_unique<QStackedBarSeries>();
 
