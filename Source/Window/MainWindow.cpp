@@ -8,6 +8,10 @@
 #include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
 #include <Window/Dialogs/NewImageDialog.hpp>
+#include <Core/Image/Histogram/Histogram.hpp>
+#include <QtWidgets/QMainWindow>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QStackedBarSeries>
 
 #include <QFileDialog>
 #include <QPixmap>
@@ -171,13 +175,68 @@ void MainWindow::InitMenuBar()
 
         auto* drawLineAction = imageMenu->addAction("Draw line");
         connect(drawLineAction, &QAction::triggered, this, &MainWindow::OnLineDrawAction);
+
+        auto* showHistogramMenu = imageMenu->addMenu("Histogram");
+        {
+            auto* showHistogramAction = showHistogramMenu->addAction("Show/Hide");
+            connect(showHistogramAction, &QAction::triggered, this, &MainWindow::OnShowHistogramAction);
+            auto typeMenu = showHistogramMenu->addMenu("Type");
+            {
+                auto* histogramTypeActionGroup = new QActionGroup(this);
+                histogramTypeActionGroup->setExclusive(true);
+
+                auto* rgbAction = typeMenu->addAction("RGB");
+                rgbAction->setCheckable(true);
+
+                connect(rgbAction, &QAction::toggled, this, [this](bool checked) {
+                    if (checked) {
+                        m_HistogramSettings.ShowRgb = true;
+                        m_HistogramSettings.ShowGrayscale = false;
+                        UpdateHistogram(Histogram::Calculate(*m_Image));
+                    }
+                });
+
+                histogramTypeActionGroup->addAction(rgbAction);
+
+                auto* grayscaleAction = typeMenu->addAction("Grayscale");
+                grayscaleAction->setCheckable(true);
+
+                connect(grayscaleAction, &QAction::toggled, this, [this](bool checked) {
+                    if (checked) {
+                        m_HistogramSettings.ShowRgb = false;
+                        m_HistogramSettings.ShowGrayscale = true;
+                        UpdateHistogram(Histogram::Calculate(*m_Image));
+                    }
+                });
+
+                histogramTypeActionGroup->addAction(grayscaleAction);
+
+                auto* bothAction = typeMenu->addAction("Both");
+                bothAction->setCheckable(true);
+                bothAction->setChecked(true);
+
+                connect(bothAction, &QAction::toggled, this, [this](bool checked) {
+                    if (checked) {
+                        m_HistogramSettings.ShowRgb = true;
+                        m_HistogramSettings.ShowGrayscale = true;
+                        UpdateHistogram(Histogram::Calculate(*m_Image));
+                    }
+                });
+
+                histogramTypeActionGroup->addAction(bothAction);
+            }
+        }
     }
 }
 
 void MainWindow::InitImageView()
 {
     m_ImageView = std::make_unique<ImageViewWithInfo>(this);
-    setCentralWidget(m_ImageView.get());
+    m_Splitter = std::make_unique<QSplitter>(this);
+    m_Splitter->setOrientation(Qt::Vertical);
+    setCentralWidget(m_Splitter.get());
+    m_Splitter->addWidget(m_ImageView.get());
+    m_Splitter->setStretchFactor(0, 1);
 
     UpdateColorModelText(m_SelectedColorModel);
     UpdateActiveChannelsText(m_ActiveChannel);
@@ -397,6 +456,7 @@ void MainWindow::UpdateActiveChannelsText(ActiveChannel activeChannel)
 void MainWindow::SetImage(std::unique_ptr<Image>&& image)
 {
     m_Image = std::move(image);
+    UpdateHistogram(Histogram::Calculate(*m_Image));
     SetGamma(m_Image->GetGamma());
     SetImageForQt(m_Image.get());
 
@@ -650,4 +710,116 @@ void MainWindow::OnApplyFilterAction(FilterAlgo filter)
     auto algo = Filter::GetFilter(filter, param);
     auto image = algo->Apply(*m_Image);
     SetImage(std::move(image));
+}
+
+void MainWindow::OnShowHistogramAction()
+{
+    if (!m_Image) {
+        return;
+    }
+
+    auto histogram = Histogram::Calculate(*m_Image);
+    ShowHistogram(histogram);
+
+}
+
+void MainWindow::OnCorrectHistogramAction()
+{
+    if (!m_Image) {
+        return;
+    }
+
+    auto image = Histogram::Correct(*m_Image);
+    SetImage(std::move(image));
+}
+
+void MainWindow::ShowHistogram(const std::vector<std::vector<int>>& histogram)
+{
+    if (m_HistogramSettings.IsVisible) {
+        m_HistogramView->hide();
+        m_HistogramSettings.IsVisible = false;
+    } else {
+        m_HistogramView->show();
+        m_HistogramSettings.IsVisible = true;
+    }
+}
+
+void MainWindow::UpdateHistogram(const std::vector<std::vector<int>>& histogram)
+{
+    auto chart = new QChart();
+    chart->legend()->hide();
+
+    auto pSeries = std::make_unique<QStackedBarSeries>();
+
+    auto grayBarSet = std::make_unique<QBarSet>("Gray");
+    grayBarSet->setColor(Qt::black);
+    auto redBarSet = std::make_unique<QBarSet>("Red");
+    redBarSet->setColor(Qt::red);
+    auto greenBarSet = std::make_unique<QBarSet>("Green");
+    greenBarSet->setColor(Qt::green);
+    auto blueBarSet = std::make_unique<QBarSet>("Blue");
+    blueBarSet->setColor(Qt::blue);
+
+    //find max value
+    int max = 0;
+    for (const auto & i : histogram) {
+        switch (m_ActiveChannel) {
+            case ActiveChannel::ZEROTH:
+                max = std::max(max, i[0]);
+                break;
+            case ActiveChannel::FIRST:
+                max = std::max(max, i[1]);
+                break;
+            case ActiveChannel::SECOND:
+                max = std::max(max, i[2]);
+                break;
+            case ActiveChannel::ALL:
+                max = std::max(max, i[0]);
+                max = std::max(max, i[1]);
+                max = std::max(max, i[2]);
+                break;
+        }
+    }
+
+    for (int i = 1; i < 256; ++i) {
+        switch (m_ActiveChannel) {
+            case ActiveChannel::ZEROTH:
+                *redBarSet << histogram[0][i];
+                break;
+            case ActiveChannel::FIRST:
+                *greenBarSet << histogram[1][i];
+                break;
+            case ActiveChannel::SECOND:
+                *blueBarSet << histogram[2][i];
+                break;
+            case ActiveChannel::ALL:
+                if (m_HistogramSettings.ShowRgb) {
+                    *redBarSet << histogram[0][i];
+                    *greenBarSet << histogram[1][i];
+                    *blueBarSet << histogram[2][i];
+                }
+                if (m_HistogramSettings.ShowGrayscale) {
+                    *grayBarSet << histogram[3][i];
+                }
+                break;
+        }
+    }
+
+    pSeries->append(grayBarSet.release());
+    pSeries->append(redBarSet.release());
+    pSeries->append(greenBarSet.release());
+    pSeries->append(blueBarSet.release());
+
+    chart->addSeries(pSeries.release());
+    chart->createDefaultAxes();
+
+    if(!m_HistogramView) {
+        m_HistogramView = std::make_unique<QChartView>(chart);
+        m_HistogramView->hide();
+        m_HistogramSettings.IsVisible = false;
+        m_Splitter->addWidget(m_HistogramView.get());
+        m_Splitter->setStretchFactor(0, 1);
+    } else {
+        m_HistogramView->setChart(chart);
+    }
 }

@@ -4,6 +4,8 @@
 #include <Core/Image/Editors/Painter.hpp>
 #include <Core/Image/Filter/Filter.hpp>
 #include <Window/ImageViewWithInfo.hpp>
+#include <QSplitter>
+#include <QtCharts/QChartView>
 
 #include <QAction>
 #include <QDialog>
@@ -45,6 +47,13 @@ struct WindowSettings
     const char* Title = "Photoshop";
 };
 
+struct HistogramSettings
+{
+    bool IsVisible = false;
+    bool ShowRgb = true;
+    bool ShowGrayscale = true;
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -72,6 +81,9 @@ private:
     void SetGamma(float newGamma);
     void ApplyGammaCorrection(Image& image, float gammaValue);
 
+    void ShowHistogram(const std::vector<std::vector<int>>& histogram);
+    void UpdateHistogram(const std::vector<std::vector<int>>& histogram);
+
 private slots:
     void OnFileNewAction();
     void OnFileOpenAction();
@@ -88,6 +100,9 @@ private slots:
 
     void OnImageAssignGammaAction();
     void OnImageConvertGammaAction();
+
+    void OnShowHistogramAction();
+    void OnCorrectHistogramAction();
 
     Image TransformImageForQt(const Image& image);
     void SetImageForQt(const Image* image);
@@ -111,7 +126,11 @@ private:
 
     ColorModel m_SelectedColorModel;
     QAction* m_DefaultColorModelAction = nullptr;
+    std::unique_ptr<QSplitter> m_Splitter = nullptr;
+    std::unique_ptr<QChartView> m_HistogramView = nullptr;
+    std::vector<std::vector<int>> m_Histogram;
 
+    HistogramSettings m_HistogramSettings;
     float m_Gamma;
 
     std::unordered_map<ColorModel, QActionGroup*> m_ColorModelActionGroupMapping;
