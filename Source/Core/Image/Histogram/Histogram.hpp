@@ -6,7 +6,7 @@ class Histogram
 {
 public:
     static std::vector<std::vector<int>> Calculate(const Image& image);
-    static std::unique_ptr<Image> Correct(Image& image, const std::vector<std::vector<int>>& histogram, float ignore = 0.0f);
+    static std::unique_ptr<Image> Correct(Image& image, float ignore = 0.0f);
 
     Histogram() = delete;
 };

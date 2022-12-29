@@ -13,6 +13,7 @@
 #include <QString>
 
 #include "Core/Image/Dither/Dither.hpp"
+#include "Window/Widgets/HistogramWidget.h"
 #include <memory>
 
 struct WindowSettings
@@ -47,13 +48,6 @@ struct WindowSettings
     const char* Title = "Photoshop";
 };
 
-struct HistogramSettings
-{
-    bool IsVisible = false;
-    bool ShowRgb = true;
-    bool ShowGrayscale = true;
-};
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -82,7 +76,7 @@ private:
     void ApplyGammaCorrection(Image& image, float gammaValue);
 
     void ShowHistogram(const std::vector<std::vector<int>>& histogram);
-    void UpdateHistogram(const std::vector<std::vector<int>>& histogram);
+    void UpdateHistogram();
 
 private slots:
     void OnFileNewAction();
@@ -127,10 +121,9 @@ private:
     ColorModel m_SelectedColorModel;
     QAction* m_DefaultColorModelAction = nullptr;
     std::unique_ptr<QSplitter> m_Splitter = nullptr;
-    std::unique_ptr<QChartView> m_HistogramView = nullptr;
-    std::vector<std::vector<int>> m_Histogram;
+    std::unique_ptr<HistogramWidget> m_HistogramView = nullptr;
+    bool m_IsHistogramShown = false;
 
-    HistogramSettings m_HistogramSettings;
     float m_Gamma;
 
     std::unordered_map<ColorModel, QActionGroup*> m_ColorModelActionGroupMapping;

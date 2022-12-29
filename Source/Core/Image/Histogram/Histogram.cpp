@@ -12,7 +12,13 @@ std::vector<std::vector<int>> Histogram::Calculate(const Image& image)
             uint8_t normalizedValue = Utils::ByteFromNorm(image.PixelAt(i).channels[j]);
             ++histogram[j][normalizedValue];
         }
-        float gray = image.PixelAt(i).channels[0] * 0.299f + image.PixelAt(i).channels[1] * 0.587f + image.PixelAt(i).channels[2] * 0.114f;
+        float gray;
+        if (image.IsGrayscale()) {
+            gray = image.PixelAt(i).channels[0];
+        } else {
+            gray = image.PixelAt(i).channels[0] * 0.299f + image.PixelAt(i).channels[1] * 0.587f + image.PixelAt(i).channels[2] * 0.114f;
+        }
+
         uint8_t grayByte = Utils::ByteFromNorm(gray);
         ++histogram[3][grayByte];
     }
@@ -20,9 +26,10 @@ std::vector<std::vector<int>> Histogram::Calculate(const Image& image)
     return histogram;
 }
 
-std::unique_ptr<Image> Histogram::Correct(Image& image, const std::vector<std::vector<int>>& histogram, float ignore)
+std::unique_ptr<Image> Histogram::Correct(Image& image, float ignore)
 {
-    auto newImage = std::make_unique<Image>(image.GetWidth(), image.GetHeight());
+    std::vector<std::vector<int>> histogram = Calculate(image);
+    auto newImage = std::make_unique<Image>(image.GetWidth(), image.GetHeight(), image.IsGrayscale());
 
     // find lowest and highest values with ignore
 
@@ -51,7 +58,7 @@ std::unique_ptr<Image> Histogram::Correct(Image& image, const std::vector<std::v
     for (int i = 0; i < image.GetPixelsCount(); ++i) {
         for (int j = 0; j < 3; ++j) {
             uint8_t normalizedValue = Utils::ByteFromNorm(image.PixelAt(i).channels[j]);
-            float newNormalizedValue = (normalizedValue - lowest) / (float)(highest - lowest);
+            float newNormalizedValue = (float)(normalizedValue - lowest) / (float)(highest - lowest);
             newNormalizedValue = std::clamp(newNormalizedValue, 0.0f, 1.0f);
             newImage->PixelAt(i).channels[j] = newNormalizedValue;
         }

@@ -109,5 +109,5 @@ std::unique_ptr<Image> PgmReader::ReadImage(const std::vector<uint8_t>& data)
     }
 
     Log::Info("Reading PGM image: image successfully read.");
-    return std::make_unique<Image>(header.width, header.height, pixels);
+    return std::make_unique<Image>(header.width, header.height, pixels, true);
 }
