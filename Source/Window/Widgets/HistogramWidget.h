@@ -17,7 +17,6 @@ public:
     void SetImage(const Image* image, ActiveChannel activeChannel);
 
 private:
-
     void SetGrayScaleMode();
     void SetRgbMode();
     void SetCharts(std::vector<std::vector<int>>& histograms);

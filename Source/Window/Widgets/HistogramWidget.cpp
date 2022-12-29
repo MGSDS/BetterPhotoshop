@@ -28,8 +28,7 @@ HistogramWidget::HistogramWidget(QWidget* parent)
 
 void HistogramWidget::SetImage(const Image* image, ActiveChannel activeChannel)
 {
-    if (image == nullptr)
-    {
+    if (image == nullptr) {
         return;
     }
 
@@ -37,31 +36,23 @@ void HistogramWidget::SetImage(const Image* image, ActiveChannel activeChannel)
 
     SetCharts(histograms);
 
-    if (image->IsGrayscale())
-    {
+    if (image->IsGrayscale()) {
         SetGrayScaleMode();
         return;
     }
 
     SetRgbMode();
 
-
-    if (activeChannel == ActiveChannel::ZEROTH)
-    {
+    if (activeChannel == ActiveChannel::ZEROTH) {
         m_BlueChartView->hide();
         m_GreenChartView->hide();
-    }
-    else if (activeChannel == ActiveChannel::FIRST)
-    {
+    } else if (activeChannel == ActiveChannel::FIRST) {
         m_BlueChartView->hide();
         m_RedChartView->hide();
-    }
-    else if (activeChannel == ActiveChannel::SECOND)
-    {
+    } else if (activeChannel == ActiveChannel::SECOND) {
         m_GreenChartView->hide();
         m_RedChartView->hide();
     }
-
 }
 
 void HistogramWidget::SetChart(std::vector<int>& histogram, QChartView* chartView, QColor color, std::string name)
@@ -70,8 +61,7 @@ void HistogramWidget::SetChart(std::vector<int>& histogram, QChartView* chartVie
     barSet->setColor(color);
     barSet->setBorderColor(color);
     int max = *std::max_element(histogram.begin() + 1, histogram.end());
-    for (int i = 1; i < histogram.size(); i++)
-    {
+    for (int i = 1; i < histogram.size(); i++) {
         *barSet << histogram[i] / (float)max;
     }
 
@@ -114,12 +104,9 @@ void HistogramWidget::SetGrayscaleChart(std::vector<int>& histogram)
 
 void HistogramWidget::SetCharts(std::vector<std::vector<int>>& histograms)
 {
-    if (m_IsGrayScale)
-    {
+    if (m_IsGrayScale) {
         SetGrayScaleMode();
-    }
-    else
-    {
+    } else {
         SetRgbMode();
     }
     SetRedChart(histograms[0]);
