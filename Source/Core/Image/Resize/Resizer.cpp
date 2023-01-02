@@ -1,6 +1,7 @@
 #include "Resizer.hpp"
 #include <stdexcept>
 #include "NearestPointResizer.hpp"
+#include "BilinearResizer.hpp"
 
 std::unique_ptr<Resizer> Resizer::GetResizer(ResizeAlgo resizer)
 {
@@ -8,7 +9,7 @@ std::unique_ptr<Resizer> Resizer::GetResizer(ResizeAlgo resizer)
         case ResizeAlgo::NEAREST_POINT:
             return std::make_unique<NearestPointResizer>();
         case ResizeAlgo::BILINEAR:
-            throw std::logic_error("Not implemented");
+            return std::make_unique<BilinearResizer>();
         case ResizeAlgo::LANCZOS3:
             throw std::logic_error("Not implemented");
         case ResizeAlgo::BC:

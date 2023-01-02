@@ -672,6 +672,9 @@ void MainWindow::OnResizeActionSelected(ResizeAlgo resizeType)
 {
     bool ok = false;
     auto scale = ResizeScaleDialog::getDoubles(this, &ok);
+    if (!ok) {
+        return;
+    }
 
     auto algo = Resizer::GetResizer(resizeType);
     auto image = algo->Apply(*m_Image, scale[0], scale[1]);

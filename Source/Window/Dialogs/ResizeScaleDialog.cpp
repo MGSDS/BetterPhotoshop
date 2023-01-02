@@ -14,14 +14,14 @@ ResizeScaleDialog::ResizeScaleDialog(QWidget* parent)
     gridLayout->addWidget(new QLabel("Scale X"), 0, 0);
     auto* scaleX = new QLineEdit();
     scaleX->setText("1");
-    scaleX->setValidator(new QDoubleValidator(0.01, 2, 2, this));
+    scaleX->setValidator(new QDoubleValidator(0.01, 10, 2, this));
     gridLayout->addWidget(scaleX, 0, 1);
     fields.append(scaleX);
 
     gridLayout->addWidget(new QLabel("Scale Y"), 1, 0);
     auto* scaleY = new QLineEdit();
     scaleY->setText("1");
-    scaleY->setValidator(new QDoubleValidator(0.01, 2, 2, this));
+    scaleY->setValidator(new QDoubleValidator(0.01, 10, 2, this));
     gridLayout->addWidget(scaleY, 1, 1);
     fields.append(scaleY);
 

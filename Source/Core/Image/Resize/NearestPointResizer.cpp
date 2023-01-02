@@ -14,7 +14,7 @@ std::unique_ptr<Image> NearestPointResizer::Apply(const Image& img, float scaleX
             int srcY = y / scaleY;
             for (int c = 0; c < 4; ++c)
             {
-                result->PixelAt(x, y).channels[c] = img.PixelAt(srcX, srcY).channels[c];
+                result->PixelAt(y, x).channels[c] = img.PixelAt(srcY, srcX).channels[c];
             }
         }
     }
