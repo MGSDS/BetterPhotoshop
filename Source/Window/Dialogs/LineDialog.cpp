@@ -81,6 +81,8 @@ void LineDialog::accept()
         auto text = field->text();
         int pos = field->cursorPosition();
         if (field->validator()->validate(text, pos) != QValidator::Acceptable) {
+            QDialog::reject();
+            return;
         }
     }
     QDialog::accept();

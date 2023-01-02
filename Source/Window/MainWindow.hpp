@@ -4,6 +4,7 @@
 #include <Core/Image/Editors/Painter.hpp>
 #include <Core/Image/Filter/Filter.hpp>
 #include <Window/ImageViewWithInfo.hpp>
+#include <Core/Image/Resize/Resizer.hpp>
 
 #include <QAction>
 #include <QDialog>
@@ -85,6 +86,7 @@ private slots:
     void OnImageColorModelActionSelected(ColorModel selectedColorModel);
     void OnActiveChannelSelected(ActiveChannel activeChannels);
     void OnDitheringActionSelected(DitherAlgo ditheringType);
+    void OnResizeActionSelected(ResizeAlgo resizeType);
 
     void OnImageAssignGammaAction();
     void OnImageConvertGammaAction();
