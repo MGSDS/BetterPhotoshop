@@ -24,5 +24,5 @@ public:
 
     virtual std::unique_ptr<Image> Apply(const Image& img, float scaleX, float scaleY) = 0;
 
-    static std::unique_ptr<Resizer> GetResizer(ResizeAlgo resizer);
+    static std::unique_ptr<Resizer> GetResizer(ResizeAlgo resizer, float* params = nullptr, uint8_t paramsCount = 0);
 };

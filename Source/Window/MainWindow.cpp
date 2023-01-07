@@ -8,6 +8,7 @@
 #include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
 #include <Window/Dialogs/NewImageDialog.hpp>
+#include <Window/Dialogs/BcResizerDialog.hpp>
 #include <Window/Dialogs/ResizeScaleDialog.hpp>
 
 #include <QFileDialog>
@@ -676,7 +677,24 @@ void MainWindow::OnResizeActionSelected(ResizeAlgo resizeType)
         return;
     }
 
-    auto algo = Resizer::GetResizer(resizeType);
+    float* params = nullptr;
+    uint8_t paramsCount = 0;
+
+    if (resizeType == ResizeAlgo::BC) {
+        ok = false;
+        paramsCount = 2;
+        params = new float[paramsCount];
+        auto bcParams = BcResizerDialog::getDoubles(this, &ok);
+        if (!ok) {
+            delete[] params;
+            return;
+        }
+        params[0] = bcParams[0];
+        params[1] = bcParams[1];
+    }
+
+    auto algo = Resizer::GetResizer(resizeType, params, paramsCount);
     auto image = algo->Apply(*m_Image, scale[0], scale[1]);
     SetImage(std::move(image));
+    delete[] params;
 }

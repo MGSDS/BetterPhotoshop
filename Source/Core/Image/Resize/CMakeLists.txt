@@ -3,4 +3,5 @@ target_sources(Photoshop PUBLIC
         NearestPointResizer.cpp
         BilinearResizer.cpp
         Lanczos3Resizer.cpp
+        BcSpline.cpp
 )

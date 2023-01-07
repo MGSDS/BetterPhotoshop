@@ -3,8 +3,9 @@
 #include "NearestPointResizer.hpp"
 #include "BilinearResizer.hpp"
 #include "Lanczos3Resizer.hpp"
+#include "BcSpline.hpp"
 
-std::unique_ptr<Resizer> Resizer::GetResizer(ResizeAlgo resizer)
+std::unique_ptr<Resizer> Resizer::GetResizer(ResizeAlgo resizer, float* params, uint8_t paramsCount)
 {
     switch (resizer) {
         case ResizeAlgo::NEAREST_POINT:
@@ -14,6 +15,10 @@ std::unique_ptr<Resizer> Resizer::GetResizer(ResizeAlgo resizer)
         case ResizeAlgo::LANCZOS3:
             return std::make_unique<Lanczos3Resizer>();
         case ResizeAlgo::BC:
-            throw std::logic_error("Not implemented");
+            if (paramsCount != 2) {
+                return std::make_unique<BcSpline>();
+            }
+
+            return std::make_unique<BcSpline>(params[0], params[1]);
     }
 }
