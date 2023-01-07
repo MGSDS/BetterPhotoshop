@@ -21,7 +21,7 @@ std::unique_ptr<Image> BcSpline::Apply(const Image& img, float scaleX, float sca
                             continue;
                         }
 
-                        double weight = filter(i - srcX + srcX0) * filter(j - srcY + srcY0);
+                        double weight = filter(i - srcX + srcX0, m_B, m_C) * filter(j - srcY + srcY0, m_B, m_C);
                         sum += img.PixelAt(srcY0, srcX0).channels[c] * weight;
                         weightSum += weight;
                     }
