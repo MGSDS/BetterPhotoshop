@@ -1,7 +1,7 @@
 #include "ResizeScaleDialog.hpp"
 #include <QDialogButtonBox>
-#include <QFormLayout>
 #include <QDoubleValidator>
+#include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <limits.h>

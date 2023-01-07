@@ -11,10 +11,10 @@ enum ResizeAlgo : uint8_t
 };
 
 static const std::unordered_map<ResizeAlgo, std::string> ENUM_TO_STRING_RESIZER_MAPPING = {
-    {ResizeAlgo::NEAREST_POINT, "Nearest point"},
-    {ResizeAlgo::BILINEAR, "Bilinear"},
-    {ResizeAlgo::LANCZOS3, "Lanczos3"},
-    {ResizeAlgo::BC, "BC-spline"}
+    { ResizeAlgo::NEAREST_POINT, "Nearest point" },
+    { ResizeAlgo::BILINEAR, "Bilinear" },
+    { ResizeAlgo::LANCZOS3, "Lanczos3" },
+    { ResizeAlgo::BC, "BC-spline" }
 };
 
 class Resizer

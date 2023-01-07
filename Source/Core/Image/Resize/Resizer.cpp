@@ -1,9 +1,9 @@
 #include "Resizer.hpp"
-#include <stdexcept>
-#include "NearestPointResizer.hpp"
+#include "BcSpline.hpp"
 #include "BilinearResizer.hpp"
 #include "Lanczos3Resizer.hpp"
-#include "BcSpline.hpp"
+#include "NearestPointResizer.hpp"
+#include <stdexcept>
 
 std::unique_ptr<Resizer> Resizer::GetResizer(ResizeAlgo resizer, float* params, uint8_t paramsCount)
 {

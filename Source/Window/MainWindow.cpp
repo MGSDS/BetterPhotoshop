@@ -7,8 +7,8 @@
 #include <Core/Image/Gamma/SrgbGammaCorrection.hpp>
 #include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
-#include <Window/Dialogs/NewImageDialog.hpp>
 #include <Window/Dialogs/BcResizerDialog.hpp>
+#include <Window/Dialogs/NewImageDialog.hpp>
 #include <Window/Dialogs/ResizeScaleDialog.hpp>
 
 #include <QFileDialog>

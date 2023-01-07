@@ -1,7 +1,7 @@
 #include "BcResizerDialog.hpp"
 #include <QDialogButtonBox>
-#include <QFormLayout>
 #include <QDoubleValidator>
+#include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
 
@@ -39,22 +39,18 @@ BcResizerDialog::BcResizerDialog(QWidget* parent)
 QList<double> BcResizerDialog::getDoubles(QWidget* parent, bool* ok)
 {
     BcResizerDialog dialog(parent);
-    if (dialog.exec() == QDialog::Accepted)
-    {
+    if (dialog.exec() == QDialog::Accepted) {
         QList<double> result;
-        for (auto* field : dialog.fields)
-        {
+        for (auto* field : dialog.fields) {
             result.append(field->text().toDouble());
         }
-        if (ok)
-        {
+        if (ok) {
             *ok = true;
         }
         return result;
     }
 
-    if (ok)
-    {
+    if (ok) {
         *ok = false;
     }
 
@@ -63,11 +59,9 @@ QList<double> BcResizerDialog::getDoubles(QWidget* parent, bool* ok)
 
 void BcResizerDialog::accept()
 {
-    for (auto* field : fields)
-    {
+    for (auto* field : fields) {
         auto text = field->text();
-        if (text.isEmpty())
-        {
+        if (text.isEmpty()) {
             return;
         }
     }

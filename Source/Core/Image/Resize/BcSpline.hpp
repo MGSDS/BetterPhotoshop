@@ -13,4 +13,3 @@ private:
     float m_B = 0.0f;
     float m_C = 0.5f;
 };
-

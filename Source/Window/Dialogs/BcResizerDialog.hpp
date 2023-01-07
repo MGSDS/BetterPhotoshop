@@ -4,7 +4,6 @@
 
 class QLineEdit;
 
-
 class BcResizerDialog : public QDialog
 {
     Q_OBJECT

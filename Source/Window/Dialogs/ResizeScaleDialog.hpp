@@ -2,7 +2,6 @@
 
 #include <QDialog>
 
-
 class QLineEdit;
 class QLabel;
 

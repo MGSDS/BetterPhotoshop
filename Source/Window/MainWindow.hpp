@@ -3,8 +3,8 @@
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
 #include <Core/Image/Editors/Painter.hpp>
 #include <Core/Image/Filter/Filter.hpp>
-#include <Window/ImageViewWithInfo.hpp>
 #include <Core/Image/Resize/Resizer.hpp>
+#include <Window/ImageViewWithInfo.hpp>
 
 #include <QAction>
 #include <QDialog>
