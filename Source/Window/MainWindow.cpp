@@ -9,7 +9,9 @@
 #include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
 #include <QtWidgets/QMainWindow>
+#include <Window/Dialogs/BcResizerDialog.hpp>
 #include <Window/Dialogs/NewImageDialog.hpp>
+#include <Window/Dialogs/ResizeScaleDialog.hpp>
 
 #include <QFileDialog>
 #include <QPixmap>
@@ -169,6 +171,21 @@ void MainWindow::InitMenuBar()
                     OnApplyFilterAction(filter);
                 });
             }
+        }
+
+        auto resizeMenu = imageMenu->addMenu("Resize image");
+        {
+            auto* resizeActionGroup = new QActionGroup(this);
+            resizeActionGroup->setExclusive(true);
+
+            for (const auto& [resizerEnum, resizerName] : ENUM_TO_STRING_RESIZER_MAPPING) {
+                auto* resizeAction = resizeMenu->addAction(resizerName.c_str());
+                resizeActionGroup->addAction(resizeAction);
+                connect(resizeAction, &QAction::triggered, this, [this, resizeAlgo = resizerEnum]() {
+                    OnResizeActionSelected(resizeAlgo);
+                });
+            }
+            SetActionGroupEnabled(resizeActionGroup, true);
         }
 
         auto* drawLineAction = imageMenu->addAction("Draw line");
@@ -671,6 +688,36 @@ void MainWindow::OnApplyFilterAction(FilterAlgo filter)
     auto algo = Filter::GetFilter(filter, param);
     auto image = algo->Apply(*m_Image);
     SetImage(std::move(image));
+}
+
+void MainWindow::OnResizeActionSelected(ResizeAlgo resizeType)
+{
+    bool ok = false;
+    auto scale = ResizeScaleDialog::getDoubles(this, &ok);
+    if (!ok) {
+        return;
+    }
+
+    float* params = nullptr;
+    uint8_t paramsCount = 0;
+
+    if (resizeType == ResizeAlgo::BC) {
+        ok = false;
+        paramsCount = 2;
+        params = new float[paramsCount];
+        auto bcParams = BcResizerDialog::getDoubles(this, &ok);
+        if (!ok) {
+            delete[] params;
+            return;
+        }
+        params[0] = bcParams[0];
+        params[1] = bcParams[1];
+    }
+
+    auto algo = Resizer::GetResizer(resizeType, params, paramsCount);
+    auto image = algo->Apply(*m_Image, scale[0], scale[1]);
+    SetImage(std::move(image));
+    delete[] params;
 }
 
 void MainWindow::OnShowHistogramAction()

@@ -3,6 +3,7 @@
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
 #include <Core/Image/Editors/Painter.hpp>
 #include <Core/Image/Filter/Filter.hpp>
+#include <Core/Image/Resize/Resizer.hpp>
 #include <QSplitter>
 #include <QtCharts/QChartView>
 #include <Window/ImageViewWithInfo.hpp>
@@ -91,6 +92,7 @@ private slots:
     void OnImageColorModelActionSelected(ColorModel selectedColorModel);
     void OnActiveChannelSelected(ActiveChannel activeChannels);
     void OnDitheringActionSelected(DitherAlgo ditheringType);
+    void OnResizeActionSelected(ResizeAlgo resizeType);
 
     void OnImageAssignGammaAction();
     void OnImageConvertGammaAction();
