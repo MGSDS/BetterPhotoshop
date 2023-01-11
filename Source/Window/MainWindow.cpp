@@ -8,8 +8,8 @@
 #include <Core/Image/Histogram/Histogram.hpp>
 #include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
-#include <Window/Dialogs/BcResizerDialog.hpp>
 #include <QtWidgets/QMainWindow>
+#include <Window/Dialogs/BcResizerDialog.hpp>
 #include <Window/Dialogs/NewImageDialog.hpp>
 #include <Window/Dialogs/ResizeScaleDialog.hpp>
 
