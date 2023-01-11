@@ -1,4 +1,5 @@
 #include "BilinearResizer.hpp"
+#include "algorithm"
 
 std::unique_ptr<Image> BilinearResizer::Apply(const Image& img, float scaleX, float scaleY)
 {
