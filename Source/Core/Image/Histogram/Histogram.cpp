@@ -38,7 +38,11 @@ std::unique_ptr<Image> Histogram::Correct(Image& image, float ignore)
     int ignorePixels = image.GetPixelsCount() * ignore;
     int currentPixels = 0;
     for (int i = 0; i < 256; ++i) {
-        currentPixels += histogram[3][i];
+        if (image.IsGrayscale()) {
+            currentPixels += histogram[3][i];
+        } else {
+            currentPixels += histogram[0][i] + histogram[1][i] + histogram[2][i];
+        }
         if (currentPixels > ignorePixels) {
             lowest = i;
             break;
@@ -47,7 +51,11 @@ std::unique_ptr<Image> Histogram::Correct(Image& image, float ignore)
 
     currentPixels = 0;
     for (int i = 255; i >= 0; --i) {
-        currentPixels += histogram[3][i];
+        if (image.IsGrayscale()) {
+            currentPixels += histogram[3][i];
+        } else {
+            currentPixels += histogram[0][i] + histogram[1][i] + histogram[2][i];
+        }
         if (currentPixels > ignorePixels) {
             highest = i;
             break;
