@@ -6,3 +6,4 @@ target_sources(Photoshop PUBLIC
 )
 
 add_subdirectory(Dialogs)
+add_subdirectory(Widgets)

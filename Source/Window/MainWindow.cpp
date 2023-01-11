@@ -5,8 +5,10 @@
 #include "Window/Dialogs/LineDialog.hpp"
 #include <Core/Image/ColorModel/ColorModelConverter.hpp>
 #include <Core/Image/Gamma/SrgbGammaCorrection.hpp>
+#include <Core/Image/Histogram/Histogram.hpp>
 #include <Core/Image/Image.hpp>
 #include <Core/Log.hpp>
+#include <QtWidgets/QMainWindow>
 #include <Window/Dialogs/NewImageDialog.hpp>
 
 #include <QFileDialog>
@@ -171,13 +173,31 @@ void MainWindow::InitMenuBar()
 
         auto* drawLineAction = imageMenu->addAction("Draw line");
         connect(drawLineAction, &QAction::triggered, this, &MainWindow::OnLineDrawAction);
+
+        auto* showHistogramMenu = imageMenu->addMenu("Histogram");
+        {
+            auto* showHistogramAction = showHistogramMenu->addAction("Show/Hide");
+            connect(showHistogramAction, &QAction::triggered, this, &MainWindow::OnShowHistogramAction);
+
+            auto* correctHistogramAction = showHistogramMenu->addAction("Correct");
+            connect(correctHistogramAction, &QAction::triggered, this, &MainWindow::OnCorrectHistogramAction);
+        }
     }
 }
 
 void MainWindow::InitImageView()
 {
     m_ImageView = std::make_unique<ImageViewWithInfo>(this);
-    setCentralWidget(m_ImageView.get());
+    m_Splitter = std::make_unique<QSplitter>(this);
+    m_Splitter->setOrientation(Qt::Horizontal);
+    setCentralWidget(m_Splitter.get());
+    m_Splitter->addWidget(m_ImageView.get());
+    m_Splitter->setStretchFactor(0, 1);
+
+    m_HistogramView = std::make_unique<HistogramWidget>(this);
+    m_Splitter->addWidget(m_HistogramView.get());
+    m_Splitter->setStretchFactor(1, 0);
+    m_HistogramView->hide();
 
     UpdateColorModelText(m_SelectedColorModel);
     UpdateActiveChannelsText(m_ActiveChannel);
@@ -397,6 +417,7 @@ void MainWindow::UpdateActiveChannelsText(ActiveChannel activeChannel)
 void MainWindow::SetImage(std::unique_ptr<Image>&& image)
 {
     m_Image = std::move(image);
+    UpdateHistogram();
     SetGamma(m_Image->GetGamma());
     SetImageForQt(m_Image.get());
 
@@ -650,4 +671,51 @@ void MainWindow::OnApplyFilterAction(FilterAlgo filter)
     auto algo = Filter::GetFilter(filter, param);
     auto image = algo->Apply(*m_Image);
     SetImage(std::move(image));
+}
+
+void MainWindow::OnShowHistogramAction()
+{
+    if (!m_Image) {
+        return;
+    }
+
+    auto histogram = Histogram::Calculate(*m_Image);
+    ShowHistogram(histogram);
+}
+
+void MainWindow::OnCorrectHistogramAction()
+{
+    if (!m_Image) {
+        return;
+    }
+
+    bool ok = false;
+
+    double ignorePixels = QInputDialog::getDouble(this, "Histogram correction", "Ignore pixels", 0.0, 0.0, 0.5, 2, &ok, {}, 0.01);
+    if (!ok) {
+        return;
+    }
+
+    auto image = Histogram::Correct(*m_Image, ignorePixels);
+    SetImage(std::move(image));
+}
+
+void MainWindow::ShowHistogram(const std::vector<std::vector<int>>& histogram)
+{
+    if (m_IsHistogramShown) {
+        m_HistogramView->hide();
+        m_IsHistogramShown = false;
+    } else {
+        m_HistogramView->show();
+        m_IsHistogramShown = true;
+    }
+}
+
+void MainWindow::UpdateHistogram()
+{
+    if (!m_HistogramView) {
+        return;
+    }
+
+    m_HistogramView->SetImage(m_Image.get(), m_ActiveChannel);
 }
