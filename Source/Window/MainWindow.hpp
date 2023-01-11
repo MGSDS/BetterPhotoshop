@@ -4,6 +4,8 @@
 #include <Core/Image/Editors/Painter.hpp>
 #include <Core/Image/Filter/Filter.hpp>
 #include <Core/Image/Resize/Resizer.hpp>
+#include <QSplitter>
+#include <QtCharts/QChartView>
 #include <Window/ImageViewWithInfo.hpp>
 
 #include <QAction>
@@ -12,6 +14,7 @@
 #include <QString>
 
 #include "Core/Image/Dither/Dither.hpp"
+#include "Window/Widgets/HistogramWidget.h"
 #include <memory>
 
 struct WindowSettings
@@ -73,6 +76,9 @@ private:
     void SetGamma(float newGamma);
     void ApplyGammaCorrection(Image& image, float gammaValue);
 
+    void ShowHistogram(const std::vector<std::vector<int>>& histogram);
+    void UpdateHistogram();
+
 private slots:
     void OnFileNewAction();
     void OnFileOpenAction();
@@ -90,6 +96,9 @@ private slots:
 
     void OnImageAssignGammaAction();
     void OnImageConvertGammaAction();
+
+    void OnShowHistogramAction();
+    void OnCorrectHistogramAction();
 
     Image TransformImageForQt(const Image& image);
     void SetImageForQt(const Image* image);
@@ -113,6 +122,9 @@ private:
 
     ColorModel m_SelectedColorModel;
     QAction* m_DefaultColorModelAction = nullptr;
+    std::unique_ptr<QSplitter> m_Splitter = nullptr;
+    std::unique_ptr<HistogramWidget> m_HistogramView = nullptr;
+    bool m_IsHistogramShown = false;
 
     float m_Gamma;
 

@@ -143,20 +143,20 @@ const uint8_t* Image::ToDataRGBA32FPx4() const
     return reinterpret_cast<const uint8_t*>(&m_Pixels[0]);
 }
 
-Image::Image(size_t width, size_t height)
-    : m_Width(width), m_Height(height), m_Size(width * height), m_Pixels(m_Size, Pixel::WhiteRgb())
+Image::Image(size_t width, size_t height, bool isGrayscale)
+    : m_Width(width), m_Height(height), m_Size(width * height), m_Pixels(m_Size, Pixel::WhiteRgb()), m_IsGrayscale(isGrayscale)
 {}
 
-Image::Image(size_t width, size_t height, Pixel pixel)
-    : m_Width(width), m_Height(height), m_Size(width * height), m_Pixels(m_Size, pixel)
-
+Image::Image(size_t width, size_t height, Pixel pixel, bool isGrayscale)
+    : m_Width(width), m_Height(height), m_Size(width * height), m_Pixels(m_Size, pixel), m_IsGrayscale(isGrayscale)
 {}
 
-Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels)
+Image::Image(size_t width, size_t height, const std::vector<Pixel>& pixels, bool isGrayscale)
     : m_Width(width)
     , m_Height(height)
     , m_Size(width * height)
     , m_Pixels(pixels)
+    , m_IsGrayscale(isGrayscale)
 {
 }
 
@@ -199,4 +199,9 @@ void Image::AssignGamma(float gamma)
 float Image::GetGamma() const
 {
     return m_Gamma;
+}
+
+bool Image::IsGrayscale() const
+{
+    return m_IsGrayscale;
 }

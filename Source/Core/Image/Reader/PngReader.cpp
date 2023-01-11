@@ -153,7 +153,7 @@ std::unique_ptr<Image> PngReader::DecodeGrayscaleImage(const std::vector<std::ve
             pixels.push_back(pixel);
         }
     }
-    return std::make_unique<Image>(header.width, header.height, pixels);
+    return std::make_unique<Image>(header.width, header.height, pixels, true);
 }
 
 std::unique_ptr<Image>

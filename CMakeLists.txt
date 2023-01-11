@@ -23,6 +23,7 @@ find_package(Qt6 REQUIRED COMPONENTS
     Core
     Gui
     Widgets
+    Charts
 )
 
 add_executable(Photoshop)
@@ -34,6 +35,7 @@ add_subdirectory(Deps/zlib)
 
 find_package(ZLIB REQUIRED)
 target_link_libraries(Photoshop PRIVATE ZLIB::ZLIB)
+target_link_libraries(Photoshop PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Charts)
 
 target_compile_definitions(Photoshop PUBLIC SPDLOG_COMPILED_LIB)
 
